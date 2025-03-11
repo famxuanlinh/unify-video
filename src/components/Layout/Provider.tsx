@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
 
 import GhostLayout from './GhostLayout';
+import { MainLayout } from './MainLayout';
 
 interface ProviderProps {
   children: React.ReactNode;
@@ -14,10 +15,12 @@ const Provider = ({ children, me }: ProviderProps) => {
   const queryClient = new QueryClient();
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <GhostLayout me={me} />
-      {children}
-    </QueryClientProvider>
+    <MainLayout>
+      <QueryClientProvider client={queryClient}>
+        <GhostLayout me={me} />
+        {children}
+      </QueryClientProvider>
+    </MainLayout>
   );
 };
 
