@@ -4,6 +4,8 @@ import useMainStore from '@/store/mainProvider';
 import usePeerStore from '@/store/peerProvider';
 import React, { useState, useEffect } from 'react';
 
+import LoginButton from '@/components/LoginButton';
+
 export const DiagnosticOverlay = () => {
   const { ready, onlineUsersCount, waitingForMatch } = useMainStore();
   const [isVisible, setIsVisible] = useState(false);
@@ -62,12 +64,15 @@ export const DiagnosticOverlay = () => {
     <div className="absolute top-0 right-0 bg-black bg-opacity-80 text-white p-4 m-2 rounded max-w-md z-50">
       <div className="flex justify-between items-center mb-2">
         <h3 className="text-lg font-bold">Connection Diagnostics</h3>
-        <button
-          onClick={toggleVisibility}
-          className="bg-red-500 text-white px-2 py-1 rounded text-xs"
-        >
-          Close
-        </button>
+        <div className="flex space-x-2">
+          <LoginButton />
+          <button
+            onClick={toggleVisibility}
+            className="bg-red-500 text-white px-2 py-1 rounded text-xs"
+          >
+            Close
+          </button>
+        </div>
       </div>
 
       <div className="text-sm space-y-1">
