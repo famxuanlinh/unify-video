@@ -53,7 +53,7 @@ export const DiagnosticOverlay = () => {
     return (
       <button
         onClick={toggleVisibility}
-        className="absolute top-2 right-2 bg-blue-500 text-white px-2 py-1 rounded text-xs"
+        className="absolute top-2 z-999 cursor-pointer right-2 bg-blue-500 text-white px-2 py-1 rounded text-xs"
       >
         Show Diagnostics
       </button>
@@ -61,17 +61,17 @@ export const DiagnosticOverlay = () => {
   }
 
   return (
-    <div className="absolute top-0 right-0 bg-black bg-opacity-80 text-white p-4 m-2 rounded max-w-md z-50">
+    <div className="absolute top-0 right-0 bg-black bg-opacity-80 text-white p-4 m-2 rounded max-w-md z-9999">
       <div className="flex justify-between items-center mb-2">
         <h3 className="text-lg font-bold">Connection Diagnostics</h3>
-        <div className="flex space-x-2">
-          <LoginButton />
+        <div className="flex gap-2">
           <button
             onClick={toggleVisibility}
             className="bg-red-500 text-white px-2 py-1 rounded text-xs"
           >
             Close
           </button>
+          <LoginButton />
         </div>
       </div>
 

@@ -34,7 +34,7 @@ const LoginButton: React.FunctionComponent<LoginButtonProps> = ({ className }) =
   return (
     <Button
       disabled={isLoading}
-      className={cn('w-full px-0', className)}
+      className={cn('w-full ', className)}
       onClick={handleLoginMiniAppWalletAuth}
     >
       Sign In

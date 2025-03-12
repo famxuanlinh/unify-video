@@ -13,7 +13,7 @@ export const MessageInput = () => {
     <form className="text-white flex gap-3" onSubmit={send}>
       <div className="relative flex-1">
         <input
-          className="w-full h-12 px-4 rounded-full bg-[#00000052] text-white placeholder-gray-300 text-xs focus:outline-none pr-10"
+          className="w-full h-12 px-4 rounded-full bg-[#00000052] text-white placeholder-gray-300 text-xs focus:outline-hidden pr-10"
           type="text"
           placeholder="Send Message"
         />
