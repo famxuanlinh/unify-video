@@ -1,7 +1,7 @@
 'use client';
 
-import usePeer from '@/hooks/use-peer';
-import useMainStore from '@/store/main-provider';
+import { usePeer } from '@/hooks';
+import { useMainStore } from '@/store';
 import { VideoIcon } from 'lucide-react';
 import React from 'react';
 

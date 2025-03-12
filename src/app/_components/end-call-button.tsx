@@ -1,6 +1,6 @@
 'use client';
 
-import usePeer from '@/hooks/use-peer';
+import { usePeer } from '@/hooks';
 import { PhoneOffIcon } from 'lucide-react';
 import React from 'react';
 

@@ -2,7 +2,7 @@
 
 import React, { FC, ReactNode } from 'react';
 
-import VideoPlayer from '../video-player';
+import { VideoPlayer } from '@/components';
 
 interface SideProps {
   videoRef?: MediaStream | null;

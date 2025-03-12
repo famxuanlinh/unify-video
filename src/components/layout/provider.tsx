@@ -3,15 +3,14 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
 
-import GhostLayout from './ghost-layout';
-import { MainLayout } from './main-layout';
+import { MainLayout, GhostLayout } from '@/components';
 
 interface ProviderProps {
   children: React.ReactNode;
   me?: string;
 }
 
-const Provider = ({ children, me }: ProviderProps) => {
+export const Provider = ({ children, me }: ProviderProps) => {
   const queryClient = new QueryClient();
 
   return (
@@ -23,5 +22,3 @@ const Provider = ({ children, me }: ProviderProps) => {
     </MainLayout>
   );
 };
-
-export default Provider;

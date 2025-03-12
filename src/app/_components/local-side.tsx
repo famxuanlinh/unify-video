@@ -1,15 +1,15 @@
 'use client';
 
-import useMainStore from '@/store/main-provider';
-import usePeerStore from '@/store/peer-provider';
+import {
+  ChatOverlay,
+  ErrorOverlay,
+  LoadingOverlay,
+  StartVideoChatOverlay
+} from '@/app/_components';
+import { useMainStore, usePeerStore } from '@/store';
 import React from 'react';
 
-import { Side } from '@/components/layout/side';
-
-import ChatOverlay from './chat-overlay';
-import { ErrorOverlay } from './error-overlay';
-import { LoadingOverlay } from './loading-overlay';
-import { StartVideoChatOverlay } from './start-video-chat-overlay';
+import { Side } from '@/components';
 
 export const LocalSide = () => {
   const { started, loading, error } = useMainStore();

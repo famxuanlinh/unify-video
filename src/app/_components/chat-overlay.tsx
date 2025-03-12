@@ -1,10 +1,7 @@
+import { EndCallButton, MessageInput, MessagesBox } from '@/app/_components';
 import React from 'react';
 
-import { EndCallButton } from './end-call-button';
-import { MessageInput } from './message-input';
-import { MessagesBox } from './messages-box';
-
-const ChatOverlay = () => {
+export const ChatOverlay = () => {
   return (
     <div className="flex h-full flex-col gap-5 p-8">
       <EndCallButton />
@@ -15,5 +12,3 @@ const ChatOverlay = () => {
     </div>
   );
 };
-
-export default ChatOverlay;

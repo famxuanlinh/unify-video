@@ -1,14 +1,14 @@
 'use client';
 
-import useMainStore from '@/store/main-provider';
-import usePeerStore from '@/store/peer-provider';
+import {
+  LoadingOverlay,
+  RemoteVideoOverlay,
+  WelcomeOverlay
+} from '@/app/_components';
+import { useMainStore, usePeerStore } from '@/store';
 import React from 'react';
 
-import { Side } from '@/components/layout/side';
-
-import { LoadingOverlay } from './loading-overlay';
-import { RemoteVideoOverlay } from './remote-video-overlay';
-import { WelcomeOverlay } from './welcome-overlay';
+import { Side } from '@/components';
 
 export const RemoteSide = () => {
   const { started, loading, waitingForMatch } = useMainStore();

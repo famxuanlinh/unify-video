@@ -1,10 +1,9 @@
 'use client';
 
-import useMainStore from '@/store/main-provider';
-import usePeerStore from '@/store/peer-provider';
+import { useMainStore, usePeerStore } from '@/store';
 import React, { useState, useEffect } from 'react';
 
-import LoginButton from '@/components/login-button';
+import { LoginButton } from '@/components';
 
 export const DiagnosticOverlay = () => {
   const { ready, onlineUsersCount, waitingForMatch } = useMainStore();

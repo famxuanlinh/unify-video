@@ -1,5 +1,4 @@
-import { AUTH_TOKEN_KEY } from '@/constants/common';
-import env from '@/constants/env';
+import { AUTH_TOKEN_KEY, env } from '@/constants';
 import axios from 'axios';
 import { getCookie } from 'cookies-next';
 

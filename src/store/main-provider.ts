@@ -16,7 +16,7 @@ interface MainState {
   setOnlineUsersCount: (onlineUsersCount: number) => void;
 }
 
-const useMainStore = create<MainState>(set => ({
+export const useMainStore = create<MainState>(set => ({
   started: false,
   loading: false,
   waitingForMatch: false,
@@ -31,5 +31,3 @@ const useMainStore = create<MainState>(set => ({
   setError: error => set({ error }),
   setOnlineUsersCount: onlineUsersCount => set({ onlineUsersCount })
 }));
-
-export default useMainStore;

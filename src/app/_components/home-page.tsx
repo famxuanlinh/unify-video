@@ -1,10 +1,7 @@
+import { LocalSide, DiagnosticOverlay, RemoteSide } from '@/app/_components';
 import React from 'react';
 
-import { DiagnosticOverlay } from './diagnostic-overlay';
-import { LocalSide } from './local-side';
-import { RemoteSide } from './remote-side';
-
-const HomePage = () => {
+export const HomePage = () => {
   return (
     <>
       <RemoteSide />
@@ -13,5 +10,3 @@ const HomePage = () => {
     </>
   );
 };
-
-export default HomePage;

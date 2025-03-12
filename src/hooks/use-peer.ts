@@ -1,16 +1,12 @@
 'use client';
 
-import useMainStore from '@/store/main-provider';
-import useMessagingStore from '@/store/message-provider';
-import usePeerStore from '@/store/peer-provider';
-import { HEARTBEAT, MESSAGE_EVENTS, peer } from '@/utils/constants';
+import { useMainStore, useMessagingStore, usePeerStore } from '@/store';
+import { HEARTBEAT, MESSAGE_EVENTS, peer, log } from '@/utils';
 import { DataConnection, MediaConnection } from 'peerjs';
 import { FormEvent, useEffect, useRef, useState } from 'react';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 
-import { log } from '../utils/helpers';
-
-export default function usePeer() {
+export function usePeer() {
   const { addMessage, clearMessages } = useMessagingStore();
   const {
     setError,
@@ -29,7 +25,7 @@ export default function usePeer() {
   const mediaConnectionRef = useRef<MediaConnection>(undefined);
 
   const { sendMessage, lastMessage, readyState } = useWebSocket(
-    'http://146.190.192.108:5000/',
+    'http://localhost:5001/',
     {
       heartbeat: HEARTBEAT,
       onError: _e => {
@@ -206,10 +202,23 @@ export default function usePeer() {
         audio: true
       });
       log('User media obtained successfully');
-
       setLocalStream(videoStream);
-      setLoading(false);
-      setStarted(true);
+
+      return new Promise(resolve => {
+        // Wait a short time to ensure the stream is properly initialized
+        setTimeout(() => {
+          if (videoStream) {
+            log('Local stream initialized successfully');
+            setLoading(false);
+            setStarted(true);
+            resolve(true);
+          } else {
+            log('Failed to initialize local stream');
+            setError('Error getting user media');
+            resolve(false);
+          }
+        }, 1000);
+      });
     } catch (error) {
       log('Error getting user media:', error);
       setError('Error getting user media');
@@ -225,9 +234,9 @@ export default function usePeer() {
       return;
     }
 
-    await startVideoStream();
+    const streamInitialized = await startVideoStream();
 
-    if (readyState === ReadyState.OPEN) {
+    if (streamInitialized && readyState === ReadyState.OPEN) {
       log('Joining with peer ID:', myPeerId);
       sendMessage(JSON.stringify({ event: MESSAGE_EVENTS.JOIN, id: myPeerId }));
     } else {

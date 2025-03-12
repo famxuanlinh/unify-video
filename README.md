@@ -41,7 +41,7 @@ The root directory of the project is structured as follows:
 ```sh
 src
 |
-+-- husky             # Hooks for commit or push (https://typicode.github.io/husky/#/)
+# +-- husky             # Hooks for commit or push (https://typicode.github.io/husky/#/)
 |
 +-- .next             # Build folder of Next.js (https://nextjs.org/docs/app/building-your-application/deploying)
 |
@@ -102,8 +102,7 @@ Standard commit syntax:
 
 ```sh
 feat: add email notifications on new direct messages
-feat(shopping-cart): add the amazing button
-fix(api): fix wrong calculation of request body checksum
+fix (#ticketnumber): message name
 ```
 
 ---

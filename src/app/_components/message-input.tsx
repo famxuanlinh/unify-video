@@ -1,10 +1,9 @@
 'use client';
 
-import usePeer from '@/hooks/use-peer';
+import { ClearChatButton } from '@/app/_components';
+import { usePeer } from '@/hooks';
 import { SendIcon } from 'lucide-react';
 import React from 'react';
-
-import { ClearChatButton } from './clear-chat-button';
 
 export const MessageInput = () => {
   const { send } = usePeer();

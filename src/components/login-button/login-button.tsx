@@ -1,3 +1,5 @@
+'use client';
+
 import { signInWithMiniAppWallet } from '@/utils/auth';
 import { Base64 } from '@/utils/base64';
 import { useRouter } from 'next/navigation';
@@ -5,13 +7,13 @@ import React, { useState } from 'react';
 
 import { Button } from '@/components/core/button';
 
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib';
 
 interface LoginButtonProps {
   className?: string;
 }
 
-const LoginButton: React.FunctionComponent<LoginButtonProps> = ({
+export const LoginButton: React.FunctionComponent<LoginButtonProps> = ({
   className
 }) => {
   const [isLoading, setLoading] = useState(false);
@@ -43,5 +45,3 @@ const LoginButton: React.FunctionComponent<LoginButtonProps> = ({
     </Button>
   );
 };
-
-export default LoginButton;

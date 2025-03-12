@@ -1,7 +1,6 @@
-import useMessagingStore from '@/store/message-provider';
+import { MessageBubble } from '@/app/_components';
+import { useMessagingStore } from '@/store';
 import React from 'react';
-
-import { MessageBubble } from './message-bubble';
 
 export const MessagesBox = () => {
   const { messages } = useMessagingStore();

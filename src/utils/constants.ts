@@ -1,6 +1,6 @@
 'use client';
 
-import env from '@/constants/env';
+import { env } from '@/constants';
 import Peer from 'peerjs';
 
 export const debugMode =

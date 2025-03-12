@@ -7,12 +7,11 @@ interface VideoPlayerProps extends React.VideoHTMLAttributes<HTMLVideoElement> {
   videoRef: MediaStream | null;
 }
 
-const VideoPlayer: FC<VideoPlayerProps> = ({
+export const VideoPlayer: FC<VideoPlayerProps> = ({
   isLocal = true,
   videoRef,
   ...props
 }) => {
-  console.log('🚀 ~ isLocal:', isLocal);
   const videoPlayerRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
@@ -35,5 +34,3 @@ const VideoPlayer: FC<VideoPlayerProps> = ({
     />
   );
 };
-
-export default VideoPlayer;

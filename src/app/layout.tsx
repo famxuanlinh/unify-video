@@ -3,10 +3,9 @@ import { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { ReactNode } from 'react';
 
-import { Toaster } from '@/components/core/toaster';
-import Provider from '@/components/layout/provider';
+import { Provider, Toaster } from '@/components';
 
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-primary' });
 

@@ -14,7 +14,7 @@ interface MessagingState {
   clearMessages: () => void;
 }
 
-const useMessagingStore = create<MessagingState>(set => ({
+export const useMessagingStore = create<MessagingState>(set => ({
   messages: [],
 
   addMessage: message =>
@@ -22,5 +22,3 @@ const useMessagingStore = create<MessagingState>(set => ({
 
   clearMessages: () => set({ messages: [] })
 }));
-
-export default useMessagingStore;

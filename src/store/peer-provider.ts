@@ -10,12 +10,10 @@ interface PeerState {
   setRemoteStream: (stream: MediaStream | null) => void;
 }
 
-const usePeerStore = create<PeerState>(set => ({
+export const usePeerStore = create<PeerState>(set => ({
   localStream: null,
   remoteStream: null,
 
   setLocalStream: stream => set({ localStream: stream }),
   setRemoteStream: stream => set({ remoteStream: stream })
 }));
-
-export default usePeerStore;

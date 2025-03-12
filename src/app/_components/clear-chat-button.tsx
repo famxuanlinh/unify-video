@@ -1,4 +1,4 @@
-import useMessagingStore from '@/store/message-provider';
+import { useMessagingStore } from '@/store';
 import { Trash2Icon } from 'lucide-react';
 import React from 'react';
 
