@@ -2,7 +2,7 @@
 
 import usePeer from '@/hooks/use-peer';
 import useMainStore from '@/store/main-provider';
-import { User, VideoIcon } from 'lucide-react';
+import { VideoIcon } from 'lucide-react';
 import React from 'react';
 
 export const StartVideoChatOverlay = () => {
@@ -11,8 +11,6 @@ export const StartVideoChatOverlay = () => {
 
   return (
     <div className="flex h-full flex-col items-center justify-center">
-      <User className="mb-2 text-2xl text-yellow-400 md:text-4xl" />
-
       <p className="mb-8 text-center text-sm text-white sm:mb-16 sm:text-lg">
         {onlineUsersCount === 1
           ? 'You are the only user online'

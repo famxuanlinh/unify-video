@@ -19,7 +19,7 @@ const SideComponent: FC<SideProps> = ({
 }) => {
   return (
     <div
-      className={`relative portrait:h-1/2 landscape:w-1/2 ${className} ${isLocal ? '' : 'bg-[#644af1]'}`}
+      className={`relative portrait:h-1/2 landscape:w-1/2 ${className} ${isLocal ? 'bg-violet-950' : 'bg-violet-400'}`}
     >
       {videoRef && (
         <VideoPlayer videoRef={videoRef} isLocal={isLocal} muted={isLocal} />
