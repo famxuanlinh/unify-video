@@ -6,6 +6,15 @@ import { DataConnection, MediaConnection } from 'peerjs';
 import { FormEvent, useEffect, useRef, useState } from 'react';
 import useWebSocket, { ReadyState } from 'react-use-websocket';
 
+/**
+ * Custom React hook for managing peer-to-peer connections using WebRTC and WebSockets.
+ *
+ * @returns {Object} - Methods for handling peer interactions.
+ * @property {Function} join - Joins a peer connection and starts a video stream.
+ * @property {Function} skip - Skips the current peer connection.
+ * @property {Function} send - Sends a text message over the peer connection.
+ * @property {Function} end - Ends the peer connection and reloads the page.
+ */
 export function usePeer() {
   const { addMessage, clearMessages } = useMessagingStore();
   const {
@@ -17,7 +26,7 @@ export function usePeer() {
     setWaitingForMatch,
     ready
   } = useMainStore();
-  const { setLocalStream, setRemoteStream } = usePeerStore();
+  const { setLocalStreamRef, setRemoteStreamRef } = usePeerStore();
   const [myPeerId, setMyPeerId] = useState('');
 
   const peerConnectionRef = useRef<DataConnection>(undefined);
@@ -93,19 +102,19 @@ export function usePeer() {
             if (isCaller) {
               log('Calling peer:', id);
               try {
-                const localStream = usePeerStore.getState().localStream;
-                if (!localStream) {
+                const localStreamRef = usePeerStore.getState().localStreamRef;
+                if (!localStreamRef) {
                   log('Local stream not available for call');
                   setError('Local stream not available for call');
 
                   return;
                 }
 
-                const call = peer.call(id, localStream);
+                const call = peer.call(id, localStreamRef);
 
                 call.on('stream', stream => {
                   log('Remote stream received');
-                  setRemoteStream(stream);
+                  setRemoteStreamRef(stream);
                 });
 
                 call.on('close', () => {
@@ -126,19 +135,19 @@ export function usePeer() {
             peer.on('call', call => {
               log('Received call from:', call.peer);
               try {
-                const localStream = usePeerStore.getState().localStream;
-                if (!localStream) {
+                const localStreamRef = usePeerStore.getState().localStreamRef;
+                if (!localStreamRef) {
                   log('Local stream not available for answer');
                   setError('Local stream not available for answer');
 
                   return;
                 }
 
-                call.answer(localStream);
+                call.answer(localStreamRef);
 
                 call.on('stream', stream => {
                   log('Remote stream received from answer');
-                  setRemoteStream(stream);
+                  setRemoteStreamRef(stream);
                 });
 
                 call.on('close', () => {
@@ -183,7 +192,7 @@ export function usePeer() {
 
         if (event === MESSAGE_EVENTS.WAITING) {
           log('Waiting for a match...');
-          setRemoteStream(null);
+          setRemoteStreamRef(null);
           setWaitingForMatch(true);
         }
       } catch (err) {
@@ -202,7 +211,7 @@ export function usePeer() {
         audio: true
       });
       log('User media obtained successfully');
-      setLocalStream(videoStream);
+      setLocalStreamRef(videoStream);
 
       return new Promise(resolve => {
         // Wait a short time to ensure the stream is properly initialized

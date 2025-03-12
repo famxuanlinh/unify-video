@@ -3,17 +3,17 @@
 import { create } from 'zustand';
 
 interface PeerState {
-  localStream: MediaStream | null;
-  remoteStream: MediaStream | null;
+  localStreamRef: MediaStream | null;
+  remoteStreamRef: MediaStream | null;
 
-  setLocalStream: (stream: MediaStream | null) => void;
-  setRemoteStream: (stream: MediaStream | null) => void;
+  setLocalStreamRef: (stream: MediaStream | null) => void;
+  setRemoteStreamRef: (stream: MediaStream | null) => void;
 }
 
 export const usePeerStore = create<PeerState>(set => ({
-  localStream: null,
-  remoteStream: null,
+  localStreamRef: null,
+  remoteStreamRef: null,
 
-  setLocalStream: stream => set({ localStream: stream }),
-  setRemoteStream: stream => set({ remoteStream: stream })
+  setLocalStreamRef: stream => set({ localStreamRef: stream }),
+  setRemoteStreamRef: stream => set({ remoteStreamRef: stream })
 }));

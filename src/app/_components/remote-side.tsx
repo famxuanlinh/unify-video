@@ -13,7 +13,7 @@ import { Side } from '@/components';
 export const RemoteSide = () => {
   const { started, loading, waitingForMatch } = useMainStore();
 
-  const { remoteStream } = usePeerStore();
+  const { remoteStreamRef } = usePeerStore();
 
   function renderOverlay() {
     if (loading) {
@@ -32,7 +32,7 @@ export const RemoteSide = () => {
   }
 
   return (
-    <Side videoRef={remoteStream} isLocal={false}>
+    <Side videoRef={remoteStreamRef} isLocal={false}>
       {renderOverlay()}
     </Side>
   );

@@ -13,7 +13,7 @@ import { Side } from '@/components';
 
 export const LocalSide = () => {
   const { started, loading, error } = useMainStore();
-  const { localStream } = usePeerStore();
+  const { localStreamRef } = usePeerStore();
 
   const renderOverlay = () => {
     if (error) {
@@ -31,5 +31,5 @@ export const LocalSide = () => {
     return <ChatOverlay />;
   };
 
-  return <Side videoRef={localStream}>{renderOverlay()}</Side>;
+  return <Side videoRef={localStreamRef}>{renderOverlay()}</Side>;
 };

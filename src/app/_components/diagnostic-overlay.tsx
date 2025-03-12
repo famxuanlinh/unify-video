@@ -29,20 +29,20 @@ export const DiagnosticOverlay = () => {
     }
   }, []);
 
-  const { localStream, remoteStream } = usePeerStore();
+  const { localStreamRef, remoteStreamRef } = usePeerStore();
 
   useEffect(() => {
     // Update diagnostic info every second
     const interval = setInterval(() => {
       setDiagnosticInfo(prev => ({
         ...prev,
-        localStreamStatus: localStream ? 'Active' : 'Not initialized',
-        remoteStreamStatus: remoteStream ? 'Connected' : 'Not connected'
+        localStreamStatus: localStreamRef ? 'Active' : 'Not initialized',
+        remoteStreamStatus: remoteStreamRef ? 'Connected' : 'Not connected'
       }));
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [localStream, remoteStream]);
+  }, [localStreamRef, remoteStreamRef]);
 
   const toggleVisibility = () => {
     setIsVisible(!isVisible);
