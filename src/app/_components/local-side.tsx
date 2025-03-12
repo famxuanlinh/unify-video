@@ -4,7 +4,7 @@ import useMainStore from '@/store/main-provider';
 import usePeerStore from '@/store/peer-provider';
 import React from 'react';
 
-import { Side } from '@/components/layout/side';
+import { Side } from '@/components/layoutv1/side';
 
 import ChatOverlay from './chat-overlay';
 import { ErrorOverlay } from './error-overlay';

@@ -4,7 +4,7 @@ import { Inter } from 'next/font/google';
 import { ReactNode } from 'react';
 
 import { Toaster } from '@/components/core/toaster';
-import Provider from '@/components/layout/provider';
+import Provider from '@/components/layoutv1/provider';
 
 import { cn } from '@/lib/utils';
 
