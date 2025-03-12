@@ -8,7 +8,8 @@ import { getCookie } from 'cookies-next';
 const baseURL = env.API_BASE_URL,
   isServer = typeof window === 'undefined';
 
-axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+axios.defaults.headers.post['Content-Type'] =
+  'application/x-www-form-urlencoded';
 
 const api = axios.create({
   baseURL
@@ -16,7 +17,7 @@ const api = axios.create({
 });
 
 api.interceptors.request.use(
-  async (config) => {
+  async config => {
     if (isServer) {
       const { cookies } = await import('next/headers');
       let userRaw = undefined;
@@ -40,7 +41,7 @@ api.interceptors.request.use(
 
     return config;
   },
-  (error) => {
+  error => {
     Promise.reject(error);
   }
 );

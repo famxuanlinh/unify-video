@@ -78,6 +78,8 @@ src
 +-- types             # Base types used across the application
 |
 +-- utils             # Shared utility functions
+|
++-- styles             # Style css
 ```
 
 ---

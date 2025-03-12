@@ -3,7 +3,8 @@
 import env from '@/constants/env';
 import Peer from 'peerjs';
 
-export const debugMode = process.env.NEXT_PUBLIC_PEER_SECURE === 'true' || false;
+export const debugMode =
+  process.env.NEXT_PUBLIC_PEER_SECURE === 'true' || false;
 
 const isClient = typeof window !== 'undefined';
 

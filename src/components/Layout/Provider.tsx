@@ -3,8 +3,8 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
 
-import GhostLayout from './GhostLayout';
-import { MainLayout } from './MainLayout';
+import GhostLayout from './ghost-layout';
+import { MainLayout } from './main-layout';
 
 interface ProviderProps {
   children: React.ReactNode;

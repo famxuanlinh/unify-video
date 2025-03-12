@@ -2,7 +2,7 @@
 
 import React, { FC, ReactNode } from 'react';
 
-import VideoPlayer from '../VideoPlayer';
+import VideoPlayer from '../video-player';
 
 interface SideProps {
   videoRef?: MediaStream | null;
@@ -11,13 +11,22 @@ interface SideProps {
   isLocal?: boolean;
 }
 
-const SideComponent: FC<SideProps> = ({ videoRef, children, className = '', isLocal = true }) => {
+const SideComponent: FC<SideProps> = ({
+  videoRef,
+  children,
+  className = '',
+  isLocal = true
+}) => {
   return (
     <div
-      className={`relative landscape:w-1/2 portrait:h-1/2 ${className} ${isLocal ? '' : 'bg-[#644af1]'}`}
+      className={`relative portrait:h-1/2 landscape:w-1/2 ${className} ${isLocal ? '' : 'bg-[#644af1]'}`}
     >
-      {videoRef && <VideoPlayer videoRef={videoRef} isLocal={isLocal} muted={isLocal} />}
-      <div className="w-full h-full top-0 left-0 absolute z-100">{children}</div>
+      {videoRef && (
+        <VideoPlayer videoRef={videoRef} isLocal={isLocal} muted={isLocal} />
+      )}
+      <div className="absolute top-0 left-0 z-100 h-full w-full">
+        {children}
+      </div>
     </div>
   );
 };

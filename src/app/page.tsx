@@ -1,5 +1,6 @@
-import HomePage from '@/containers/Home';
 import React from 'react';
+
+import HomePage from './_components/home-page';
 
 const page = () => <HomePage />;
 
