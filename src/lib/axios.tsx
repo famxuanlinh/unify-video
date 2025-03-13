@@ -10,7 +10,7 @@ const baseURL = env.API_BASE_URL,
 axios.defaults.headers.post['Content-Type'] =
   'application/x-www-form-urlencoded';
 
-const api = axios.create({
+export const api = axios.create({
   baseURL
   // withCredentials: true
 });
@@ -44,5 +44,3 @@ api.interceptors.request.use(
     Promise.reject(error);
   }
 );
-
-export default api;

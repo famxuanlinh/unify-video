@@ -11,6 +11,7 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-primary' });
 
 export const metadata: Metadata = {
   title: 'Unify video',
+  metadataBase: new URL('https://unify.com'),
   description: 'Unify video',
   openGraph: {
     title: 'Unify video',

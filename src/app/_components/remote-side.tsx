@@ -12,21 +12,15 @@ import { Side } from '@/components';
 
 export const RemoteSide = () => {
   const { started, loading, waitingForMatch } = useMainStore();
-
   const { remoteStreamRef } = usePeerStore();
 
   function renderOverlay() {
-    if (loading) {
-      return <LoadingOverlay />;
-    }
+    if (loading) return <LoadingOverlay />;
 
-    if (waitingForMatch) {
+    if (waitingForMatch)
       return <LoadingOverlay message="Waiting for a match..." />;
-    }
 
-    if (!started) {
-      return <WelcomeOverlay />;
-    }
+    if (!started) return <WelcomeOverlay />;
 
     return <RemoteVideoOverlay />;
   }

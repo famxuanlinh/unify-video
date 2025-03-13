@@ -29,9 +29,9 @@ export function usePeer() {
   const { setLocalStreamRef, setRemoteStreamRef } = usePeerStore();
   const [myPeerId, setMyPeerId] = useState('');
 
-  const peerConnectionRef = useRef<DataConnection>(undefined);
-  const dataConnectionRef = useRef<DataConnection>(undefined);
-  const mediaConnectionRef = useRef<MediaConnection>(undefined);
+  const peerConnectionRef = useRef<DataConnection | null>(null);
+  const dataConnectionRef = useRef<DataConnection | null>(null);
+  const mediaConnectionRef = useRef<MediaConnection | null>(null);
 
   const { sendMessage, lastMessage, readyState } = useWebSocket(
     'http://localhost:5001/',

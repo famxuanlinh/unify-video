@@ -29,15 +29,11 @@ export const peer = new Peer({
 const SERVER_PORT = env.PEER_PORT || 5000;
 const CLIENT_PORT = 3000;
 
-// Đảm bảo WebSocket URL được thiết lập đúng cho môi trường production
 export const WS_URL = isClient
   ? window.location.href
       .replace('http', 'ws')
       .replace(CLIENT_PORT.toString(), SERVER_PORT.toString())
   : env.API_BASE_URL || '';
-
-console.log('WebSocket URL:', WS_URL);
-console.log('Debug Mode:', debugMode);
 
 export const HEARTBEAT = {
   message: 'ping',
