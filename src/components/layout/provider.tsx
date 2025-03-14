@@ -3,7 +3,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
 
-import { MainLayout, GhostLayout } from '@/components';
+import { MainLayout, GhostLayout, ErudaProvider } from '@/components';
 
 interface ProviderProps {
   children: React.ReactNode;
@@ -15,10 +15,12 @@ export const Provider = ({ children, me }: ProviderProps) => {
 
   return (
     <MainLayout>
-      <QueryClientProvider client={queryClient}>
-        <GhostLayout me={me} />
-        {children}
-      </QueryClientProvider>
+      <ErudaProvider>
+        <QueryClientProvider client={queryClient}>
+          <GhostLayout me={me} />
+          {children}
+        </QueryClientProvider>
+      </ErudaProvider>
     </MainLayout>
   );
 };

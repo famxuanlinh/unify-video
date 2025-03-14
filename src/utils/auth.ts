@@ -29,3 +29,7 @@ export async function signInWithMiniAppWallet() {
     };
   }
 }
+
+export function parseToUsername(accountId: string) {
+  return accountId?.replace('client|', '');
+}

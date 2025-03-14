@@ -3,8 +3,6 @@
 import { useMainStore, usePeerStore } from '@/store';
 import React, { useState, useEffect } from 'react';
 
-import { LoginButton } from '@/components';
-
 export const DiagnosticOverlay = () => {
   const { ready, onlineUsersCount, waitingForMatch } = useMainStore();
   const [isVisible, setIsVisible] = useState(false);
@@ -52,7 +50,7 @@ export const DiagnosticOverlay = () => {
     return (
       <button
         onClick={toggleVisibility}
-        className="absolute top-2 right-2 z-999 cursor-pointer rounded bg-blue-500 px-2 py-1 text-xs text-white"
+        className="absolute top-16 right-2 z-999 cursor-pointer rounded bg-blue-500 px-2 py-1 text-xs text-white md:top-2"
       >
         Show Diagnostics
       </button>
@@ -70,7 +68,6 @@ export const DiagnosticOverlay = () => {
           >
             Close
           </button>
-          <LoginButton />
         </div>
       </div>
 
