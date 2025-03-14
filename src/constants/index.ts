@@ -1,6 +1,20 @@
 export * from './common';
 export * from './env';
 
+export const CHAT_PRIVATE_KEY = 'chat_private_key';
+
+export enum StorageKeys {
+  CONTRACT_ID = 'CONTRACT_ID',
+  FCM_TOKEN = 'FCM_TOKEN',
+  POST_CACHE = 'POST_CACHE',
+  POST_CACHE_BOOKMARK = 'POST_CACHE_BOOKMARK',
+  POST_CACHE_STOPID = 'POST_CACHE_STOPID',
+  POST_CACHE_STATUS = 'POST_CACHE_STATUS',
+
+  BACKEND_JWT = 'JWT',
+  BACKEND_JWT_REFRESH = 'JWT_REFRESH'
+}
+
 /**
  * This constants used for reducing redudant communities.
  * All urls listed in the constant will be evaluated as original url

@@ -53,8 +53,6 @@ export const useOAuthDirect = () => {
     | SignInMethod
     | undefined;
 
-  console.log({ idToken, providerId });
-
   const registerForm = useForm<{
     accountId: string;
     uid: string;
@@ -129,7 +127,7 @@ export const useOAuthDirect = () => {
 
       try {
         const extraData = await Base64.decode(idToken);
-        const payload = { uid: '', extraData };
+        const payload = { uid: 'aaa', extraData };
 
         const response = await UnifyApi.auth.signin(payload);
 
@@ -147,7 +145,6 @@ export const useOAuthDirect = () => {
         router.push('/');
         Sentry.captureException(new Error('The account does not exist'));
       } catch (error) {
-        console.log(error);
         const axiosError = error as AxiosError<{
           message: string;
           success: boolean;

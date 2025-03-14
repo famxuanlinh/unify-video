@@ -3,24 +3,26 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
 
-import { MainLayout, GhostLayout, ErudaProvider } from '@/components';
+import { MainLayout, ErudaProvider } from '@/components';
+import { AuthProvider } from './auth-provider';
 
 interface ProviderProps {
   children: React.ReactNode;
   me?: string;
 }
 
-export const Provider = ({ children, me }: ProviderProps) => {
+export const Provider = ({ children }: ProviderProps) => {
   const queryClient = new QueryClient();
 
   return (
     <MainLayout>
-      <ErudaProvider>
-        <QueryClientProvider client={queryClient}>
-          <GhostLayout me={me} />
-          {children}
-        </QueryClientProvider>
-      </ErudaProvider>
+      <AuthProvider>
+        <ErudaProvider>
+          <QueryClientProvider client={queryClient}>
+            {children}
+          </QueryClientProvider>
+        </ErudaProvider>
+      </AuthProvider>
     </MainLayout>
   );
 };

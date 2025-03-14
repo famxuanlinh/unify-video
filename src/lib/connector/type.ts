@@ -1,7 +1,7 @@
 import { BackendConnector, GalaConnector } from '@fluxion-labs/web-auth';
 
 export type RepConnector = {
-  bcConnector: GalaConnector & {
+  bcConnector?: GalaConnector & {
     callEvaluateMethod(endpoint: string, body: object): Promise<any>;
     callSubmitMethod<R>(endpoint: string, body: object): Promise<R>;
   };
@@ -19,4 +19,10 @@ export type RepConnector = {
     ): Promise<R>;
     post<R = any>(endpoint: string, body: any, base?: string): Promise<R>;
   };
+};
+
+export type BackendResponse<T = object | undefined> = {
+  success: boolean;
+  message: string;
+  data: T;
 };
