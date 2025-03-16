@@ -1,6 +1,6 @@
 'use client';
 
-import React, { FC, RefObject, useEffect, useRef } from 'react';
+import React, { FC, RefObject } from 'react';
 
 interface VideoPlayerProps extends React.VideoHTMLAttributes<HTMLVideoElement> {
   isLocal?: boolean;
@@ -12,14 +12,6 @@ export const VideoPlayer: FC<VideoPlayerProps> = ({
   videoRef,
   ...props
 }) => {
-  // const videoPlayerRef = useRef<HTMLVideoElement>(null);
-
-  // useEffect(() => {
-  //   if (videoRef && videoPlayerRef.current) {
-  //     videoPlayerRef.current.srcObject = videoRef;
-  //   }
-  // }, [videoRef]);
-
   return (
     <video
       autoPlay

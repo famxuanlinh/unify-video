@@ -1,19 +1,18 @@
 'use client';
 
+import { usePeer } from '@/hooks';
+import { useSocketIO } from '@/hooks/use-socket-io';
 import { useMainStore, usePeerStore } from '@/store';
 import React, { useState, useEffect } from 'react';
 
 import { LoginButton } from '@/components';
-import { usePeer } from '@/hooks';
-// import { useSocketStore } from '@/store/socket-provider';
-// import { useSocketIO } from '@/hooks/use-socket-io';
 
 export const DiagnosticOverlay = () => {
-  const { ready, onlineUsersCount, waitingForMatch } = useMainStore();
+  const { onlineUsersCount, waitingForMatch } = useMainStore();
   const { join } = usePeer();
 
   const [isVisible, setIsVisible] = useState(false);
-  // const { socket } = useSocketStore();
+  const { socket } = useSocketIO();
   const [diagnosticInfo, setDiagnosticInfo] = useState({
     browserInfo: '',
     webRTCSupport: false,
@@ -89,9 +88,9 @@ export const DiagnosticOverlay = () => {
       </div>
 
       <div className="space-y-1 text-sm">
-        {/* <p>
+        <p>
           <strong>Socket IO Ready:</strong> {socket ? 'Yes' : 'No'}
-        </p> */}
+        </p>
         <p>
           <strong>Online Users:</strong> {onlineUsersCount}
         </p>

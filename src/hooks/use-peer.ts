@@ -1,8 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
-import Peer, { DataConnection, MediaConnection } from 'peerjs';
-import { log } from '@/utils/helpers';
-import { MESSAGE_EVENTS } from '@/utils/constants';
 import { useMainStore, useMessagingStore, usePeerStore } from '@/store';
+import Peer, { DataConnection, MediaConnection } from 'peerjs';
+import { useEffect, useRef, useState } from 'react';
+
 import { useSocketIO } from './use-socket-io';
 
 export function usePeer() {
@@ -27,10 +26,6 @@ export function usePeer() {
 
   const { socket, isConnected } = useSocketIO();
 
-  if (!localStreamRef) {
-    console.log('localStreamRef >>>>>>>>>>> ');
-  }
-
   useEffect(() => {
     if (!socket) return;
     console.log('usePeer: Setting up socket listeners');
@@ -38,7 +33,6 @@ export function usePeer() {
     socket.on('MATCH', ({ peerId }: { peerId: string }) => {
       console.log('usePeer: Matched with peer:', peerId);
       setWaitingForMatch(false);
-      debugger;
       connectToPeer(peerId);
     });
 
@@ -64,11 +58,9 @@ export function usePeer() {
 
     return () => {
       console.log('usePeer: Cleaning up socket listeners');
-      socket.off('MATCH');
-      socket.off('WAITING');
-      socket.off('ONLINE');
-      socket.off('END');
-      socket.off('ERROR');
+      ['MATCH', 'WAITING', 'ONLINE', 'END', 'ERROR'].forEach(event =>
+        socket.off(event)
+      );
     };
   }, [socket]);
 
@@ -101,7 +93,6 @@ export function usePeer() {
 
     peer.on('call', call => {
       console.log('usePeer: Incoming call from:', call.peer);
-      debugger;
       answerCall(call);
     });
 
@@ -117,7 +108,6 @@ export function usePeer() {
   }, [isConnected]);
 
   const connectToPeer = (peerId: string) => {
-    debugger;
     if (!peerRef.current) return;
 
     try {
@@ -142,14 +132,18 @@ export function usePeer() {
   };
 
   const makeCall = (peerId: string) => {
-    debugger;
-    if (!localStreamRef?.id) {
-      console.log('usePeer: makeCall  Local stream not available for answer');
-      setError('makeCall  Local stream not available for answer');
+    const stream = localStreamRef?.id
+      ? localStreamRef
+      : usePeerStore.getState().localStreamRef;
+
+    if (!stream?.id) {
+      console.log('usePeer: makeCall Local stream not available');
+      setError('makeCall Local stream not available');
+
       return;
     }
 
-    const call = peerRef.current?.call(peerId, localStreamRef);
+    const call = peerRef.current?.call(peerId, stream);
     if (!call) return;
 
     call.on('stream', stream => {
@@ -164,13 +158,18 @@ export function usePeer() {
   };
 
   const answerCall = (call: MediaConnection) => {
-    if (!localStreamRef) {
-      console.log('usePeer: answerCall Local stream not available for answer');
-      setError('answerCall Local stream not available for answer');
+    const stream = localStreamRef?.id
+      ? localStreamRef
+      : usePeerStore.getState().localStreamRef;
+
+    if (!stream?.id) {
+      console.log('usePeer: makeCall Local stream not available');
+      setError('makeCall Local stream not available');
+
       return;
     }
 
-    call.answer(localStreamRef);
+    call.answer(stream);
 
     call.on('stream', stream => {
       console.log('usePeer: Remote stream received from answer');
@@ -191,16 +190,17 @@ export function usePeer() {
       });
 
       setLocalStreamRef(videoStream);
-      debugger;
 
       console.log('usePeer: User media obtained successfully');
       setLoading(false);
       setStarted(true);
+
       return true;
     } catch (error) {
       console.log('usePeer: Error getting user media:', error);
       setError('default');
       setLoading(false);
+
       return false;
     }
   };
@@ -209,6 +209,7 @@ export function usePeer() {
     if (!ready || !isConnected || !socket || !peerRef.current) {
       console.log('usePeer: Not ready to join');
       setError('default');
+
       return;
     }
 
@@ -216,9 +217,7 @@ export function usePeer() {
 
     if (streamInitialized) {
       console.log('usePeer: Joining with peer ID:', myPeerId);
-      socket.emit('JOIN', { peerId: myPeerId }, (response: any) => {
-        console.log('usePeer: Response from server:', response);
-      });
+      socket.emit('JOIN', { peerId: myPeerId });
     } else {
       console.log('usePeer: Failed to   join - stream not initialized');
       setError('default');
