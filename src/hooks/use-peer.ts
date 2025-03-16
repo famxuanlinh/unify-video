@@ -1,22 +1,11 @@
-'use client';
-
+import { useEffect, useRef, useState } from 'react';
+import Peer, { DataConnection, MediaConnection } from 'peerjs';
+import { log } from '@/utils/helpers';
+import { MESSAGE_EVENTS } from '@/utils/constants';
 import { useMainStore, useMessagingStore, usePeerStore } from '@/store';
-import { HEARTBEAT, MESSAGE_EVENTS, peer, log } from '@/utils';
-import { DataConnection, MediaConnection } from 'peerjs';
-import { FormEvent, useEffect, useRef, useState } from 'react';
-import useWebSocket, { ReadyState } from 'react-use-websocket';
+import { useSocketIO } from './use-socket-io';
 
-/**
- * Custom React hook for managing peer-to-peer connections using WebRTC and WebSockets.
- *
- * @returns {Object} - Methods for handling peer interactions.
- * @property {Function} join - Joins a peer connection and starts a video stream.
- * @property {Function} skip - Skips the current peer connection.
- * @property {Function} send - Sends a text message over the peer connection.
- * @property {Function} end - Ends the peer connection and reloads the page.
- */
 export function usePeer() {
-  const { addMessage, clearMessages } = useMessagingStore();
   const {
     setError,
     setLoading,
@@ -26,270 +15,242 @@ export function usePeer() {
     setWaitingForMatch,
     ready
   } = useMainStore();
-  const { setLocalStreamRef, setRemoteStreamRef } = usePeerStore();
-  const [myPeerId, setMyPeerId] = useState('');
+  const { addMessage, clearMessages } = useMessagingStore();
+  const { setLocalStreamRef, setRemoteStreamRef, localStreamRef } =
+    usePeerStore();
 
-  const peerConnectionRef = useRef<DataConnection | null>(null);
+  const [myPeerId, setMyPeerId] = useState<string | null>(null);
+
+  const peerRef = useRef<Peer | null>(null);
   const dataConnectionRef = useRef<DataConnection | null>(null);
   const mediaConnectionRef = useRef<MediaConnection | null>(null);
 
-  const { sendMessage, lastMessage, readyState } = useWebSocket(
-    'http://localhost:5001/',
-    {
-      heartbeat: HEARTBEAT,
-      onError: _e => {
-        setError('Initial error');
-      }
-    }
-  );
+  const { socket, isConnected } = useSocketIO();
+
+  if (!localStreamRef) {
+    console.log('localStreamRef >>>>>>>>>>> ');
+  }
 
   useEffect(() => {
+    if (!socket) return;
+    console.log('usePeer: Setting up socket listeners');
+
+    socket.on('MATCH', ({ peerId }: { peerId: string }) => {
+      console.log('usePeer: Matched with peer:', peerId);
+      setWaitingForMatch(false);
+      debugger;
+      connectToPeer(peerId);
+    });
+
+    socket.on('WAITING', () => {
+      console.log('usePeer: Waiting for a match...');
+      setRemoteStreamRef(null);
+      setWaitingForMatch(true);
+    });
+
+    socket.on('ONLINE', ({ count }: { count: number }) => {
+      setOnlineUsersCount(count);
+    });
+
+    socket.on('END', () => {
+      console.log('usePeer: Call ended');
+      end();
+    });
+
+    socket.on('ERROR', ({ message }: { message: string }) => {
+      console.log('usePeer: Error:', message);
+      setError('default');
+    });
+
+    return () => {
+      console.log('usePeer: Cleaning up socket listeners');
+      socket.off('MATCH');
+      socket.off('WAITING');
+      socket.off('ONLINE');
+      socket.off('END');
+      socket.off('ERROR');
+    };
+  }, [socket]);
+
+  useEffect(() => {
+    if (!isConnected) return;
+    console.log('usePeer: Socket is connected, setting up PeerJS');
+
+    const peer = new Peer();
+    peerRef.current = peer;
+
     peer.on('open', id => {
-      log('Peer open with ID:', id);
-
+      console.log('usePeer: Peer open with ID:', id);
       setMyPeerId(id);
-
-      if (readyState !== ReadyState.CLOSED) {
-        setReady(true);
-      } else {
-        setError('Peer open error');
-      }
+      setReady(true);
     });
 
     peer.on('connection', conn => {
-      log('Peer Connected with:', conn.peer);
+      console.log('usePeer: Peer connected with:', conn.peer);
+      dataConnectionRef.current = conn;
 
-      if (peerConnectionRef.current) {
-        peerConnectionRef.current = conn;
-      }
+      conn.on('data', data => {
+        addMessage({ text: data as string, isMine: false });
+      });
+
+      conn.on('close', () => {
+        console.log('usePeer: Data connection closed');
+        clearMessages();
+      });
     });
 
-    peer.on('close', () => {
-      log('Peer closed');
+    peer.on('call', call => {
+      console.log('usePeer: Incoming call from:', call.peer);
+      debugger;
+      answerCall(call);
     });
 
     peer.on('error', err => {
-      log('Peer error:', err.type, err.message);
-      setError('Peer connection error');
+      console.log('usePeer: Peer error:', err);
+      setError('default');
     });
-  }, []);
 
-  useEffect(() => {
-    if (lastMessage) {
-      try {
-        const data = JSON.parse(lastMessage.data);
-        const { event, id, isCaller, onlineUsersCount } = data;
+    return () => {
+      console.log('usePeer: Cleaning up PeerJS');
+      peer.destroy();
+    };
+  }, [isConnected]);
 
-        log('WebSocket message received:', data);
+  const connectToPeer = (peerId: string) => {
+    debugger;
+    if (!peerRef.current) return;
 
-        if (onlineUsersCount) {
-          setOnlineUsersCount(onlineUsersCount);
+    try {
+      const conn = peerRef.current.connect(peerId);
+      dataConnectionRef.current = conn;
 
-          return;
-        }
+      conn.on('open', () => console.log('usePeer: Data connection opened'));
+      conn.on('data', data =>
+        addMessage({ text: data as string, isMine: false })
+      );
+      conn.on('close', () => {
+        console.log('usePeer: Connection closed');
+        clearMessages();
+        socket?.emit('SKIP');
+      });
 
-        if (event === MESSAGE_EVENTS.MATCH) {
-          setWaitingForMatch(false);
-          log('Match found with peer ID:', id);
-
-          try {
-            const dataConnection = peer.connect(id);
-
-            dataConnection.on('error', err => {
-              log('Data connection error:', err);
-            });
-
-            if (isCaller) {
-              log('Calling peer:', id);
-              try {
-                const localStreamRef = usePeerStore.getState().localStreamRef;
-                if (!localStreamRef) {
-                  log('Local stream not available for call');
-                  setError('Local stream not available for call');
-
-                  return;
-                }
-
-                const call = peer.call(id, localStreamRef);
-
-                call.on('stream', stream => {
-                  log('Remote stream received');
-                  setRemoteStreamRef(stream);
-                });
-
-                call.on('close', () => {
-                  log('Call closed');
-                });
-
-                call.on('error', err => {
-                  log('Media connection error:', err);
-                });
-
-                mediaConnectionRef.current = call;
-              } catch (err) {
-                log('Error making call:', err);
-                setError('Error making call');
-              }
-            }
-
-            peer.on('call', call => {
-              log('Received call from:', call.peer);
-              try {
-                const localStreamRef = usePeerStore.getState().localStreamRef;
-                if (!localStreamRef) {
-                  log('Local stream not available for answer');
-                  setError('Local stream not available for answer');
-
-                  return;
-                }
-
-                call.answer(localStreamRef);
-
-                call.on('stream', stream => {
-                  log('Remote stream received from answer');
-                  setRemoteStreamRef(stream);
-                });
-
-                call.on('close', () => {
-                  log('Remote Call closed');
-                });
-
-                call.on('error', err => {
-                  log('Call error:', err);
-                });
-              } catch (err) {
-                log('Error answering call:', err);
-                setError('Error answering call');
-              }
-            });
-
-            dataConnection.on('open', () => {
-              log('Connection open');
-            });
-
-            dataConnection.on('data', data => {
-              const message = {
-                text: data as string,
-                isMine: false
-              };
-              addMessage(message);
-            });
-
-            dataConnection.on('close', () => {
-              log('Connection closed');
-              clearMessages();
-              sendMessage(
-                JSON.stringify({ event: MESSAGE_EVENTS.SKIP, id: myPeerId })
-              );
-            });
-
-            dataConnectionRef.current = dataConnection;
-          } catch (err) {
-            log('Error connecting to peer:', err);
-            setError('Error connecting to peer');
-          }
-        }
-
-        if (event === MESSAGE_EVENTS.WAITING) {
-          log('Waiting for a match...');
-          setRemoteStreamRef(null);
-          setWaitingForMatch(true);
-        }
-      } catch (err) {
-        log('Error parsing message:', err);
-        setError('Error parsing message');
-      }
+      makeCall(peerId);
+    } catch (err) {
+      console.log('usePeer: Error connecting to peer:', err);
+      setError('default');
     }
-  }, [lastMessage]);
+  };
 
-  async function startVideoStream() {
+  const makeCall = (peerId: string) => {
+    debugger;
+    if (!localStreamRef?.id) {
+      console.log('usePeer: makeCall  Local stream not available for answer');
+      setError('makeCall  Local stream not available for answer');
+      return;
+    }
+
+    const call = peerRef.current?.call(peerId, localStreamRef);
+    if (!call) return;
+
+    call.on('stream', stream => {
+      console.log('usePeer: Remote stream received');
+      setRemoteStreamRef(stream);
+    });
+
+    call.on('close', () => console.log('usePeer: Call closed'));
+    call.on('error', err => console.log('usePeer: Call error:', err));
+
+    mediaConnectionRef.current = call;
+  };
+
+  const answerCall = (call: MediaConnection) => {
+    if (!localStreamRef) {
+      console.log('usePeer: answerCall Local stream not available for answer');
+      setError('answerCall Local stream not available for answer');
+      return;
+    }
+
+    call.answer(localStreamRef);
+
+    call.on('stream', stream => {
+      console.log('usePeer: Remote stream received from answer');
+      setRemoteStreamRef(stream);
+    });
+
+    call.on('close', () => console.log('usePeer: Remote Call closed'));
+    call.on('error', err => console.log('usePeer: Call error:', err));
+  };
+
+  const startVideoStream = async (): Promise<boolean> => {
     setLoading(true);
     try {
-      log('Requesting user media...');
+      console.log('usePeer: Requesting user media...');
       const videoStream = await navigator.mediaDevices.getUserMedia({
         video: true,
         audio: true
       });
-      log('User media obtained successfully');
-      setLocalStreamRef(videoStream);
 
-      return new Promise(resolve => {
-        // Wait a short time to ensure the stream is properly initialized
-        setTimeout(() => {
-          if (videoStream) {
-            log('Local stream initialized successfully');
-            setLoading(false);
-            setStarted(true);
-            resolve(true);
-          } else {
-            log('Failed to initialize local stream');
-            setError('Error getting user media');
-            resolve(false);
-          }
-        }, 1000);
-      });
-    } catch (error) {
-      log('Error getting user media:', error);
-      setError('Error getting user media');
+      setLocalStreamRef(videoStream);
+      debugger;
+
+      console.log('usePeer: User media obtained successfully');
       setLoading(false);
+      setStarted(true);
+      return true;
+    } catch (error) {
+      console.log('usePeer: Error getting user media:', error);
+      setError('default');
+      setLoading(false);
+      return false;
     }
-  }
+  };
 
   const join = async () => {
-    if (!ready) {
-      log('Not ready to join - WebSocket or Peer not initialized');
-      setError('Not ready to join - WebSocket or Peer not initialized');
-
+    if (!ready || !isConnected || !socket || !peerRef.current) {
+      console.log('usePeer: Not ready to join');
+      setError('default');
       return;
     }
 
     const streamInitialized = await startVideoStream();
 
-    if (streamInitialized && readyState === ReadyState.OPEN) {
-      log('Joining with peer ID:', myPeerId);
-      sendMessage(JSON.stringify({ event: MESSAGE_EVENTS.JOIN, id: myPeerId }));
+    if (streamInitialized) {
+      console.log('usePeer: Joining with peer ID:', myPeerId);
+      socket.emit('JOIN', { peerId: myPeerId }, (response: any) => {
+        console.log('usePeer: Response from server:', response);
+      });
     } else {
-      log('Failed to join - WebSocket not open');
-      setError('Failed to join - WebSocket not open');
+      console.log('usePeer: Failed to   join - stream not initialized');
+      setError('default');
     }
   };
 
   const skip = () => {
-    if (peerConnectionRef.current) {
-      peerConnectionRef.current.close();
-    }
-    if (mediaConnectionRef?.current) {
-      mediaConnectionRef.current.close();
-    }
-    if (dataConnectionRef.current) {
-      dataConnectionRef.current?.close();
-    }
-
-    log('Skipped');
+    dataConnectionRef.current?.close();
+    mediaConnectionRef.current?.close();
+    socket?.emit('SKIP');
+    console.log('usePeer: Skipped');
   };
 
-  const send = (e: FormEvent<HTMLFormElement>) => {
+  const send = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const form = e.target as HTMLFormElement;
-    const input = form.elements[0] as HTMLInputElement;
-
+    const input = e.currentTarget.elements[0] as HTMLInputElement;
     if (!input.value) return;
 
-    const message = {
-      text: input.value,
-      isMine: true
-    };
-
+    addMessage({ text: input.value, isMine: true });
+    dataConnectionRef.current?.send(input.value);
     input.value = '';
-
-    if (!peerConnectionRef.current) return;
-    peerConnectionRef.current?.send(message.text);
-    addMessage(message);
   };
 
   const end = () => {
+    socket?.emit('END');
     window.location.reload();
   };
 
-  return { join, skip, send, end };
+  return {
+    join,
+    skip,
+    send,
+    end
+  };
 }

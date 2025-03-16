@@ -1,11 +1,11 @@
 'use client';
 
-import React, { FC, ReactNode } from 'react';
+import React, { FC, ReactNode, RefObject } from 'react';
 
 import { VideoPlayer } from '@/components';
 
 interface SideProps {
-  videoRef?: MediaStream | null;
+  videoRef?: RefObject<HTMLVideoElement | null>;
   children?: ReactNode;
   className?: string;
   isLocal?: boolean;

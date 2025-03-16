@@ -5,7 +5,11 @@ export const HomePage = () => {
   return (
     <>
       <RemoteSide />
+      {/* <MyComponent /> */}
+
       <LocalSide />
+      {/* <StartVideoChatOverlay /> */}
+
       <DiagnosticOverlay />
     </>
   );

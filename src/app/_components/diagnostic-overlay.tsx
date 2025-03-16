@@ -4,10 +4,16 @@ import { useMainStore, usePeerStore } from '@/store';
 import React, { useState, useEffect } from 'react';
 
 import { LoginButton } from '@/components';
+import { usePeer } from '@/hooks';
+// import { useSocketStore } from '@/store/socket-provider';
+// import { useSocketIO } from '@/hooks/use-socket-io';
 
 export const DiagnosticOverlay = () => {
   const { ready, onlineUsersCount, waitingForMatch } = useMainStore();
+  const { join } = usePeer();
+
   const [isVisible, setIsVisible] = useState(false);
+  // const { socket } = useSocketStore();
   const [diagnosticInfo, setDiagnosticInfo] = useState({
     browserInfo: '',
     webRTCSupport: false,
@@ -50,12 +56,20 @@ export const DiagnosticOverlay = () => {
 
   if (!isVisible) {
     return (
-      <button
-        onClick={toggleVisibility}
-        className="absolute top-2 right-2 z-999 cursor-pointer rounded bg-blue-500 px-2 py-1 text-xs text-white"
-      >
-        Show Diagnostics
-      </button>
+      <div className="absolute top-2 right-2 z-999 space-x-1">
+        <button
+          onClick={toggleVisibility}
+          className="cursor-pointer rounded bg-blue-500 px-2 py-1 text-xs text-white"
+        >
+          Show Diagnostics
+        </button>
+        <button
+          onClick={join}
+          className="cursor-pointer rounded bg-blue-500 px-2 py-1 text-xs text-white"
+        >
+          Join
+        </button>
+      </div>
     );
   }
 
@@ -75,9 +89,9 @@ export const DiagnosticOverlay = () => {
       </div>
 
       <div className="space-y-1 text-sm">
-        <p>
-          <strong>WebSocket Ready:</strong> {ready ? 'Yes' : 'No'}
-        </p>
+        {/* <p>
+          <strong>Socket IO Ready:</strong> {socket ? 'Yes' : 'No'}
+        </p> */}
         <p>
           <strong>Online Users:</strong> {onlineUsersCount}
         </p>

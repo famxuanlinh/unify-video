@@ -21,7 +21,7 @@ export const StartVideoChatOverlay = () => {
 
       <button
         className="flex items-center gap-3 rounded-full bg-[#fffc03] px-8 py-3 text-[.9rem] font-medium text-black hover:bg-[#fff06b] hover:text-black sm:px-14 sm:py-4 sm:text-base"
-        onClick={async () => await join()}
+        onClick={join}
       >
         <VideoIcon className="text-xl md:text-2xl" />
         Start Video Chat
