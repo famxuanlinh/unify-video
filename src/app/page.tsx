@@ -1,5 +1,6 @@
+import { HomePage } from '@/app/_components';
 import React from 'react';
 
-const page = () => <div className="text-red-500">This Unify dashboard</div>;
+const page = () => <HomePage />;
 
 export default page;

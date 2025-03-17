@@ -70,6 +70,7 @@ export default [
     },
 
     rules: {
+      'react-hooks/exhaustive-deps': 'off',
       'newline-before-return': 2,
       'react/prop-types': 0,
       'react/react-in-jsx-scope': 0,
@@ -109,7 +110,7 @@ export default [
       // ]
     }
   },
-  ...compat.extends('plugin:testing-library/react').map((config) => ({
+  ...compat.extends('plugin:testing-library/react').map(config => ({
     ...config,
     files: ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(spec|test).[jt]s?(x)']
   }))

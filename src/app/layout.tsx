@@ -3,15 +3,15 @@ import { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { ReactNode } from 'react';
 
-import Provider from '@/components/Layout/Provider';
-import { Toaster } from '@/components/ui/toaster';
+import { Provider, Toaster } from '@/components';
 
-import { cn } from '@/lib/utils';
+import { cn } from '@/lib';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-primary' });
 
 export const metadata: Metadata = {
   title: 'Unify video',
+  metadataBase: new URL('https://unify.com'),
   description: 'Unify video',
   openGraph: {
     title: 'Unify video',
@@ -34,7 +34,10 @@ interface RootLayoutProps {
 const RootLayout = async ({ children }: RootLayoutProps) => {
   return (
     <html lang="en">
-      <body className={cn(inter.variable, 'font-primary')} suppressHydrationWarning>
+      <body
+        className={cn(inter.variable, 'font-primary')}
+        suppressHydrationWarning
+      >
         <Provider> {children}</Provider>
         <Toaster />
       </body>

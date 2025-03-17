@@ -6,7 +6,7 @@ interface GhostLayoutProps {
   me?: string;
 }
 
-const GhostLayout = ({ me }: GhostLayoutProps) => {
+export const GhostLayout = ({ me }: GhostLayoutProps) => {
   useEffect(() => {
     if (me) {
       console.log('🚀 ~ useEffect ~ me:', me);
@@ -15,5 +15,3 @@ const GhostLayout = ({ me }: GhostLayoutProps) => {
 
   return <></>;
 };
-
-export default GhostLayout;
