@@ -38,7 +38,7 @@ const RootLayout = async ({ children }: RootLayoutProps) => {
         className={cn(inter.variable, 'font-primary')}
         suppressHydrationWarning
       >
-        <Provider> {children}</Provider>
+        <Provider>{children}</Provider>
         <Toaster />
       </body>
     </html>

@@ -1,7 +1,6 @@
-// utils/use-socket-io.js
+import { log } from '@/utils/helpers';
 import { useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
-import { log } from '@/utils/helpers';
 
 export function useSocketIO() {
   const socketRef = useRef<Socket | null>(null);
@@ -29,7 +28,6 @@ export function useSocketIO() {
 
     return () => {
       console.log('useSocketIO: Cleanup function called');
-      //do not disconnect here.
     };
   }, []);
 

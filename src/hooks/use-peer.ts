@@ -52,8 +52,13 @@ export function usePeer() {
     });
 
     socket.on('ERROR', ({ message }: { message: string }) => {
+      if (message === 'No current match to skip') {
+        setWaitingForMatch(true);
+
+        return;
+      }
       console.log('usePeer: Error:', message);
-      setError('default');
+      setError('Socket error');
     });
 
     return () => {
@@ -98,7 +103,7 @@ export function usePeer() {
 
     peer.on('error', err => {
       console.log('usePeer: Peer error:', err);
-      setError('default');
+      setError('Peer error');
     });
 
     return () => {
@@ -118,16 +123,17 @@ export function usePeer() {
       conn.on('data', data =>
         addMessage({ text: data as string, isMine: false })
       );
+
+      // This handles the closure of a data connection (text messaging via WebRTC DataChannel).
       conn.on('close', () => {
         console.log('usePeer: Connection closed');
         clearMessages();
-        socket?.emit('SKIP');
       });
 
       makeCall(peerId);
     } catch (err) {
       console.log('usePeer: Error connecting to peer:', err);
-      setError('default');
+      setError('Error connecting to peer');
     }
   };
 
@@ -151,7 +157,11 @@ export function usePeer() {
       setRemoteStreamRef(stream);
     });
 
-    call.on('close', () => console.log('usePeer: Call closed'));
+    // This handles the closure of a media connection (video/audio call).
+    call.on('close', () => {
+      console.log('usePeer: Remote stream received');
+      socket?.emit('SKIP');
+    });
     call.on('error', err => console.log('usePeer: Call error:', err));
 
     mediaConnectionRef.current = call;
@@ -176,8 +186,13 @@ export function usePeer() {
       setRemoteStreamRef(stream);
     });
 
-    call.on('close', () => console.log('usePeer: Remote Call closed'));
-    call.on('error', err => console.log('usePeer: Call error:', err));
+    call.on('close', () => {
+      console.log('usePeer: Remote Call closed');
+      socket?.emit('SKIP');
+    });
+    call.on('error', err => {
+      console.log('usePeer: Call error:', err);
+    });
   };
 
   const startVideoStream = async (): Promise<boolean> => {
@@ -188,7 +203,6 @@ export function usePeer() {
         video: true,
         audio: true
       });
-
       setLocalStreamRef(videoStream);
 
       console.log('usePeer: User media obtained successfully');
@@ -198,7 +212,7 @@ export function usePeer() {
       return true;
     } catch (error) {
       console.log('usePeer: Error getting user media:', error);
-      setError('default');
+      setError('Error getting user media');
       setLoading(false);
 
       return false;
@@ -208,7 +222,7 @@ export function usePeer() {
   const join = async () => {
     if (!ready || !isConnected || !socket || !peerRef.current) {
       console.log('usePeer: Not ready to join');
-      setError('default');
+      setError('Not ready to join');
 
       return;
     }
@@ -220,7 +234,7 @@ export function usePeer() {
       socket.emit('JOIN', { peerId: myPeerId });
     } else {
       console.log('usePeer: Failed to   join - stream not initialized');
-      setError('default');
+      setError('Failed to   join - stream not initialized');
     }
   };
 
