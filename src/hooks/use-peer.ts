@@ -1,5 +1,5 @@
 import { useMainStore, useMessagingStore, usePeerStore } from '@/store';
-import Peer, { DataConnection, MediaConnection } from 'peerjs';
+import Peer, { MediaConnection } from 'peerjs';
 import { useEffect, useRef, useState } from 'react';
 
 import { useSocketIO } from './use-socket-io';
@@ -15,14 +15,18 @@ export function usePeer() {
     ready
   } = useMainStore();
   const { addMessage, clearMessages } = useMessagingStore();
-  const { setLocalStreamRef, setRemoteStreamRef, localStreamRef } =
-    usePeerStore();
+  const {
+    setLocalStreamRef,
+    setRemoteStreamRef,
+    localStreamRef,
+    setDataConnectionRef,
+    setMediaConnectionRef,
+    setPeerConnectionRef
+  } = usePeerStore();
 
   const [myPeerId, setMyPeerId] = useState<string | null>(null);
 
   const peerRef = useRef<Peer | null>(null);
-  const dataConnectionRef = useRef<DataConnection | null>(null);
-  const mediaConnectionRef = useRef<MediaConnection | null>(null);
 
   const { socket, isConnected } = useSocketIO();
 
@@ -83,8 +87,7 @@ export function usePeer() {
     });
 
     peer.on('connection', conn => {
-      console.log('usePeer: Peer connected with:', conn.peer);
-      dataConnectionRef.current = conn;
+      setPeerConnectionRef(conn);
 
       conn.on('data', data => {
         addMessage({ text: data as string, isMine: false });
@@ -117,12 +120,12 @@ export function usePeer() {
 
     try {
       const conn = peerRef.current.connect(peerId);
-      dataConnectionRef.current = conn;
+      setDataConnectionRef(conn);
 
       conn.on('open', () => console.log('usePeer: Data connection opened'));
-      conn.on('data', data =>
-        addMessage({ text: data as string, isMine: false })
-      );
+      conn.on('data', data => {
+        addMessage({ text: data as string, isMine: false });
+      });
 
       // This handles the closure of a data connection (text messaging via WebRTC DataChannel).
       conn.on('close', () => {
@@ -164,7 +167,7 @@ export function usePeer() {
     });
     call.on('error', err => console.log('usePeer: Call error:', err));
 
-    mediaConnectionRef.current = call;
+    setMediaConnectionRef(call);
   };
 
   const answerCall = (call: MediaConnection) => {
@@ -193,6 +196,7 @@ export function usePeer() {
     call.on('error', err => {
       console.log('usePeer: Call error:', err);
     });
+    setMediaConnectionRef(call);
   };
 
   const startVideoStream = async (): Promise<boolean> => {
@@ -239,19 +243,43 @@ export function usePeer() {
   };
 
   const skip = () => {
-    dataConnectionRef.current?.close();
-    mediaConnectionRef.current?.close();
-    socket?.emit('SKIP');
-    console.log('usePeer: Skipped');
+    const dataConnection = usePeerStore.getState().dataConnectionRef;
+    const mediaConnection = usePeerStore.getState().mediaConnectionRef;
+    const peerConnection = usePeerStore.getState().peerConnectionRef;
+    if (dataConnection) {
+      console.log('Closing data connection...');
+      dataConnection.close();
+      setDataConnectionRef(null);
+    }
+    if (peerConnection) {
+      console.log('Closing peer connection...');
+      peerConnection.close();
+      setPeerConnectionRef(null);
+    }
+
+    if (mediaConnection) {
+      console.log('Closing media connection...');
+      mediaConnection.close();
+      setMediaConnectionRef(null);
+    }
   };
 
   const send = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const peerConnectionRef = usePeerStore.getState().peerConnectionRef;
+    const dataConnectionRef = usePeerStore.getState().dataConnectionRef;
+
     const input = e.currentTarget.elements[0] as HTMLInputElement;
     if (!input.value) return;
 
     addMessage({ text: input.value, isMine: true });
-    dataConnectionRef.current?.send(input.value);
+
+    if (dataConnectionRef) {
+      dataConnectionRef.send(input.value);
+    }
+    if (peerConnectionRef) {
+      peerConnectionRef.send(input.value);
+    }
     input.value = '';
   };
 
