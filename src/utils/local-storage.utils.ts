@@ -7,6 +7,7 @@ export class LocalStorage {
       const value = localStorage.getItem(key);
       localStorageObject[key] = value;
     }
+
     return localStorageObject;
   }
 

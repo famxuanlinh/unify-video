@@ -1,7 +1,7 @@
+import { parseToUsername } from '@/utils';
 import axios, { AxiosResponse } from 'axios';
 
 import { getConnector } from '@/lib';
-import { parseToUsername } from '@/utils';
 
 export type AuthData = {
   accountId: string;
@@ -75,6 +75,7 @@ export const auth = {
       },
       process.env.NEXT_PUBLIC_API_BASE_URL
     );
+
     return { ...res, accountId: parseToUsername(res.userId) };
   },
   async signin(payload: {
@@ -91,6 +92,7 @@ export const auth = {
       },
       process.env.NEXT_PUBLIC_API_BASE_URL
     );
+
     return { ...res, accountId: parseToUsername(res.userId) };
   },
   async refreshSession(payload: { refreshToken: string }): Promise<JWT> {
@@ -101,6 +103,7 @@ export const auth = {
       },
       process.env.NEXT_PUBLIC_API_BASE_URL
     );
+
     return res;
   },
 

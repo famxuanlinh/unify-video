@@ -2,14 +2,14 @@
 
 'use client';
 
+import UnifyApi from '@/apis';
+import { CHAT_PRIVATE_KEY, StorageKeys } from '@/constants';
 import { FluxionConnector } from '@fluxion-labs/web-auth';
 import * as Sentry from '@sentry/browser';
 
 // import { BackendProtocalConfig } from '@/configs';
-import { CHAT_PRIVATE_KEY, StorageKeys } from '@/constants';
 
 import { BackendResponse, RepConnector } from './type';
-import UnifyApi from '@/apis';
 
 export const BackendProtocalConfig = {
   headerKey: 'x-authorization',
@@ -34,6 +34,7 @@ if (!process.env.NEXT_RUNTIME && typeof window !== 'undefined') {
           refreshToken: refreshToken
         });
         localStorage.setItem('STREAM_TOKEN', res.stream);
+
         return { accessToken: res.access, refreshToken: res.refresh };
       },
       onError: error => {

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 export class Base64 {
   public static async encode(input: any) {
     return Buffer.from(JSON.stringify(input)).toString('base64');

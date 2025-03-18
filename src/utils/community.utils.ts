@@ -1,6 +1,5 @@
-import { NextRouter } from 'next/router';
-
 import { SAME_COMMUNITY_URLS } from '@/constants';
+import { NextRouter } from 'next/router';
 
 import { b64DecodeUnicode, b64EncodeUnicode } from '.';
 
@@ -60,6 +59,7 @@ export function getCommunityName(communityId: CommunityId): string | null {
   if (communityId && communities[communityId]) {
     return communities[communityId]?.name;
   }
+
   return null;
 }
 
@@ -71,6 +71,7 @@ export function getCommunityId(
 
   if (!communityId) {
     if (isEmbeddedOrChromeExtension) return CommunityId.Local;
+
     return CommunityId.Rep;
   }
 
@@ -86,17 +87,20 @@ export function getCommunityId(
 
 export function getCommPrefixUrl(router: NextRouter): string {
   const communityId = getCommunityId(router);
+
   return communities[communityId]?.prefix ?? 'rep';
 }
 
 export function extractCommunityIdFromPostId(postId: string): CommunityId {
   const components = postId.split('_');
+
   return CommunityId[components[0] as keyof typeof CommunityId];
 }
 
 export function isYoutubeVideoLink(url: string) {
   const MATCH_URL_YOUTUBE =
     /(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:embed\/|v\/|watch\/|watch\?v=|watch\?.+&v=|shorts\/|live\/))((\w|-){11})|youtube\.com\/playlist\?list=|youtube\.com\/user\//;
+
   return MATCH_URL_YOUTUBE.test(url);
 }
 
@@ -156,6 +160,7 @@ export const unSanitizeUrl = (hash: string): string | null => {
     return decodeURIComponent(b64DecodeUnicode(hash));
   } catch (e) {
     console.log(`Can not unSanitizeUrl: ${hash}`, e);
+
     return null;
   }
 };
@@ -182,6 +187,7 @@ export const isStandardCommunity = (community: string) => {
  */
 export const isLocalCommunity = (community: string) => {
   const communityValues = Object.values(CommunityId);
+
   return !communityValues.includes(community as CommunityId);
 };
 
@@ -193,8 +199,10 @@ export const isLocalCommunity = (community: string) => {
 export function isYoutubeVideoCommunity(community: string) {
   if (isLocalCommunity(community)) {
     const communityUrl = unSanitizeUrl(community);
+
     return isYoutubeVideoLink(communityUrl as string);
   }
+
   return false;
 }
 
@@ -206,7 +214,9 @@ export function isYoutubeVideoCommunity(community: string) {
 export function getCommunityUrl(communityId: string) {
   if (isLocalCommunity(communityId)) {
     const communityUrl = unSanitizeUrl(communityId);
+
     return communityUrl;
   }
+
   return communityId;
 }

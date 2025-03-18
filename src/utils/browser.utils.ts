@@ -30,6 +30,7 @@ export class Browser {
       return 'Not a Chromium-based browser';
     } catch (error) {
       console.error('An error occurred while detecting the browser:', error);
+
       return null;
     }
   }

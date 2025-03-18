@@ -1,5 +1,6 @@
-import { LoginButton } from '@/components';
 import React from 'react';
+
+import { LoginButton } from '@/components';
 
 export const WelcomeOverlay = () => {
   return (

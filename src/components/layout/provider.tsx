@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
 
 import { MainLayout, ErudaProvider } from '@/components';
+
 import { AuthProvider } from './auth-provider';
 
 interface ProviderProps {
