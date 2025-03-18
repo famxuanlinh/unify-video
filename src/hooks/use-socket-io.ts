@@ -1,3 +1,4 @@
+import { env } from '@/constants';
 import { log } from '@/utils/helpers';
 import { useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
@@ -8,32 +9,32 @@ export function useSocketIO() {
 
   useEffect(() => {
     if (!socketRef.current) {
-      console.log('useSocketIO: Creating new socket instance');
-      socketRef.current = io('http://localhost:3001', {
+      console.log('Creating new socket instance');
+      socketRef.current = io(env.SOCKET_URL, {
         transports: ['websocket']
       });
 
       socketRef.current.on('connect', () => {
-        console.log('useSocketIO: Socket connected');
+        console.log('Socket connected');
         setIsConnected(true);
       });
 
       socketRef.current.on('disconnect', () => {
-        log('useSocketIO: Socket disconnected');
+        log('Socket disconnected');
         setIsConnected(false);
       });
     } else {
-      console.log('useSocketIO: Socket instance already exists');
+      console.log('Socket instance already exists');
     }
 
     return () => {
-      console.log('useSocketIO: Cleanup function called');
+      console.log('Cleanup function called');
     };
   }, []);
 
   useEffect(() => {
     return () => {
-      console.log('useSocketIO: component unmounted, disconnecting');
+      console.log('Component unmounted, disconnecting');
       socketRef.current?.disconnect();
     };
   }, []);

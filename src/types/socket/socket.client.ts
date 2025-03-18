@@ -1,0 +1,8 @@
+export enum MESSAGE_EVENTS {
+  MATCH = 'MATCH',
+  WAITING = 'WAITING',
+  ONLINE = 'ONLINE',
+  END = 'END',
+  ERROR = 'ERROR',
+  SKIP = 'SKIP'
+}

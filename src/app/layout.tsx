@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     description: 'Unify video',
     images: [
       {
-        url: '/manson-affiliate-banner.png',
+        url: '',
         width: 800,
         height: 600,
         alt: 'Unify video'

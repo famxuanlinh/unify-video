@@ -1,4 +1,4 @@
-import { debugMode } from './constants';
+import { debugMode } from '@/lib';
 
 export function log(...args: unknown[]) {
   if (debugMode) {
