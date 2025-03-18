@@ -4,5 +4,6 @@ export const env = {
   SITE_BASE_URL: process.env.NEXT_PUBLIC_SITE_BASE_URL || '',
   PEER_PORT: process.env.NEXT_PUBLIC_PEER_PORT || '',
   PEER_PATH: process.env.NEXT_PUBLIC_PEER_PATH || '',
-  SOCKET_URL: process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:3001'
+  SOCKET_URL:
+    process.env.NEXT_PUBLIC_SOCKET_URL || 'https://dev-indexer.unify.mx/'
 };

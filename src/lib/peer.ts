@@ -19,5 +19,6 @@ export const peer = new Peer({
     ],
     iceCandidatePoolSize: 10
   },
-  debug: debugMode ? 3 : 0
+  debug: 0
+  // debug: debugMode ? 3 : 0
 });
