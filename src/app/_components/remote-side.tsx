@@ -6,13 +6,23 @@ import {
   WelcomeOverlay
 } from '@/app/_components';
 import { useMainStore, usePeerStore } from '@/store';
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 
 import { Side } from '@/components';
 
 export const RemoteSide = () => {
   const { started, loading, waitingForMatch } = useMainStore();
   const { remoteStreamRef } = usePeerStore();
+
+  const remoteVideoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    if (remoteStreamRef && remoteVideoRef.current) {
+      remoteVideoRef.current.srcObject = remoteStreamRef;
+    } else if (!remoteStreamRef && remoteVideoRef.current) {
+      remoteVideoRef.current.srcObject = null;
+    }
+  }, [remoteStreamRef]);
 
   function renderOverlay() {
     if (loading) return <LoadingOverlay />;
@@ -26,7 +36,7 @@ export const RemoteSide = () => {
   }
 
   return (
-    <Side videoRef={remoteStreamRef} isLocal={false}>
+    <Side videoRef={remoteVideoRef} isLocal={false}>
       {renderOverlay()}
     </Side>
   );
