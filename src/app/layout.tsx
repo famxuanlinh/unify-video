@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     description: 'Unify video',
     images: [
       {
-        url: '/manson-affiliate-banner.png',
+        url: '',
         width: 800,
         height: 600,
         alt: 'Unify video'
@@ -38,7 +38,7 @@ const RootLayout = async ({ children }: RootLayoutProps) => {
         className={cn(inter.variable, 'font-primary')}
         suppressHydrationWarning
       >
-        <Provider> {children}</Provider>
+        <Provider>{children}</Provider>
         <Toaster />
       </body>
     </html>

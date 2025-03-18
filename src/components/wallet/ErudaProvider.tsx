@@ -1,11 +1,11 @@
 'use client';
 
-let eruda;
+let eruda: any;
 const isEligibleForInstallation =
   typeof window !== 'undefined' && process.env.NODE_ENV === 'development';
 
 if (isEligibleForInstallation) {
-  eruda = require('eruda');
+  eruda = import('eruda');
 }
 import { ReactNode, useEffect } from 'react';
 

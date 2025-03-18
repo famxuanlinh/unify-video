@@ -1,10 +1,12 @@
 'use client';
 
+import UnifyApi from '@/apis';
+import { useOAuthDirect } from '@/hooks';
 import axios from 'axios';
 import { debounce } from 'lodash';
+import { Loader2, LoaderCircle } from 'lucide-react';
 import React, { useCallback, useRef, useState } from 'react';
 
-import { useOAuthDirect } from '@/hooks';
 import {
   Button,
   Form,
@@ -14,8 +16,6 @@ import {
   FormMessage,
   Input
 } from '@/components';
-import UnifyApi from '@/apis';
-import { Loader2, LoaderCircle } from 'lucide-react';
 
 export default function AuthPage() {
   const {
@@ -220,7 +220,7 @@ export default function AuthPage() {
                     message: 'Account ID must not be longer than 15 characters'
                   },
                   pattern: {
-                    value: /^([a-z\d]+[\_])*[a-z\d]+([\_][a-z\d]+)*$/,
+                    value: /^([a-z\d]+[_])*[a-z\d]+([_][a-z\d]+)*$/,
                     message: 'Please enter a valid account ID'
                   }
                 }}

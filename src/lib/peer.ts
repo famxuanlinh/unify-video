@@ -1,12 +1,8 @@
-'use client';
-
 import { env } from '@/constants';
 import Peer from 'peerjs';
 
 export const debugMode =
   process.env.NEXT_PUBLIC_PEER_SECURE === 'true' || false;
-
-const isClient = typeof window !== 'undefined';
 
 export const peer = new Peer({
   host: process.env.NEXT_PUBLIC_PEER_HOST || '0.peerjs.com',
@@ -23,28 +19,6 @@ export const peer = new Peer({
     ],
     iceCandidatePoolSize: 10
   },
-  debug: debugMode ? 3 : 0
+  debug: 0
+  // debug: debugMode ? 3 : 0
 });
-
-const SERVER_PORT = env.PEER_PORT || 5000;
-const CLIENT_PORT = 3000;
-
-export const WS_URL = isClient
-  ? window.location.href
-      .replace('http', 'ws')
-      .replace(CLIENT_PORT.toString(), SERVER_PORT.toString())
-  : env.API_BASE_URL || '';
-
-export const HEARTBEAT = {
-  message: 'ping',
-  interval: 58000,
-  timeout: 120000,
-  returnMessage: 'pong'
-};
-
-export const MESSAGE_EVENTS = {
-  MATCH: 'match',
-  WAITING: 'waiting',
-  JOIN: 'join',
-  SKIP: 'skip'
-};

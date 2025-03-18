@@ -1,16 +1,16 @@
+import UnifyApi from '@/apis';
+import { AuthData } from '@/types';
+import { Base64, Embedded, ModalUtils } from '@/utils';
 import * as Sentry from '@sentry/browser';
+import { MiniKit } from '@worldcoin/minikit-js';
 import { AxiosError } from 'axios';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-import UnifyApi from '@/apis';
 import { getConnector } from '@/lib';
-import { Base64, Embedded, ModalUtils } from '@/utils';
 
-import { MiniKit } from '@worldcoin/minikit-js';
 import { toast } from './use-toast';
-import { AuthData } from '@/types';
-import { useRouter, useSearchParams } from 'next/navigation';
 
 export type SignInMethod =
   | 'google'
@@ -91,6 +91,7 @@ export const useOAuthDirect = () => {
     try {
       await signUp(data.accountId, data.uid);
     } catch (e) {
+      console.log(e);
       toast({
         description: 'Register failed!'
       });
@@ -106,6 +107,7 @@ export const useOAuthDirect = () => {
           description: 'An error occurred. Please try again!'
         });
         router.push('/');
+
         return;
       }
 
@@ -116,6 +118,7 @@ export const useOAuthDirect = () => {
           opener.authWindow.close();
           opener.location.href = window.location.href;
           delete opener.authWindow;
+
           return;
         }
       } catch (error) {
@@ -134,6 +137,7 @@ export const useOAuthDirect = () => {
         if (response?.privateKey) {
           setIsNewUser(false);
           loginAndRedirect(response);
+
           return;
         }
 
@@ -177,6 +181,8 @@ export const useOAuthDirect = () => {
             try {
               await signUp(walletUsername, idToken);
             } catch (e) {
+              console.log(e);
+
               toast({
                 description: 'Username already exists.'
               });
@@ -184,6 +190,7 @@ export const useOAuthDirect = () => {
           }
 
           setIsNewUser(true);
+
           return;
         }
 

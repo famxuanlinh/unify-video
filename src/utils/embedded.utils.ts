@@ -25,6 +25,7 @@ export class Embedded {
     if (typeof window !== 'undefined') {
       if (document.documentElement.getAttribute('data-rep-social')) return true;
     }
+
     return false;
   }
 
@@ -59,5 +60,6 @@ const handleMessageFromParentWeb = (event: MessageEvent<any>) => {
   }
 };
 
-typeof window !== 'undefined' &&
+if (typeof window !== 'undefined') {
   window.addEventListener('message', handleMessageFromParentWeb);
+}

@@ -13,6 +13,7 @@ export class StorageAccess {
     // Check if access has already been granted
     if (await document.hasStorageAccess()) {
       console.log('Access already granted');
+
       return true;
     }
 
@@ -24,10 +25,11 @@ export class StorageAccess {
     try {
       permission = await navigator.permissions.query({
         name: 'storage-access'
-      } as any);
+      });
     } catch (error) {
       console.log(
-        'storage-access permission not supported. Assume no cookie access.'
+        'storage-access permission not supported. Assume no cookie access.',
+        error
       );
 
       return false;
@@ -42,8 +44,12 @@ export class StorageAccess {
           // await document.requestStorageAccess({ all: true });
           return true;
         } catch (error) {
-          console.log(`This shouldn't really fail if access is granted, but return false
-              // if it does.`);
+          console.log(
+            `This shouldn't really fail if access is granted, but return false
+              // if it does.`,
+            error
+          );
+
           return false;
         }
       } else if (permission.state === 'prompt') {
@@ -86,13 +92,16 @@ export class StorageAccess {
 
       if (isLogined) {
         LocalStorage.setAllLocalStorageItems(handle?.localStorage);
+
         return true;
       } else {
         console.error('No handle or localStorage');
+
         return false;
       }
     } catch (e) {
       console.error(e);
+
       return false;
     }
   }
