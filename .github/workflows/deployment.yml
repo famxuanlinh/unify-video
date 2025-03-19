@@ -1,0 +1,53 @@
+name: Deploy application to Vercel
+
+env:
+  VERCEL_ORG_ID: team_2a1EsXVeUdcZCAVYsqsPvHCU
+  VERCEL_PROJECT_ID: prj_uiwM0M2H9f8Ux1P3Hk0s6h2i96jB
+  # SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+  # SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
+  # SERVICE_NAME: Unify Video Frontend
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Build and Deploy Project Artifacts to Vercel
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+
+      - name: Setup Git
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+
+          git fetch origin deploy/dev:deploy/dev
+          git checkout deploy/dev
+          git reset --hard ${{ github.sha }}
+
+          git push origin deploy/dev -f
+
+      - name: Install Vercel CLI
+        run: |
+          # echo "@fluxion-labs:registry=https://npm.pkg.github.com" > .npmrc 
+          # echo "//npm.pkg.github.com/:_authToken=${{ secrets.GIT_NPMRC_TOKEN }}" >> .npmrc
+          yarn install --frozen-lockfile
+          yarn global add vercel@latest
+
+      - name: Setup Node 20.5.1
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20.5.1'
+
+      - name: Build and deploy app
+        run: |
+          vercel pull --yes --environment=preview --git-branch=deploy/dev --token=${{ secrets.VERCEL_TOKEN }};
+          vercel build --token=${{ secrets.VERCEL_TOKEN }};
+          vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }};
