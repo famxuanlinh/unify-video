@@ -1,3 +1,5 @@
+'use client';
+
 import { useMainStore, useMessagingStore, usePeerStore } from '@/store';
 import { MESSAGE_EVENTS } from '@/types';
 import { log } from '@/utils';

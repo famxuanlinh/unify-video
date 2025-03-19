@@ -1,3 +1,5 @@
+'use client';
+
 import { env } from '@/constants';
 import { log } from '@/utils/helpers';
 import { useEffect, useRef, useState } from 'react';

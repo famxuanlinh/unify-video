@@ -71,6 +71,7 @@ export default [
 
     rules: {
       'react-hooks/exhaustive-deps': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
       'newline-before-return': 2,
       'react/prop-types': 0,
       'react/react-in-jsx-scope': 0,

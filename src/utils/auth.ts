@@ -1,13 +1,18 @@
+import { toast } from '@/hooks';
 import { MiniKit } from '@worldcoin/minikit-js';
 
 export async function signInWithMiniAppWallet() {
   if (!MiniKit.isInstalled()) {
     console.log('MiniKit is not installed');
+    toast({
+      description: 'MiniKit is not installed'
+    });
 
     return;
   }
 
   const res = await fetch(`/api/world-id/nonce`);
+
   const { nonce } = await res.json();
 
   const { finalPayload } = await MiniKit.commandsAsync.walletAuth({
@@ -19,7 +24,6 @@ export async function signInWithMiniAppWallet() {
   });
 
   if (finalPayload.status === 'error') {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     throw new Error((finalPayload as any).description);
   } else {
     return {
@@ -27,4 +31,8 @@ export async function signInWithMiniAppWallet() {
       nonce
     };
   }
+}
+
+export function parseToUsername(accountId: string) {
+  return accountId?.replace('client|', '');
 }

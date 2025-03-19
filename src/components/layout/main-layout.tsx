@@ -1,12 +1,19 @@
+import { User } from '@/types';
 import React from 'react';
 
-export const MainLayout = ({ children }: { children: React.ReactNode }) => {
+import { AuthProvider } from './auth-provider';
+import Header from './header';
+
+interface MainLayoutProps {
+  children: React.ReactNode;
+  me: User | null;
+}
+
+export const MainLayout = async ({ children, me }: MainLayoutProps) => {
   return (
-    <div
-      style={{ height: '100svh' }}
-      className="flex w-screen flex-col bg-gray-500 landscape:flex-row"
-    >
-      {children}
+    <div className="relative">
+      <Header me={me} />
+      <AuthProvider me={me}>{children}</AuthProvider>
     </div>
   );
 };
