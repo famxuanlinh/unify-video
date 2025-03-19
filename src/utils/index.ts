@@ -1,12 +1,6 @@
 export * from './auth';
 export * from './base64';
 export * from './helpers';
-export * from './modal.utils';
-export * from './local-storage.utils';
-export * from './browser.utils';
-export * from './embedded.utils';
-export * from './storage-access.utils';
-export * from './community.utils';
 
 export function b64EncodeUnicode(str: string) {
   return btoa(

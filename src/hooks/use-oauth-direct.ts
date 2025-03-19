@@ -1,51 +1,26 @@
+'use client';
+
 import UnifyApi from '@/apis';
-import { AuthData } from '@/types';
-import { Base64, Embedded, ModalUtils } from '@/utils';
+import { AUTH_TOKEN_KEY } from '@/constants';
+import { useAuthStore } from '@/store';
+import { Base64 } from '@/utils';
 import * as Sentry from '@sentry/browser';
 import { MiniKit } from '@worldcoin/minikit-js';
 import { AxiosError } from 'axios';
+import { setCookie } from 'cookies-next';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-import { getConnector } from '@/lib';
-
 import { toast } from './use-toast';
 
-export type SignInMethod =
-  | 'google'
-  | 'apple'
-  | 'x'
-  | 'usernamePassword'
-  | 'linkedIn'
-  | 'worldID'
-  | 'worldWalletAuth';
-
-export function uint8ArrayToHexString(uint8Array: Uint8Array): string {
-  return Buffer.from(uint8Array).toString(`hex`);
-}
-
-const loginAndRedirect = async (auth: AuthData) => {
-  const isEmbedded = Embedded.isEmbeddedInIframe();
-  getConnector().backendConnector.init(auth.access, auth.refresh);
-
-  window.localStorage.setItem('STREAM_TOKEN', auth.stream);
-
-  if (!isEmbedded && !MiniKit.isInstalled()) {
-    ModalUtils.kycWelcome.onOpen({
-      onClose: () => {
-        window.location.replace(`${window.location.origin}`);
-      }
-    });
-  } else {
-    window.location.replace(`${window.location.origin}`);
-  }
-};
+export type SignInMethod = 'worldID' | 'worldWalletAuth';
 
 export const useOAuthDirect = () => {
   const [torusLoading, setTorusLoading] = useState(true);
   const [isNewUser, setIsNewUser] = useState<boolean>();
   const [isRegisterLoading, setIsRegisterLoading] = useState<boolean>();
+
   const searchParams = useSearchParams();
   const router = useRouter();
   const idToken = searchParams.get('token');
@@ -53,10 +28,11 @@ export const useOAuthDirect = () => {
     | SignInMethod
     | undefined;
 
+  const { setSigninData } = useAuthStore();
+
   const registerForm = useForm<{
     accountId: string;
     uid: string;
-    publicKey: string;
   }>({
     mode: 'onChange'
   });
@@ -65,22 +41,18 @@ export const useOAuthDirect = () => {
     try {
       setIsRegisterLoading(true);
 
-      let payload: Parameters<typeof UnifyApi.auth.signup>[0] = {
-        accountId,
-        uid: token
-      };
+      const extraData = await Base64.decode(token);
+      const payload = { uid: '', accountId, extraData };
 
-      if (providerId === 'worldWalletAuth') {
-        const extraData = await Base64.decode(token);
-        payload = { uid: '', accountId, extraData };
-      }
-
-      if (!!token && !!accountId) {
-        const res = await UnifyApi.auth.signup(payload);
-        await loginAndRedirect(res);
-      }
+      const res = await UnifyApi.auth.signup(payload);
+      setCookie(AUTH_TOKEN_KEY, `${JSON.stringify(res)}`);
+      setSigninData(res);
+      toast({
+        description: 'Register successful!'
+      });
+      router.push('/');
     } catch (error) {
-      console.log(error);
+      console.log('Error register: ', error);
       throw error;
     } finally {
       setIsRegisterLoading(false);
@@ -100,8 +72,6 @@ export const useOAuthDirect = () => {
 
   useEffect(() => {
     (async () => {
-      // if (!router.isReady) return;
-
       if (!idToken || typeof idToken !== 'string') {
         toast({
           description: 'An error occurred. Please try again!'
@@ -111,43 +81,22 @@ export const useOAuthDirect = () => {
         return;
       }
 
-      // Handle small auth window redirection in Repsocial embeded
-      try {
-        const { opener } = window;
-        if (opener?.authWindow) {
-          opener.authWindow.close();
-          opener.location.href = window.location.href;
-          delete opener.authWindow;
-
-          return;
-        }
-      } catch (error) {
-        console.error('Error handling auth window:', error);
-        Sentry.captureException(error);
-      }
-
       setTorusLoading(true);
 
       try {
         const extraData = await Base64.decode(idToken);
-        const payload = { uid: 'aaa', extraData };
+        const payload = { uid: '', extraData };
 
-        const response = await UnifyApi.auth.signin(payload);
-
-        if (response?.privateKey) {
-          setIsNewUser(false);
-          loginAndRedirect(response);
-
-          return;
-        }
-
-        // If response is null or missing privateKey, treat as account does not exist
-        console.log('The account does not exist', idToken);
+        const res = await UnifyApi.auth.signin(payload);
+        setCookie(AUTH_TOKEN_KEY, `${JSON.stringify(res)}`);
+        setSigninData(res);
         toast({
-          description: 'The account does not exist. Please try again!'
+          description: 'Signin successful!'
         });
+
+        setIsNewUser(false);
+
         router.push('/');
-        Sentry.captureException(new Error('The account does not exist'));
       } catch (error) {
         const axiosError = error as AxiosError<{
           message: string;
@@ -169,13 +118,6 @@ export const useOAuthDirect = () => {
             const walletUsername = (worldIdUser?.username ?? '').replaceAll(
               '.',
               ''
-            );
-            console.log(
-              extraData,
-              userAddress,
-              worldIdUser,
-              walletUsername,
-              idToken
             );
             registerForm.setValue('accountId', walletUsername);
             try {
@@ -214,7 +156,6 @@ export const useOAuthDirect = () => {
       isRegisterLoading
     },
     oauthDirectMethods: {
-      // triggerLogin,
       signUp,
       handleRegisterFormSubmit
     }

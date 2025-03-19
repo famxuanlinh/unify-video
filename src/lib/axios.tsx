@@ -1,11 +1,10 @@
+import UnifyApi from '@/apis';
 import { AUTH_TOKEN_KEY, env } from '@/constants';
 import axios from 'axios';
-import { getCookie } from 'cookies-next';
+import { getCookie, setCookie, deleteCookie } from 'cookies-next';
 
-// process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-
-const baseURL = env.API_BASE_URL,
-  isServer = typeof window === 'undefined';
+const baseURL = env.API_BASE_URL;
+const isServer = typeof window === 'undefined';
 
 axios.defaults.headers.post['Content-Type'] =
   'application/x-www-form-urlencoded';
@@ -15,24 +14,53 @@ export const api = axios.create({
   // withCredentials: true
 });
 
+let isRefreshing = false;
+let refreshSubscribers: ((token: string) => void)[] = [];
+
+const onRefreshed = (token: string) => {
+  refreshSubscribers.forEach(cb => cb(token));
+  refreshSubscribers = [];
+};
+
+const handleRefresh = async () => {
+  const userRaw = JSON.parse((getCookie(AUTH_TOKEN_KEY) as string) || '{}');
+  if (!userRaw.refresh) return null;
+
+  try {
+    const res = await UnifyApi.auth.refreshSession({
+      refreshToken: userRaw.refresh
+    });
+
+    if (res.access) {
+      setCookie(AUTH_TOKEN_KEY, `${JSON.stringify(res)}`);
+      onRefreshed(res.access);
+
+      return res.access;
+    }
+  } catch (error) {
+    console.error('Refresh token failed:', error);
+    deleteCookie(AUTH_TOKEN_KEY);
+
+    return null;
+  }
+};
+
 api.interceptors.request.use(
   async config => {
     if (isServer) {
       const { cookies } = await import('next/headers');
-      let userRaw = undefined;
       const cookieStore = await cookies();
-      userRaw = cookieStore.get(AUTH_TOKEN_KEY)?.value;
+      const userRaw = cookieStore.get(AUTH_TOKEN_KEY)?.value;
 
       if (userRaw) {
-        const { token } = JSON.parse(userRaw);
-        config.headers['Authorization'] = `Bearer ${token}`;
+        const { access } = JSON.parse(userRaw);
+        config.headers['Authorization'] = `Bearer ${access}`;
       }
     } else if (config.headers) {
       const userRaw = JSON.parse((getCookie(AUTH_TOKEN_KEY) as string) || '{}');
 
-      if (userRaw.token) {
-        // config.headers['Cookie'] = `Authentication=${userRaw.token}`;
-        config.headers['Authorization'] = `Bearer ${userRaw.token}`;
+      if (userRaw.access) {
+        config.headers['Authorization'] = `Bearer ${userRaw.access}`;
       }
 
       config.headers['Content-Type'] = 'application/json';
@@ -40,7 +68,40 @@ api.interceptors.request.use(
 
     return config;
   },
-  error => {
-    Promise.reject(error);
+  error => Promise.reject(error)
+);
+
+api.interceptors.response.use(
+  response => response,
+  async error => {
+    const originalRequest = error.config;
+
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      if (isRefreshing) {
+        return new Promise(resolve => {
+          refreshSubscribers.push(token => {
+            originalRequest.headers['Authorization'] = `Bearer ${token}`;
+            resolve(api(originalRequest));
+          });
+        });
+      }
+
+      originalRequest._retry = true;
+      isRefreshing = true;
+
+      const newToken = await handleRefresh();
+      isRefreshing = false;
+
+      if (newToken) {
+        onRefreshed(newToken);
+        originalRequest.headers['Authorization'] = `Bearer ${newToken}`;
+
+        return api(originalRequest);
+      }
+
+      return Promise.reject(error);
+    }
+
+    return Promise.reject(error);
   }
 );

@@ -6,7 +6,6 @@ export const WelcomeOverlay = () => {
   return (
     <div className="relative flex h-full flex-col items-center justify-center text-center text-white">
       <div className="absolute top-4 right-4">
-        {' '}
         <LoginButton />
       </div>
 

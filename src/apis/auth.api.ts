@@ -1,19 +1,8 @@
+import { JWT, SigninData } from '@/types';
 import { parseToUsername } from '@/utils';
 import axios, { AxiosResponse } from 'axios';
 
-import { getConnector } from '@/lib';
-
-export type AuthData = {
-  accountId: string;
-  encryptionKey: string;
-  privateKey: string;
-} & JWT;
-
-export type JWT = {
-  access: string;
-  refresh: string;
-  stream: string;
-};
+import { api } from '@/lib';
 
 export const auth = {
   // async register(payload: { email: string; password: string }): Promise<void> {
@@ -26,85 +15,42 @@ export const auth = {
   //     process.env.NEXT_PUBLIC_AUTH_BACKEND_URL
   //   );
   // },
-  // async signup(payload: {
-  //   accountId: string;
-  //   uid: string;
-
-  //   extraData?: any;
-  // }): Promise<BackendResponse<AuthData>> {
-  //   return api
-  //     .post('/auth/sign-up', {
-  //       userId: payload.accountId,
-  //       idToken: payload.uid,
-  //       provider: 'WorldId',
-  //       payload: payload.extraData
-  //     })
-  //     .then(res => ({
-  //       ...res.data,
-  //       accountId: parseToUsername(res.data.userId)
-  //     }));
-  // },
-  // signin(payload: {
-  //   uid: string;
-  //   extraData?: any;
-  // }): Promise<BackendResponse<AuthData>> {
-  //   return api
-  //     .post('/auth/sign-in', {
-  //       idToken: payload.uid,
-  //       provider: 'WorldId',
-  //       payload: payload.extraData
-  //     })
-  //     .then(res => ({
-  //       ...res.data,
-  //       accountId: parseToUsername(res.data.userId)
-  //     }));
-  // },
   async signup(payload: {
     accountId: string;
     uid: string;
-    providerId?: string;
+
     extraData?: any;
-  }): Promise<AuthData> {
-    const res = await getConnector().backendConnector.post(
-      '/auth/sign-up',
-      {
+  }): Promise<SigninData> {
+    return api
+      .post('/auth/sign-up', {
         userId: payload.accountId,
         idToken: payload.uid,
         provider: 'WorldCoinWallet',
         payload: payload.extraData
-      },
-      process.env.NEXT_PUBLIC_API_BASE_URL
-    );
-
-    return { ...res, accountId: parseToUsername(res.userId) };
+      })
+      .then(res => ({
+        ...res.data,
+        accountId: parseToUsername(res.data.userId)
+      }));
   },
-  async signin(payload: {
-    uid: string;
-    providerId?: string;
-    extraData?: any;
-  }): Promise<AuthData> {
-    const res = await getConnector().backendConnector.post(
-      '/auth/sign-in',
-      {
+  signin(payload: { uid: string; extraData?: any }): Promise<SigninData> {
+    return api
+      .post('/auth/sign-in', {
         idToken: payload.uid,
         provider: 'WorldCoinWallet',
         payload: payload.extraData
-      },
-      process.env.NEXT_PUBLIC_API_BASE_URL
-    );
-
-    return { ...res, accountId: parseToUsername(res.userId) };
+      })
+      .then(res => ({
+        ...res.data,
+        accountId: parseToUsername(res.data.userId)
+      }));
   },
   async refreshSession(payload: { refreshToken: string }): Promise<JWT> {
-    const res = await getConnector().backendConnector.post(
-      '/auth/refresh-session',
-      {
+    return await api
+      .post('/auth/refresh-session', {
         refresh: payload.refreshToken
-      },
-      process.env.NEXT_PUBLIC_API_BASE_URL
-    );
-
-    return res;
+      })
+      .then(res => res.data);
   },
 
   async checkUserExist(
@@ -116,15 +62,4 @@ export const auth = {
       signal
     });
   }
-
-  // async canKYC(): Promise<boolean> {
-  //   return getConnector()
-  //     .backendConnector.get(
-  //       '/auth/can-kyc',
-  //       {},
-  //       process.env.NEXT_PUBLIC_AUTH_BACKEND_URL
-  //     )
-  //     .then(() => true)
-  //     .catch(() => false);
-  // }
 };
