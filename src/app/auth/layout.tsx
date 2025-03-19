@@ -6,8 +6,8 @@ interface RootLayoutProps {
   children: ReactNode;
 }
 
-const layout = ({ children }: RootLayoutProps) => {
+const Layout = ({ children }: RootLayoutProps) => {
   return <Suspense>{children}</Suspense>;
 };
 
-export default layout;
+export default Layout;

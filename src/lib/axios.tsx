@@ -3,16 +3,19 @@ import { AUTH_TOKEN_KEY, env } from '@/constants';
 import axios from 'axios';
 import { getCookie, setCookie, deleteCookie } from 'cookies-next';
 
-const baseURL = env.API_BASE_URL;
 const isServer = typeof window === 'undefined';
 
 axios.defaults.headers.post['Content-Type'] =
   'application/x-www-form-urlencoded';
 
-export const api = axios.create({
-  baseURL
-  // withCredentials: true
-});
+const API_BASE_URLS = {
+  main: env.API_BASE_URL,
+  auth: env.API_AUTH_URL
+};
+
+// Create multiple axios instances
+export const apiMain = axios.create({ baseURL: API_BASE_URLS.main });
+export const apiAuth = axios.create({ baseURL: API_BASE_URLS.auth });
 
 let isRefreshing = false;
 let refreshSubscribers: ((token: string) => void)[] = [];
@@ -45,7 +48,7 @@ const handleRefresh = async () => {
   }
 };
 
-api.interceptors.request.use(
+apiMain.interceptors.request.use(
   async config => {
     if (isServer) {
       const { cookies } = await import('next/headers');
@@ -54,13 +57,13 @@ api.interceptors.request.use(
 
       if (userRaw) {
         const { access } = JSON.parse(userRaw);
-        config.headers['Authorization'] = `Bearer ${access}`;
+        config.headers['x-authorization'] = access;
       }
     } else if (config.headers) {
       const userRaw = JSON.parse((getCookie(AUTH_TOKEN_KEY) as string) || '{}');
 
       if (userRaw.access) {
-        config.headers['Authorization'] = `Bearer ${userRaw.access}`;
+        config.headers['x-authorization'] = userRaw.access;
       }
 
       config.headers['Content-Type'] = 'application/json';
@@ -71,7 +74,7 @@ api.interceptors.request.use(
   error => Promise.reject(error)
 );
 
-api.interceptors.response.use(
+apiMain.interceptors.response.use(
   response => response,
   async error => {
     const originalRequest = error.config;
@@ -81,7 +84,7 @@ api.interceptors.response.use(
         return new Promise(resolve => {
           refreshSubscribers.push(token => {
             originalRequest.headers['Authorization'] = `Bearer ${token}`;
-            resolve(api(originalRequest));
+            resolve(apiMain(originalRequest));
           });
         });
       }
@@ -96,7 +99,7 @@ api.interceptors.response.use(
         onRefreshed(newToken);
         originalRequest.headers['Authorization'] = `Bearer ${newToken}`;
 
-        return api(originalRequest);
+        return apiMain(originalRequest);
       }
 
       return Promise.reject(error);

@@ -1,4 +1,4 @@
-import { LocalSide, DiagnosticOverlay, RemoteSide } from '@/app/_components';
+import { LocalSide, RemoteSide } from '@/app/_components';
 import React from 'react';
 
 import { StartVideoCallButton } from './start-video-call-button';
@@ -14,7 +14,7 @@ export const HomePage = () => {
       <LocalSide />
       <StartVideoCallButton />
 
-      <DiagnosticOverlay />
+      {/* <DiagnosticOverlay /> */}
     </div>
   );
 };

@@ -1,19 +1,21 @@
-import { SigninData } from '@/types';
+import { User } from '@/types';
 import { create } from 'zustand';
 
 type AuthStore = {
-  signinData?: SigninData | null;
-  setSigninData: (data: SigninData) => void;
-  clearSigninData: () => void;
+  me: User | null;
+  setMe: (data: User | null) => void;
+  clearMe: () => void;
 };
 
 export const useAuthStore = create<AuthStore>(set => ({
-  setSigninData: (data: SigninData) =>
+  me: null,
+
+  setMe: (data: User | null) =>
     set(() => ({
-      signinData: data
+      me: data
     })),
-  clearSigninData: () =>
+  clearMe: () =>
     set(() => ({
-      signinData: null
+      me: null
     }))
 }));

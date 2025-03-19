@@ -1,27 +1,18 @@
+import { env } from '@/constants';
 import { JWT, SigninData } from '@/types';
 import { parseToUsername } from '@/utils';
 import axios, { AxiosResponse } from 'axios';
 
-import { api } from '@/lib';
+import { apiAuth } from '@/lib';
 
 export const auth = {
-  // async register(payload: { email: string; password: string }): Promise<void> {
-  //   return getConnector().backendConnector.post(
-  //     '/auth/register',
-  //     {
-  //       email: payload.email,
-  //       password: payload.password
-  //     },
-  //     process.env.NEXT_PUBLIC_AUTH_BACKEND_URL
-  //   );
-  // },
   async signup(payload: {
     accountId: string;
     uid: string;
 
     extraData?: any;
   }): Promise<SigninData> {
-    return api
+    return apiAuth
       .post('/auth/sign-up', {
         userId: payload.accountId,
         idToken: payload.uid,
@@ -34,7 +25,7 @@ export const auth = {
       }));
   },
   signin(payload: { uid: string; extraData?: any }): Promise<SigninData> {
-    return api
+    return apiAuth
       .post('/auth/sign-in', {
         idToken: payload.uid,
         provider: 'WorldCoinWallet',
@@ -46,7 +37,7 @@ export const auth = {
       }));
   },
   async refreshSession(payload: { refreshToken: string }): Promise<JWT> {
-    return await api
+    return await apiAuth
       .post('/auth/refresh-session', {
         refresh: payload.refreshToken
       })
@@ -58,7 +49,7 @@ export const auth = {
     signal: AbortSignal
   ): Promise<AxiosResponse<any, any>> {
     return await axios.get(`/auth/userExisted?userId=${payload.userId}`, {
-      baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
+      baseURL: env.API_AUTH_URL,
       signal
     });
   }

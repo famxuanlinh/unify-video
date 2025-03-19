@@ -4,7 +4,8 @@ import './src/lib/env/env.mjs';
 const nextConfig = {
   reactStrictMode: true,
   env: {
-    NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL
+    NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL,
+    NEXT_PUBLIC_API_AUTH_URL: process.env.NEXT_PUBLIC_API_AUTH_URL
   },
   images: {
     remotePatterns: [

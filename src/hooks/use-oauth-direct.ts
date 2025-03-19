@@ -7,7 +7,7 @@ import { Base64 } from '@/utils';
 import * as Sentry from '@sentry/browser';
 import { MiniKit } from '@worldcoin/minikit-js';
 import { AxiosError } from 'axios';
-import { setCookie } from 'cookies-next';
+import { deleteCookie, setCookie } from 'cookies-next';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -21,14 +21,14 @@ export const useOAuthDirect = () => {
   const [isNewUser, setIsNewUser] = useState<boolean>();
   const [isRegisterLoading, setIsRegisterLoading] = useState<boolean>();
 
+  const { setMe } = useAuthStore();
+
   const searchParams = useSearchParams();
   const router = useRouter();
   const idToken = searchParams.get('token');
   const providerId = searchParams.get('providerId')?.toString() as
     | SignInMethod
     | undefined;
-
-  const { setSigninData } = useAuthStore();
 
   const registerForm = useForm<{
     accountId: string;
@@ -46,11 +46,10 @@ export const useOAuthDirect = () => {
 
       const res = await UnifyApi.auth.signup(payload);
       setCookie(AUTH_TOKEN_KEY, `${JSON.stringify(res)}`);
-      setSigninData(res);
       toast({
         description: 'Register successful!'
       });
-      router.push('/');
+      window.location.href = '/';
     } catch (error) {
       console.log('Error register: ', error);
       throw error;
@@ -89,14 +88,13 @@ export const useOAuthDirect = () => {
 
         const res = await UnifyApi.auth.signin(payload);
         setCookie(AUTH_TOKEN_KEY, `${JSON.stringify(res)}`);
-        setSigninData(res);
         toast({
           description: 'Signin successful!'
         });
 
         setIsNewUser(false);
 
-        router.push('/');
+        window.location.href = '/';
       } catch (error) {
         const axiosError = error as AxiosError<{
           message: string;
@@ -148,6 +146,12 @@ export const useOAuthDirect = () => {
     })();
   }, [idToken, providerId]);
 
+  const handleLogOut = () => {
+    deleteCookie(AUTH_TOKEN_KEY);
+    setMe(null);
+    window.location.href = '/';
+  };
+
   return {
     oauthDirectState: {
       torusLoading,
@@ -157,7 +161,8 @@ export const useOAuthDirect = () => {
     },
     oauthDirectMethods: {
       signUp,
-      handleRegisterFormSubmit
+      handleRegisterFormSubmit,
+      handleLogOut
     }
   };
 };
