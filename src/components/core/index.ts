@@ -6,3 +6,5 @@ export * from './tooltip';
 export * from './input';
 export * from './avatar';
 export * from './form';
+export * from './dialog';
+export * from './label';

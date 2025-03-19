@@ -22,9 +22,7 @@ const SideComponent: FC<SideProps> = ({
       {videoRef && (
         <VideoPlayer videoRef={videoRef} isLocal={isLocal} muted={isLocal} />
       )}
-      <div className="absolute top-0 left-0 z-100 h-full w-full">
-        {children}
-      </div>
+      <div className="absolute top-0 left-0 h-full w-full">{children}</div>
     </div>
   );
 };
