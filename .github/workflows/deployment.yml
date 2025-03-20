@@ -28,11 +28,11 @@ jobs:
       #     git config user.name "github-actions"
       #     git config user.email "github-actions@github.com"
 
-          # git fetch origin deploy/dev:deploy/dev
-          # git checkout deploy/dev
-          # git reset --hard ${{ github.sha }}
-          #
-          # git push origin deploy/dev -f
+      # git fetch origin deploy/dev:deploy/dev
+      # git checkout deploy/dev
+      # git reset --hard ${{ github.sha }}
+      #
+      # git push origin deploy/dev -f
 
       - name: Install Vercel CLI
         run: |
