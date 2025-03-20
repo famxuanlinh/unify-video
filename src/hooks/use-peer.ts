@@ -6,6 +6,8 @@ import { log } from '@/utils';
 import Peer, { MediaConnection } from 'peerjs';
 import { useEffect, useRef, useState } from 'react';
 
+import { peer } from '@/lib';
+
 import { useSocketIO } from './use-socket-io';
 
 export function usePeer() {
@@ -79,31 +81,15 @@ export function usePeer() {
     if (!isConnected) return;
     log('Socket is connected, setting up PeerJS');
 
-    peerRef.current = new Peer({
-      host: '146.190.192.108',
-      port: 9000,
-      path: '/',
-      secure: false,
-      debug: 3,
-      config: {
-        iceServers: [
-          { urls: 'stun:stun.l.google.com:19302' },
-          {
-            urls: 'turn:206.189.151.6:3478',
-            username: 'test',
-            credential: 'test123'
-          }
-        ]
-      }
-    });
+    peerRef.current = peer;
 
-    peerRef.current.on('open', id => {
+    peer.on('open', id => {
       log('Peer open with ID:', id);
       setMyPeerId(id);
       setReady(true);
     });
 
-    peerRef.current.on('connection', conn => {
+    peer.on('connection', conn => {
       setPeerConnectionRef(conn);
 
       conn.on('data', data => {
@@ -116,19 +102,19 @@ export function usePeer() {
       });
     });
 
-    peerRef.current.on('call', call => {
+    peer.on('call', call => {
       log('Incoming call from:', call.peer);
       answerCall(call);
     });
 
-    peerRef.current.on('error', err => {
+    peer.on('error', err => {
       log('Peer error:', err);
       setError('Peer error');
     });
 
     return () => {
       log('Cleaning up PeerJS');
-      peerRef.current?.destroy();
+      peer.destroy();
     };
   }, [isConnected]);
 
