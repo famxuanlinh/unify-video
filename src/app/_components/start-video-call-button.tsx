@@ -23,7 +23,7 @@ export const StartVideoCallButton = () => {
           onClick={join}
         >
           <VideoIcon className="text-xl max-md:hidden md:text-2xl" />
-          <span className="flex-none"> Start Video Chat</span>
+          <span className="flex-none">Jump In</span>
         </button>
       )}
     </div>

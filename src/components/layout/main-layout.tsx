@@ -12,7 +12,7 @@ interface MainLayoutProps {
 export const MainLayout = async ({ children, me }: MainLayoutProps) => {
   return (
     <div className="relative">
-      <Header me={me} />
+      <Header />
       <AuthProvider me={me}>{children}</AuthProvider>
     </div>
   );

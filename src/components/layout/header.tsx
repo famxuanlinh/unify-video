@@ -1,7 +1,7 @@
 'use client';
 
 import { useOAuthDirect } from '@/hooks';
-import { User } from '@/types';
+import { useAuthStore } from '@/store';
 import { parseToUsername } from '@/utils';
 import React, { useState } from 'react';
 
@@ -20,17 +20,20 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuTrigger
+  DropdownMenuTrigger,
+  ProfileForm
 } from '@/components';
 
-const Header = ({ me }: { me: User | null }) => {
+const Header = () => {
   const [isOpenDialog, setIsOpenDialog] = useState(false);
   const {
     oauthDirectMethods: { handleLogOut }
   } = useOAuthDirect();
 
+  const { me } = useAuthStore();
+
   return (
-    <div className="absolute top-4 right-4 z-9">
+    <div className="light absolute top-4 right-4 z-9">
       {me ? (
         <>
           <DropdownMenu>
@@ -42,7 +45,7 @@ const Header = ({ me }: { me: User | null }) => {
                 </AvatarFallback>
               </Avatar>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="min-w-40">
+            <DropdownMenuContent className="mr-4 min-w-40">
               <DropdownMenuLabel>
                 {me?.fullName || parseToUsername(me.userId)}
               </DropdownMenuLabel>
@@ -67,28 +70,13 @@ const Header = ({ me }: { me: User | null }) => {
         defaultOpen={false}
       >
         <DialogTrigger asChild></DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="max-w-[425px]">
           <DialogHeader>
             <DialogTitle>Edit profile</DialogTitle>
           </DialogHeader>
-          <div className="grid gap-4 py-4">
-            {/* <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="name" className="text-right">
-                Name
-              </Label>
-              <Input id="name" value="Pedro Duarte" className="col-span-3" />
-            </div>
-            <div className="grid grid-cols-4 items-center gap-4">
-              <Label htmlFor="username" className="text-right">
-                Username
-              </Label>
-              <Input id="username" value="@peduarte" className="col-span-3" />
-            </div> */}
-            Coming soon
+          <div className="scroll-hide max-h-150 overflow-auto p-1">
+            <ProfileForm />
           </div>
-          {/* <DialogFooter>
-            <Button type="submit">Save changes</Button>
-          </DialogFooter> */}
         </DialogContent>
       </Dialog>
     </div>

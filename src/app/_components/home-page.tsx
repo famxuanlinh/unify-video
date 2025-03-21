@@ -10,10 +10,8 @@ export const HomePage = () => {
       className="flex w-screen flex-col bg-gray-500 landscape:flex-row"
     >
       <RemoteSide />
-
       <LocalSide />
       <StartVideoCallButton />
-
       <DiagnosticOverlay />
     </div>
   );
