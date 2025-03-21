@@ -6,10 +6,7 @@ export const WelcomeOverlay = () => {
       <div className="mb-2 text-2xl font-medium sm:text-3xl">
         Welcome to Unify!
       </div>
-      <div className="text-md mt-2 sm:text-lg">
-        Make new friends <br />
-        face-to-face
-      </div>
+      <div className="text-md mt-2 sm:text-lg">Make new friends</div>
     </div>
   );
 };

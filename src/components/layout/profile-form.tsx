@@ -44,7 +44,7 @@ const formSchema = z.object({
   ageRange: z.array(z.number()),
   seekingGender: z.array(z.string()).default([]),
   isLimit: z.boolean(),
-  miles: z.number()
+  miles: z.coerce.number().min(18).max(99)
 });
 
 export function ProfileForm() {
@@ -65,9 +65,7 @@ export function ProfileForm() {
       ageRange: me?.seekingSettings?.ageRange
         ? [me.seekingSettings.ageRange.min, me.seekingSettings.ageRange.max]
         : [18, 99],
-      seekingGender: Array.isArray(me?.seekingSettings.gender)
-        ? me?.seekingSettings.gender
-        : [me?.seekingSettings.gender || ''],
+      seekingGender: me?.seekingSettings.genders,
       isLimit: me?.seekingSettings.location.limit,
       miles: me?.seekingSettings.location.miles
     }
@@ -81,7 +79,7 @@ export function ProfileForm() {
       dob: values.dob.toISOString(),
       gender: values.gender,
       seekingSettings: {
-        gender: values.seekingGender[0],
+        genders: values.seekingGender.filter(item => Boolean(item)),
         ageRange: {
           min: values.ageRange[0],
           max: values.ageRange[1]
@@ -92,6 +90,7 @@ export function ProfileForm() {
         }
       }
     };
+
     handleUpdateUser(payload);
     try {
       console.log(values);
@@ -122,7 +121,7 @@ export function ProfileForm() {
           )}
         />
 
-        <div className="flex gap-6">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <FormField
             control={form.control}
             name="dob"
@@ -174,7 +173,7 @@ export function ProfileForm() {
                   defaultValue={field.value}
                 >
                   <FormControl>
-                    <SelectTrigger>
+                    <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select gender" />
                     </SelectTrigger>
                   </FormControl>
@@ -194,146 +193,151 @@ export function ProfileForm() {
           />
         </div>
 
-        <FormField
-          control={form.control}
-          name="ageRange"
-          render={() => (
-            <FormItem>
-              <FormLabel className="pb-6">Ages I’m into...</FormLabel>
-              <FormControl>
-                <DualRangeSlider
-                  label={value => value}
-                  control={form.control}
-                  name="ageRange"
-                  min={18}
-                  max={99}
-                  step={1}
-                />
-              </FormControl>
-              <FormDescription>
-                Adjust the age range using the slider.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {/* <FormField
-          control={form.control}
-          name="country"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Select Country</FormLabel>
-              <FormControl>
-                <LocationSelector
-                  onCountryChange={country => {
-                    setCountryName(country?.name || '');
-                    form.setValue(field.name, [
-                      country?.name || '',
-                      stateName || ''
-                    ]);
-                  }}
-                  onStateChange={state => {
-                    setStateName(state?.name || '');
-                    form.setValue(field.name, [
-                      form.getValues(field.name)[0] || '',
-                      state?.name || ''
-                    ]);
-                  }}
-                />
-              </FormControl>
-              <FormDescription>
-                If your country has states, it will be appear after selecting
-                country
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        /> */}
-        <FormField
-          control={form.control}
-          name="seekingGender"
-          render={({ field }) => (
-            <FormItem className="flex flex-col space-y-2">
-              <FormLabel>Seeking Gender</FormLabel>
-              <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
-                {Object.values(Gender).map(gender => (
-                  <div key={gender} className="flex items-center space-x-3">
-                    <Checkbox
-                      checked={
-                        Array.isArray(field.value) &&
-                        field.value.includes(gender)
-                      }
-                      onCheckedChange={checked => {
-                        const newValue = checked
-                          ? [
-                              ...(Array.isArray(field.value)
-                                ? field.value
-                                : []),
-                              gender
-                            ]
-                          : (Array.isArray(field.value)
-                              ? field.value
-                              : []
-                            ).filter(g => g !== gender);
-                        field.onChange(newValue);
-                      }}
-                    />
-                    <FormLabel>{gender}</FormLabel>
-                  </div>
-                ))}
-              </div>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <div>
+        <div className="space-y-8 rounded-2xl border border-gray-500 p-4">
           <FormField
             control={form.control}
-            name="isLimit"
-            render={({ field }) => (
-              <FormItem className="flex flex-row items-center justify-between rounded-lg pb-3">
-                <FormLabel>Limit by location</FormLabel>
+            name="ageRange"
+            render={() => (
+              <FormItem>
+                <FormLabel className="pb-6">Ages I’m into...</FormLabel>
                 <FormControl>
-                  <Switch
-                    checked={field.value}
-                    onCheckedChange={value => {
-                      field.onChange(value);
-                      setIsShowLimitRange(value);
-                    }}
-                    aria-readonly
+                  <DualRangeSlider
+                    label={value => value}
+                    control={form.control}
+                    name="ageRange"
+                    min={18}
+                    max={99}
+                    step={1}
                   />
                 </FormControl>
+                <FormDescription>
+                  Adjust the age range using the slider.
+                </FormDescription>
+                <FormMessage />
               </FormItem>
             )}
           />
 
-          {isShowLimitRange && (
+          {/* <FormField
+            control={form.control}
+            name="country"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Select Country</FormLabel>
+                <FormControl>
+                  <LocationSelector
+                    onCountryChange={country => {
+                      setCountryName(country?.name || '');
+                      form.setValue(field.name, [
+                        country?.name || '',
+                        stateName || ''
+                      ]);
+                    }}
+                    onStateChange={state => {
+                      setStateName(state?.name || '');
+                      form.setValue(field.name, [
+                        form.getValues(field.name)[0] || '',
+                        state?.name || ''
+                      ]);
+                    }}
+                  />
+                </FormControl>
+                <FormDescription>
+                  If your country has states, it will be appear after selecting
+                  country
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          /> */}
+          <FormField
+            control={form.control}
+            name="seekingGender"
+            render={({ field }) => (
+              <FormItem className="flex flex-col space-y-2">
+                <FormLabel>Seeking Genders</FormLabel>
+                <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
+                  {Object.values(Gender).map(gender => (
+                    <div key={gender} className="flex items-center space-x-3">
+                      <Checkbox
+                        checked={
+                          Array.isArray(field.value) &&
+                          field.value.includes(gender)
+                        }
+                        onCheckedChange={checked => {
+                          const newValue = checked
+                            ? [
+                                ...(Array.isArray(field.value)
+                                  ? field.value
+                                  : []),
+                                gender
+                              ]
+                            : (Array.isArray(field.value)
+                                ? field.value
+                                : []
+                              ).filter(g => g !== gender);
+                          field.onChange(newValue);
+                        }}
+                      />
+                      <FormLabel>{gender}</FormLabel>
+                    </div>
+                  ))}
+                </div>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <div>
             <FormField
               control={form.control}
-              name="miles"
-              render={({ field: { value, onChange } }) => (
-                <FormItem>
+              name="isLimit"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg pb-3">
+                  <FormLabel>Limit by location</FormLabel>
                   <FormControl>
-                    <Slider
-                      min={1}
-                      max={100}
-                      step={5}
-                      defaultValue={[25]}
-                      onValueChange={vals => {
-                        onChange(vals[0]);
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={value => {
+                        field.onChange(value);
+                        setIsShowLimitRange(value);
                       }}
+                      aria-readonly
                     />
                   </FormControl>
-                  <FormDescription>
-                    Adjust the limit by sliding: ({value ? value : '25'} miles)
-                  </FormDescription>
-                  <FormMessage />
                 </FormItem>
               )}
             />
-          )}
+
+            {isShowLimitRange && (
+              <FormField
+                control={form.control}
+                name="miles"
+                render={({ field: { value, onChange } }) => (
+                  <FormItem>
+                    <FormControl>
+                      <Slider
+                        min={1}
+                        max={100}
+                        step={5}
+                        defaultValue={[
+                          me?.seekingSettings.location.miles || 25
+                        ]}
+                        onValueChange={vals => {
+                          onChange(vals[0]);
+                        }}
+                      />
+                    </FormControl>
+                    <FormDescription>
+                      Adjust the limit by sliding: ({value ? value : '25'}
+                      {value == 1 ? 'mile' : 'miles'})
+                    </FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
+          </div>
         </div>
         <Button loading={isLoading} disabled={isLoading} type="submit">
           Submit

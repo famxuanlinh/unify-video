@@ -8,12 +8,6 @@ export type User = {
   seekingSettings: SeekingSettings;
 };
 
-interface SeekingSettings {
-  gender: string;
-  ageRange: AgeRange;
-  location: Location;
-}
-
 interface Location {
   limit: boolean;
   miles: number;
@@ -41,7 +35,7 @@ export type UpdateUserPayload = {
 };
 
 interface SeekingSettings {
-  gender: string;
+  genders: string[];
   ageRange: AgeRange;
   location: Location;
 }

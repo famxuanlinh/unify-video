@@ -38,7 +38,7 @@ const Header = () => {
         <>
           <DropdownMenu>
             <DropdownMenuTrigger>
-              <Avatar>
+              <Avatar className="size-10">
                 <AvatarImage src={me?.avatar || ''} />
                 <AvatarFallback>
                   {me?.fullName?.slice(0, 2) || 'U'}

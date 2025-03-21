@@ -22,7 +22,7 @@ export const StartVideoCallButton = () => {
           className={`flex cursor-pointer items-center gap-3 rounded-full px-8 py-3 text-[.9rem] font-medium text-black hover:text-black sm:px-6 sm:py-4 sm:text-base ${isReady ? 'bg-[#fffc03] hover:bg-[#fff06b]' : 'bg-gray-300'}`}
           onClick={join}
         >
-          <VideoIcon className="text-xl max-md:hidden md:text-2xl" />
+          <VideoIcon className="text-xl md:text-2xl" />
           <span className="flex-none">Jump In</span>
         </button>
       )}
