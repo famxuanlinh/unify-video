@@ -1,8 +1,7 @@
 'use client';
 
 import { toast, usePeer } from '@/hooks';
-import { useAuthStore, useMainStore } from '@/store';
-import { useSocketStore } from '@/store';
+import { useAuthStore, useMainStore, useSocketStore } from '@/store';
 import { VideoIcon } from 'lucide-react';
 import React from 'react';
 
@@ -10,11 +9,11 @@ export const JumpInButton = () => {
   const { started } = useMainStore();
   const { ready } = useMainStore();
   const { join } = usePeer();
-  const { isConnected } = useSocketStore();
+  const { socket } = useSocketStore();
 
   const { me } = useAuthStore();
 
-  const isReady = isConnected && ready;
+  const isReady = ready && socket?.connect;
 
   const handleJumpIn = () => {
     if (me) {

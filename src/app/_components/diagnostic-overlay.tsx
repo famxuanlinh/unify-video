@@ -1,6 +1,5 @@
 'use client';
 
-import { useSocketIO } from '@/hooks/use-socket-io';
 import { useMainStore, usePeerStore } from '@/store';
 import React, { useState, useEffect } from 'react';
 
@@ -8,7 +7,6 @@ export const DiagnosticOverlay = () => {
   const { onlineUsersCount, waitingForMatch } = useMainStore();
 
   const [isVisible, setIsVisible] = useState(false);
-  const { isConnected } = useSocketIO();
   const [diagnosticInfo, setDiagnosticInfo] = useState({
     browserInfo: '',
     webRTCSupport: false,
@@ -74,9 +72,9 @@ export const DiagnosticOverlay = () => {
       </div>
 
       <div className="space-y-1 text-sm">
-        <p>
+        {/* <p>
           <strong>Socket IO Ready:</strong> {isConnected ? 'Yes' : 'No'}
-        </p>
+        </p> */}
         <p>
           <strong>Online Users:</strong> {onlineUsersCount}
         </p>
