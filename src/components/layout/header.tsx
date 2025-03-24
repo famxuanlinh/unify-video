@@ -1,8 +1,9 @@
 'use client';
 
-import { useOAuthDirect } from '@/hooks';
+import { AUTH_TOKEN_KEY } from '@/constants';
 import { useAuthStore } from '@/store';
 import { parseToUsername } from '@/utils';
+import { deleteCookie } from 'cookies-next';
 import React, { useState } from 'react';
 
 import {
@@ -26,11 +27,14 @@ import {
 
 const Header = () => {
   const [isOpenDialog, setIsOpenDialog] = useState(false);
-  const {
-    oauthDirectMethods: { handleLogOut }
-  } = useOAuthDirect();
 
-  const { me } = useAuthStore();
+  const { me, setMe } = useAuthStore();
+
+  const handleLogout = () => {
+    deleteCookie(AUTH_TOKEN_KEY);
+    setMe(null);
+    window.location.href = '/';
+  };
 
   return (
     <div className="light absolute top-4 right-4 z-9">
@@ -54,7 +58,7 @@ const Header = () => {
               <DropdownMenuItem onClick={() => setIsOpenDialog(true)}>
                 Profile
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleLogOut}>
+              <DropdownMenuItem onClick={handleLogout}>
                 Log out
               </DropdownMenuItem>
             </DropdownMenuContent>

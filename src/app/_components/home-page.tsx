@@ -1,7 +1,7 @@
-import { DiagnosticOverlay, LocalSide, RemoteSide } from '@/app/_components';
+import { LocalSide, RemoteSide } from '@/app/_components';
 import React from 'react';
 
-import { StartVideoCallButton } from './start-video-call-button';
+import { JumpInButton } from './jump-in-button';
 
 export const HomePage = () => {
   return (
@@ -11,8 +11,8 @@ export const HomePage = () => {
     >
       <RemoteSide />
       <LocalSide />
-      <StartVideoCallButton />
-      <DiagnosticOverlay />
+      <JumpInButton />
+      {/* <DiagnosticOverlay /> */}
     </div>
   );
 };
