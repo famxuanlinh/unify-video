@@ -9,11 +9,11 @@ import { Button } from '@/components/core/button';
 
 import { cn } from '@/lib';
 
-interface LoginButtonProps {
+interface SigninButtonProps {
   className?: string;
 }
 
-export const LoginButton: React.FunctionComponent<LoginButtonProps> = ({
+export const SigninButton: React.FunctionComponent<SigninButtonProps> = ({
   className
 }) => {
   const [isLoading, setLoading] = useState(false);

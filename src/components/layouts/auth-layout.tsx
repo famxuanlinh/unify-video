@@ -6,9 +6,9 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { MiniKit } from '@worldcoin/minikit-js';
 import React, { useEffect } from 'react';
 
-import { ErudaProvider } from './ErudaProvider';
+import { ErudaProvider } from './eruda-provider';
 
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+export const AuthLayout = ({ children }: { children: React.ReactNode }) => {
   const queryClient = new QueryClient();
   const { initSocket } = useSocketStore();
   const { handleGetProfile } = useGetProfile();
