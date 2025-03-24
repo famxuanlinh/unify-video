@@ -1,7 +1,7 @@
-import { DiagnosticOverlay, LocalSide, RemoteSide } from '@/app/_components';
+import { LocalSide, RemoteSide } from '@/app/_components';
 import React from 'react';
 
-import { StartVideoCallButton } from './start-video-call-button';
+import { JumpInButton } from './jump-in-button';
 
 export const HomePage = () => {
   return (
@@ -10,11 +10,9 @@ export const HomePage = () => {
       className="flex w-screen flex-col bg-gray-500 landscape:flex-row"
     >
       <RemoteSide />
-
       <LocalSide />
-      <StartVideoCallButton />
-
-      <DiagnosticOverlay />
+      <JumpInButton />
+      {/* <DiagnosticOverlay /> */}
     </div>
   );
 };

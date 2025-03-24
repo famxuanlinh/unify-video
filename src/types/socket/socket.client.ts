@@ -4,5 +4,6 @@ export enum MESSAGE_EVENTS {
   ONLINE = 'ONLINE',
   END = 'END',
   ERROR = 'ERROR',
-  SKIP = 'SKIP'
+  SKIP = 'SKIP',
+  AUTH_ERROR = 'AUTH_ERROR'
 }

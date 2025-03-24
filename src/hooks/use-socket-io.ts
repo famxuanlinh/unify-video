@@ -1,45 +1,70 @@
-'use client';
-
-import { env } from '@/constants';
-import { log } from '@/utils/helpers';
-import { useEffect, useRef, useState } from 'react';
+// use-socket-io.ts
+import { AUTH_TOKEN_KEY, env } from '@/constants';
+import { MESSAGE_EVENTS } from '@/types';
+import { getCookie } from 'cookies-next';
+import { useState, useEffect, useRef } from 'react';
 import { io, Socket } from 'socket.io-client';
 
-export function useSocketIO() {
-  const socketRef = useRef<Socket | null>(null);
+import { handleRefresh } from '@/lib';
+
+export const useSocket = () => {
   const [isConnected, setIsConnected] = useState(false);
+  const socketRef = useRef<Socket | null>(null);
 
   useEffect(() => {
-    if (!socketRef.current) {
-      console.log('Creating new socket instance');
+    const tokensRaw = JSON.parse((getCookie(AUTH_TOKEN_KEY) as string) || '{}');
+
+    if (tokensRaw?.access && !socketRef.current) {
+      console.log('🔌 Creating new socket instance');
+
       socketRef.current = io(env.SOCKET_URL, {
-        transports: ['websocket']
+        extraHeaders: {
+          'x-authorization': tokensRaw.access
+        }
       });
 
       socketRef.current.on('connect', () => {
-        console.log('Socket connected');
+        console.log('✅ Socket connected');
         setIsConnected(true);
       });
 
       socketRef.current.on('disconnect', () => {
-        log('Socket disconnected');
+        console.log('❌ Socket disconnected');
         setIsConnected(false);
       });
-    } else {
-      console.log('Socket instance already exists');
+
+      socketRef.current.on(MESSAGE_EVENTS.AUTH_ERROR, async error => {
+        console.error('⚠️ Socket connection error:', error);
+
+        if (error?.message === 'Unauthorized') {
+          console.log('🔄 Token expired, refreshing...');
+          const newAccessToken = await handleRefresh(); // Refresh token
+
+          if (newAccessToken) {
+            console.log('🔄 Reconnecting socket with new token...');
+            if (socketRef.current) {
+              socketRef.current.io.opts.extraHeaders = {
+                ...socketRef.current.io.opts.extraHeaders,
+                'x-authorization': newAccessToken.access
+              };
+              socketRef.current.connect();
+            }
+          }
+        }
+      });
+    }
+
+    if (socketRef.current && !isConnected) {
+      socketRef.current.connect();
     }
 
     return () => {
-      console.log('Cleanup function called');
-    };
-  }, []);
-
-  useEffect(() => {
-    return () => {
-      console.log('Component unmounted, disconnecting');
-      socketRef.current?.disconnect();
+      if (socketRef.current) {
+        console.log('🚪 Cleanup: disconnecting socket');
+        socketRef.current.disconnect();
+      }
     };
   }, []);
 
   return { socket: socketRef.current, isConnected };
-}
+};
