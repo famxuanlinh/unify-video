@@ -37,26 +37,31 @@ export const peerConfig = new Peer({
       // { urls: 'stun:stun2.l.google.com:19302' },
       // { urls: 'stun:stun3.l.google.com:19302' },
       // { urls: 'stun:stun4.l.google.com:19302' },
-      { urls: 'stun:stun.relay.metered.ca:80' },
+      // { urls: 'stun:stun.relay.metered.ca:80' },
+      // {
+      //   urls: 'turn:global.relay.metered.ca:80',
+      //   username: '49763634d32cb15840386edc',
+      //   credential: 'G0Jf2GvnWd4IOGj6'
+      // },
+      // {
+      //   urls: 'turn:global.relay.metered.ca:80?transport=tcp',
+      //   username: '49763634d32cb15840386edc',
+      //   credential: 'G0Jf2GvnWd4IOGj6'
+      // },
+      // {
+      //   urls: 'turn:global.relay.metered.ca:443',
+      //   username: '49763634d32cb15840386edc',
+      //   credential: 'G0Jf2GvnWd4IOGj6'
+      // },
+      // {
+      //   urls: 'turns:global.relay.metered.ca:443?transport=tcp',
+      //   username: '49763634d32cb15840386edc',
+      //   credential: 'G0Jf2GvnWd4IOGj6'
+      // }
       {
-        urls: 'turn:global.relay.metered.ca:80',
-        username: '49763634d32cb15840386edc',
-        credential: 'G0Jf2GvnWd4IOGj6'
-      },
-      {
-        urls: 'turn:global.relay.metered.ca:80?transport=tcp',
-        username: '49763634d32cb15840386edc',
-        credential: 'G0Jf2GvnWd4IOGj6'
-      },
-      {
-        urls: 'turn:global.relay.metered.ca:443',
-        username: '49763634d32cb15840386edc',
-        credential: 'G0Jf2GvnWd4IOGj6'
-      },
-      {
-        urls: 'turns:global.relay.metered.ca:443?transport=tcp',
-        username: '49763634d32cb15840386edc',
-        credential: 'G0Jf2GvnWd4IOGj6'
+        urls: 'turn:206.189.151.6:3478?transport=udp',
+        username: 'test',
+        credential: 'test123'
       }
     ],
     iceCandidatePoolSize: 10
