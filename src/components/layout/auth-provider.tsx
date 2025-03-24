@@ -1,32 +1,29 @@
 'use client';
 
-import { useAuthStore } from '@/store';
-import { User } from '@/types';
+import { useGetProfile } from '@/hooks/use-get-profile';
+import { useSocketStore } from '@/store';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { MiniKit } from '@worldcoin/minikit-js';
 import React, { useEffect } from 'react';
 
 import { ErudaProvider } from './ErudaProvider';
 
-export const AuthProvider = ({
-  children,
-  me
-}: {
-  children: React.ReactNode;
-  me: User | null;
-}) => {
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const queryClient = new QueryClient();
-  const setMe = useAuthStore(store => store.setMe);
+  const { initSocket } = useSocketStore();
+  const { handleGetProfile } = useGetProfile();
+  const { data: profile } = useGetProfile();
 
   useEffect(() => {
+    initSocket();
     MiniKit.install();
   }, []);
 
   useEffect(() => {
-    if (me) {
-      setMe(me);
+    if (!profile) {
+      handleGetProfile();
     }
-  }, []);
+  }, [profile]);
 
   return (
     <>

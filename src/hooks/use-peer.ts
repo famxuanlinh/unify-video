@@ -1,14 +1,17 @@
 'use client';
 
-import { useMainStore, useMessagingStore, usePeerStore } from '@/store';
+import {
+  useMainStore,
+  useMessagingStore,
+  usePeerStore,
+  useSocketStore
+} from '@/store';
 import { MESSAGE_EVENTS } from '@/types';
 import { log } from '@/utils';
 import Peer, { MediaConnection } from 'peerjs';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import { peer } from '@/lib';
-
-import { useSocketIO } from './use-socket-io';
+import { peerConfig } from '@/lib';
 
 export function usePeer() {
   const {
@@ -22,23 +25,24 @@ export function usePeer() {
   } = useMainStore();
   const { addMessage, clearMessages } = useMessagingStore();
   const {
-    setLocalStreamRef,
-    setRemoteStreamRef,
-    localStreamRef,
-    setDataConnectionRef,
-    setMediaConnectionRef,
-    setPeerConnectionRef
+    setLocalStream,
+    setRemoteStream,
+    localStream,
+    setDataConnection,
+    setMediaConnection,
+    setPeerConnection,
+    setPeer,
+    clearPeer
   } = usePeerStore();
+  const { socket: socketInit } = useSocketStore();
 
   const [myPeerId, setMyPeerId] = useState<string | null>(null);
 
-  const peerRef = useRef<Peer | null>(null);
-
-  const { socket, isConnected } = useSocketIO();
-
   useEffect(() => {
-    if (!socket) return;
-    log('Setting up socket listeners');
+    const socket = useSocketStore.getState().socket;
+    if (!socket || socket?.connected) return;
+
+    log('Setting up socket listeners', socket);
 
     socket.on(MESSAGE_EVENTS.MATCH, ({ peerId }: { peerId: string }) => {
       log('Matched with peer:', peerId);
@@ -48,7 +52,7 @@ export function usePeer() {
 
     socket.on(MESSAGE_EVENTS.WAITING, () => {
       log('Waiting for a match...');
-      setRemoteStreamRef(null);
+      setRemoteStream(null);
       setWaitingForMatch(true);
     });
 
@@ -58,7 +62,8 @@ export function usePeer() {
 
     socket.on(MESSAGE_EVENTS.END, () => {
       log('Call ended');
-      end();
+
+      // end();
     });
 
     socket.on(MESSAGE_EVENTS.ERROR, ({ message }: { message: string }) => {
@@ -75,55 +80,62 @@ export function usePeer() {
       log('Cleaning up socket listeners');
       Object.values(MESSAGE_EVENTS).forEach(event => socket.off(event));
     };
-  }, [socket]);
+  }, [socketInit]);
 
   useEffect(() => {
-    if (!isConnected) return;
+    const socket = useSocketStore.getState().socket;
+
+    if (!socket || socket?.connected) return;
     log('Socket is connected, setting up PeerJS');
+    const peer = usePeerStore.getState().peer;
+    if (peer) return;
 
-    peerRef.current = peer;
+    setPeer(peerConfig);
 
-    peer.on('open', id => {
+    peerConfig.on('open', id => {
       log('Peer open with ID:', id);
       setMyPeerId(id);
       setReady(true);
     });
 
-    peer.on('connection', conn => {
-      setPeerConnectionRef(conn);
-
-      conn.on('data', data => {
-        addMessage({ text: data as string, isMine: false });
-      });
-
+    peerConfig.on('connection', conn => {
+      setPeerConnection(conn);
+      conn.on('data', data =>
+        addMessage({ text: data as string, isMine: false })
+      );
       conn.on('close', () => {
         log('Data connection closed');
+
         clearMessages();
       });
     });
 
-    peer.on('call', call => {
+    peerConfig.on('call', call => {
       log('Incoming call from:', call.peer);
       answerCall(call);
     });
 
-    peer.on('error', err => {
+    peerConfig.on('error', err => {
       log('Peer error:', err);
       setError('Peer error');
     });
 
     return () => {
-      log('Cleaning up PeerJS');
-      peer.destroy();
+      if (peer && socket.connected) {
+        console.log('Destroying Peer instance...');
+        (peer as Peer).destroy();
+        clearPeer();
+      }
     };
-  }, [isConnected]);
+  }, [socketInit]);
 
   const connectToPeer = (peerId: string) => {
-    if (!peerRef.current) return;
+    const peer = usePeerStore.getState().peer;
+    if (!peer) return;
 
     try {
-      const conn = peerRef.current.connect(peerId);
-      setDataConnectionRef(conn);
+      const conn = peer.connect(peerId);
+      setDataConnection(conn);
 
       conn.on('open', () => log('Data connection opened'));
       conn.on('data', data => {
@@ -143,9 +155,11 @@ export function usePeer() {
   };
 
   const makeCall = (peerId: string) => {
-    const stream = localStreamRef?.id
-      ? localStreamRef
-      : usePeerStore.getState().localStreamRef;
+    const socket = useSocketStore.getState().socket;
+    const peer = usePeerStore.getState().peer;
+    const stream = localStream?.id
+      ? localStream
+      : usePeerStore.getState().localStream;
 
     if (!stream?.id) {
       log('makeCall Local stream not available');
@@ -154,12 +168,12 @@ export function usePeer() {
       return;
     }
 
-    const call = peerRef.current?.call(peerId, stream);
+    const call = peer?.call(peerId, stream);
     if (!call) return;
 
     call.on('stream', stream => {
       log('Remote stream received');
-      setRemoteStreamRef(stream);
+      setRemoteStream(stream);
     });
 
     call.on('close', () => {
@@ -168,13 +182,14 @@ export function usePeer() {
     });
     call.on('error', err => log('Call error:', err));
 
-    setMediaConnectionRef(call);
+    setMediaConnection(call);
   };
 
   const answerCall = (call: MediaConnection) => {
-    const stream = localStreamRef?.id
-      ? localStreamRef
-      : usePeerStore.getState().localStreamRef;
+    const socket = useSocketStore.getState().socket;
+    const stream = localStream?.id
+      ? localStream
+      : usePeerStore.getState().localStream;
 
     if (!stream?.id) {
       log('Local stream not available');
@@ -187,7 +202,7 @@ export function usePeer() {
 
     call.on('stream', stream => {
       log('Remote stream received from answer');
-      setRemoteStreamRef(stream);
+      setRemoteStream(stream);
     });
 
     call.on('close', () => {
@@ -197,7 +212,7 @@ export function usePeer() {
     call.on('error', err => {
       log('Call error:', err);
     });
-    setMediaConnectionRef(call);
+    setMediaConnection(call);
   };
 
   const startVideoStream = async (): Promise<boolean> => {
@@ -208,7 +223,7 @@ export function usePeer() {
         video: true,
         audio: true
       });
-      setLocalStreamRef(videoStream);
+      setLocalStream(videoStream);
 
       log('User media obtained successfully');
       setLoading(false);
@@ -225,7 +240,8 @@ export function usePeer() {
   };
 
   const join = async () => {
-    if (!ready || !isConnected || !socket || !peerRef.current) {
+    const socket = useSocketStore.getState().socket;
+    if (!ready || !socket?.connect || !socket) {
       log('Not ready to join');
       setError('Not ready to join');
 
@@ -238,56 +254,74 @@ export function usePeer() {
       log('Joining with peer ID:', myPeerId);
       socket.emit('JOIN', { peerId: myPeerId });
     } else {
-      log('Failed to   join - stream not initialized');
-      setError('Failed to   join - stream not initialized');
+      log('Failed to join - stream not initialized');
+      setError('Failed to join - stream not initialized');
     }
   };
 
   const skip = () => {
-    const dataConnection = usePeerStore.getState().dataConnectionRef;
-    const mediaConnection = usePeerStore.getState().mediaConnectionRef;
-    const peerConnection = usePeerStore.getState().peerConnectionRef;
+    const dataConnection = usePeerStore.getState().dataConnection;
+    const mediaConnection = usePeerStore.getState().mediaConnection;
+    const peerConnection = usePeerStore.getState().peerConnection;
 
     if (dataConnection) {
       log('Closing data connection...');
       dataConnection.close();
-      setDataConnectionRef(null);
+      setDataConnection(null);
     }
     if (peerConnection) {
       log('Closing peer connection...');
       peerConnection.close();
-      setPeerConnectionRef(null);
+      setPeerConnection(null);
     }
 
     if (mediaConnection) {
       log('Closing media connection...');
       mediaConnection.close();
-      setMediaConnectionRef(null);
+      setMediaConnection(null);
     }
   };
 
   const send = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const peerConnectionRef = usePeerStore.getState().peerConnectionRef;
-    const dataConnectionRef = usePeerStore.getState().dataConnectionRef;
+    const peerConnection = usePeerStore.getState().peerConnection;
+    const dataConnection = usePeerStore.getState().dataConnection;
 
     const input = e.currentTarget.elements[0] as HTMLInputElement;
     if (!input.value) return;
 
     addMessage({ text: input.value, isMine: true });
 
-    if (dataConnectionRef) {
-      dataConnectionRef.send(input.value);
+    if (dataConnection) {
+      dataConnection.send(input.value);
     }
-    if (peerConnectionRef) {
-      peerConnectionRef.send(input.value);
+    if (peerConnection) {
+      peerConnection.send(input.value);
     }
     input.value = '';
   };
 
   const end = () => {
+    const socket = useSocketStore.getState().socket;
     socket?.emit(MESSAGE_EVENTS.END);
     window.location.reload();
+
+    // const peer = usePeerStore.getState().peer;
+    // socket?.emit(MESSAGE_EVENTS.END);
+
+    // if (peer) {
+    //   peer.destroy(); // Close WebRTC connection
+    // }
+
+    // if (localStream) {
+    //   localStream.getTracks().forEach(track => track.stop());
+    // }
+
+    // setLoading(false);
+    // setStarted(false);
+    // setWaitingForMatch(false);
+    // setRemoteStream(null);
+    // setLocalStream(null);
   };
 
   return {

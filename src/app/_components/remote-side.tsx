@@ -12,17 +12,17 @@ import { Side } from '@/components';
 
 export const RemoteSide = () => {
   const { started, loading, waitingForMatch } = useMainStore();
-  const { remoteStreamRef } = usePeerStore();
+  const { remoteStream } = usePeerStore();
 
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
-    if (remoteStreamRef && remoteVideoRef.current) {
-      remoteVideoRef.current.srcObject = remoteStreamRef;
-    } else if (!remoteStreamRef && remoteVideoRef.current) {
+    if (remoteStream && remoteVideoRef.current) {
+      remoteVideoRef.current.srcObject = remoteStream;
+    } else if (!remoteStream && remoteVideoRef.current) {
       remoteVideoRef.current.srcObject = null;
     }
-  }, [remoteStreamRef]);
+  }, [remoteStream]);
 
   function renderOverlay() {
     if (loading) return <LoadingOverlay />;

@@ -4,9 +4,19 @@ export type User = {
   coverImage: string | null;
   fullName: string | null;
   dob: string | null;
-  gender: Gender;
-  inviterId: string;
+  gender: string;
+  seekingSettings: SeekingSettings;
 };
+
+interface Location {
+  limit: boolean;
+  miles: number;
+}
+
+interface AgeRange {
+  min: number;
+  max: number;
+}
 
 export enum Gender {
   Male = 'Male',
@@ -15,10 +25,27 @@ export enum Gender {
   Other = 'Other'
 }
 
-export type UserUpdatePayload = {
+export type UpdateUserPayload = {
   avatar?: string;
   coverImage?: string;
-  fullName?: string;
-  dob?: string;
-  gender?: string;
+  fullName: string;
+  dob: string;
+  gender: string;
+  seekingSettings: SeekingSettings;
 };
+
+interface SeekingSettings {
+  genders: string[];
+  ageRange: AgeRange;
+  location: Location;
+}
+
+interface Location {
+  limit: boolean;
+  miles: number;
+}
+
+interface AgeRange {
+  min: number;
+  max: number;
+}

@@ -1,6 +1,5 @@
 'use client';
 
-import { useSocketIO } from '@/hooks/use-socket-io';
 import { useMainStore, usePeerStore } from '@/store';
 import React, { useState, useEffect } from 'react';
 
@@ -8,7 +7,6 @@ export const DiagnosticOverlay = () => {
   const { onlineUsersCount, waitingForMatch } = useMainStore();
 
   const [isVisible, setIsVisible] = useState(false);
-  const { isConnected } = useSocketIO();
   const [diagnosticInfo, setDiagnosticInfo] = useState({
     browserInfo: '',
     webRTCSupport: false,
@@ -30,20 +28,19 @@ export const DiagnosticOverlay = () => {
     }
   }, []);
 
-  const { localStreamRef, remoteStreamRef } = usePeerStore();
+  const { localStream, remoteStream } = usePeerStore();
 
   useEffect(() => {
-    // Update diagnostic info every second
     const interval = setInterval(() => {
       setDiagnosticInfo(prev => ({
         ...prev,
-        localStreamStatus: localStreamRef ? 'Active' : 'Not initialized',
-        remoteStreamStatus: remoteStreamRef ? 'Connected' : 'Not connected'
+        localStreamStatus: localStream ? 'Active' : 'Not initialized',
+        remoteStreamStatus: remoteStream ? 'Connected' : 'Not connected'
       }));
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [localStreamRef, remoteStreamRef]);
+  }, [localStream, remoteStream]);
 
   const toggleVisibility = () => {
     setIsVisible(!isVisible);
@@ -75,9 +72,9 @@ export const DiagnosticOverlay = () => {
       </div>
 
       <div className="space-y-1 text-sm">
-        <p>
+        {/* <p>
           <strong>Socket IO Ready:</strong> {isConnected ? 'Yes' : 'No'}
-        </p>
+        </p> */}
         <p>
           <strong>Online Users:</strong> {onlineUsersCount}
         </p>

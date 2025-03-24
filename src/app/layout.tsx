@@ -1,9 +1,6 @@
 import '@/styles/globals.css';
-import UnifyApi from '@/apis';
-import { AUTH_TOKEN_KEY } from '@/constants';
 import { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import { cookies } from 'next/headers';
 import { ReactNode } from 'react';
 
 import { MainLayout, Toaster } from '@/components';
@@ -35,26 +32,13 @@ interface RootLayoutProps {
 }
 
 const RootLayout = async ({ children }: RootLayoutProps) => {
-  let me = null;
-
-  const cookieStore = await cookies();
-  const tokensRaw = cookieStore.get(AUTH_TOKEN_KEY);
-
-  if (tokensRaw) {
-    try {
-      me = await UnifyApi.user.get();
-    } catch (e) {
-      console.log('MainLayout', e);
-    }
-  }
-
   return (
     <html lang="en">
       <body
         className={cn(inter.variable, 'font-primary')}
         suppressHydrationWarning
       >
-        <MainLayout me={me}>{children}</MainLayout>
+        <MainLayout>{children}</MainLayout>
         <Toaster />
       </body>
     </html>

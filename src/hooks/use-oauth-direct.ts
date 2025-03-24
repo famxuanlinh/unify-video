@@ -2,12 +2,11 @@
 
 import UnifyApi from '@/apis';
 import { AUTH_TOKEN_KEY } from '@/constants';
-import { useAuthStore } from '@/store';
 import { Base64 } from '@/utils';
 import * as Sentry from '@sentry/browser';
 import { MiniKit } from '@worldcoin/minikit-js';
 import { AxiosError } from 'axios';
-import { deleteCookie, setCookie } from 'cookies-next';
+import { setCookie } from 'cookies-next';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -20,8 +19,6 @@ export const useOAuthDirect = () => {
   const [torusLoading, setTorusLoading] = useState(true);
   const [isNewUser, setIsNewUser] = useState<boolean>();
   const [isRegisterLoading, setIsRegisterLoading] = useState<boolean>();
-
-  const { setMe } = useAuthStore();
 
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -146,12 +143,6 @@ export const useOAuthDirect = () => {
     })();
   }, [idToken, providerId]);
 
-  const handleLogOut = () => {
-    deleteCookie(AUTH_TOKEN_KEY);
-    setMe(null);
-    window.location.href = '/';
-  };
-
   return {
     oauthDirectState: {
       torusLoading,
@@ -161,8 +152,7 @@ export const useOAuthDirect = () => {
     },
     oauthDirectMethods: {
       signUp,
-      handleRegisterFormSubmit,
-      handleLogOut
+      handleRegisterFormSubmit
     }
   };
 };

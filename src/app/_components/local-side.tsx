@@ -13,17 +13,17 @@ import { Side } from '@/components';
 
 export const LocalSide = () => {
   const { started, loading, error } = useMainStore();
-  const { localStreamRef } = usePeerStore();
+  const { localStream } = usePeerStore();
 
   const localVideoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
-    if (localStreamRef && localVideoRef.current) {
-      localVideoRef.current.srcObject = localStreamRef;
-    } else if (!localStreamRef && localVideoRef.current) {
+    if (localStream && localVideoRef.current) {
+      localVideoRef.current.srcObject = localStream;
+    } else if (!localStream && localVideoRef.current) {
       localVideoRef.current.srcObject = null;
     }
-  }, [localStreamRef]);
+  }, [localStream]);
 
   const renderOverlay = () => {
     if (error) {

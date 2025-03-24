@@ -25,7 +25,7 @@ export const debugMode =
 // peer.on('open', id => console.log('Peer Open:', id));
 // peer.on('error', err => console.error('PeerJS Error:', err));
 
-export const peer = new Peer({
+export const peerConfig = new Peer({
   host: process.env.NEXT_PUBLIC_PEER_HOST || '0.peerjs.com',
   port: Number(env.PEER_PORT) || 443,
   path: env.PEER_PATH || '/',

@@ -1,21 +1,24 @@
 import UnifyApi from '@/apis';
 import { AUTH_TOKEN_KEY, env } from '@/constants';
-import axios from 'axios';
-import { getCookie, setCookie, deleteCookie } from 'cookies-next';
+import axios, { AxiosInstance } from 'axios';
+import { getCookie, deleteCookie, setCookie } from 'cookies-next/client';
 
 const isServer = typeof window === 'undefined';
 
+// process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 axios.defaults.headers.post['Content-Type'] =
   'application/x-www-form-urlencoded';
 
 const API_BASE_URLS = {
   main: env.API_BASE_URL,
-  auth: env.API_AUTH_URL
+  auth: env.API_AUTH_URL,
+  current: env.API_CURRENT_URL
 };
 
 // Create multiple axios instances
 export const apiMain = axios.create({ baseURL: API_BASE_URLS.main });
 export const apiAuth = axios.create({ baseURL: API_BASE_URLS.auth });
+export const apiCurrent = axios.create({ baseURL: API_BASE_URLS.current });
 
 let isRefreshing = false;
 let refreshSubscribers: ((token: string) => void)[] = [];
@@ -25,20 +28,22 @@ const onRefreshed = (token: string) => {
   refreshSubscribers = [];
 };
 
-const handleRefresh = async () => {
-  const userRaw = JSON.parse((getCookie(AUTH_TOKEN_KEY) as string) || '{}');
-  if (!userRaw.refresh) return null;
+export const handleRefresh = async () => {
+  const token = getCookie(AUTH_TOKEN_KEY);
+
+  if (!token) return null;
+
+  const tokens = JSON.parse(token);
 
   try {
     const res = await UnifyApi.auth.refreshSession({
-      refreshToken: userRaw.refresh
+      refreshToken: tokens.refresh
     });
 
     if (res.access) {
-      setCookie(AUTH_TOKEN_KEY, `${JSON.stringify(res)}`);
-      onRefreshed(res.access);
+      setCookie(AUTH_TOKEN_KEY, JSON.stringify(res));
 
-      return res.access;
+      return res;
     }
   } catch (error) {
     console.error('Refresh token failed:', error);
@@ -48,63 +53,68 @@ const handleRefresh = async () => {
   }
 };
 
-apiMain.interceptors.request.use(
-  async config => {
-    if (isServer) {
-      const { cookies } = await import('next/headers');
-      const cookieStore = await cookies();
-      const userRaw = cookieStore.get(AUTH_TOKEN_KEY)?.value;
+const setupInterceptors = (apiInstance: AxiosInstance) => {
+  apiInstance.interceptors.request.use(
+    async config => {
+      if (isServer) {
+        const { cookies } = await import('next/headers');
+        const cookieStore = await cookies();
+        const tokensRaw = cookieStore.get(AUTH_TOKEN_KEY)?.value;
 
-      if (userRaw) {
-        const { access } = JSON.parse(userRaw);
-        config.headers['x-authorization'] = access;
+        if (tokensRaw) {
+          const { access } = JSON.parse(tokensRaw);
+          config.headers['x-authorization'] = access;
+        }
+      } else if (config.headers) {
+        const tokensRaw = JSON.parse(
+          (getCookie(AUTH_TOKEN_KEY) as string) || '{}'
+        );
+
+        if (tokensRaw.access) {
+          config.headers['x-authorization'] = tokensRaw.access;
+        }
+
+        config.headers['Content-Type'] = 'application/json';
       }
-    } else if (config.headers) {
-      const userRaw = JSON.parse((getCookie(AUTH_TOKEN_KEY) as string) || '{}');
 
-      if (userRaw.access) {
-        config.headers['x-authorization'] = userRaw.access;
-      }
+      return config;
+    },
+    error => Promise.reject(error)
+  );
 
-      config.headers['Content-Type'] = 'application/json';
-    }
-
-    return config;
-  },
-  error => Promise.reject(error)
-);
-
-apiMain.interceptors.response.use(
-  response => response,
-  async error => {
-    const originalRequest = error.config;
-
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      if (isRefreshing) {
-        return new Promise(resolve => {
-          refreshSubscribers.push(token => {
-            originalRequest.headers['Authorization'] = `Bearer ${token}`;
-            resolve(apiMain(originalRequest));
+  apiInstance.interceptors.response.use(
+    response => response,
+    async error => {
+      const originalRequest = error.config;
+      if (error.response?.status === 401 && !originalRequest._retry) {
+        originalRequest._retry = true;
+        if (isRefreshing) {
+          return new Promise(resolve => {
+            refreshSubscribers.push(token => {
+              originalRequest.headers['x-authorization'] = token;
+              resolve(apiInstance(originalRequest));
+            });
           });
-        });
-      }
+        }
+        isRefreshing = true;
+        const newToken = await handleRefresh();
 
-      originalRequest._retry = true;
-      isRefreshing = true;
+        originalRequest.headers['x-authorization'] = newToken;
+        isRefreshing = false;
+        if (newToken) {
+          onRefreshed(newToken.access);
+          originalRequest.headers['x-authorization'] = newToken;
 
-      const newToken = await handleRefresh();
-      isRefreshing = false;
-
-      if (newToken) {
-        onRefreshed(newToken);
-        originalRequest.headers['Authorization'] = `Bearer ${newToken}`;
-
-        return apiMain(originalRequest);
+          return apiInstance(originalRequest);
+        } else {
+          return null;
+        }
       }
 
       return Promise.reject(error);
     }
+  );
+};
 
-    return Promise.reject(error);
-  }
-);
+setupInterceptors(apiMain);
+setupInterceptors(apiAuth);
