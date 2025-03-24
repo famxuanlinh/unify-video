@@ -15,7 +15,7 @@ import {
   Avatar,
   AvatarFallback,
   AvatarImage,
-  LoginButton,
+  SigninButton,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -45,7 +45,8 @@ const Header = () => {
               <Avatar className="size-10">
                 <AvatarImage src={me?.avatar || ''} />
                 <AvatarFallback>
-                  {me?.fullName?.slice(0, 2) || 'U'}
+                  {me?.fullName?.slice(0, 2) ||
+                    parseToUsername(me.userId).slice(0, 2)}
                 </AvatarFallback>
               </Avatar>
             </DropdownMenuTrigger>
@@ -65,7 +66,7 @@ const Header = () => {
           </DropdownMenu>
         </>
       ) : (
-        <LoginButton />
+        <SigninButton />
       )}
 
       <Dialog

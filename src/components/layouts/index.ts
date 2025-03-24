@@ -1,4 +1,4 @@
 export * from './main-layout';
 export * from './side';
-export * from './auth-provider';
+export * from './auth-layout';
 export * from './profile-form';

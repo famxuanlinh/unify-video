@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { AuthProvider } from './auth-provider';
+import { AuthLayout } from './auth-layout';
 import Header from './header';
 
 interface MainLayoutProps {
@@ -11,7 +11,7 @@ export const MainLayout = async ({ children }: MainLayoutProps) => {
   return (
     <div className="relative">
       <Header />
-      <AuthProvider>{children}</AuthProvider>
+      <AuthLayout>{children}</AuthLayout>
     </div>
   );
 };
