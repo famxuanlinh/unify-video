@@ -7,5 +7,14 @@ export const env = {
   PEER_PORT: process.env.NEXT_PUBLIC_PEER_PORT || '',
   PEER_PATH: process.env.NEXT_PUBLIC_PEER_PATH || '',
   SOCKET_URL:
-    process.env.NEXT_PUBLIC_SOCKET_URL || 'https://dev-indexer.unify.mx/'
+    process.env.NEXT_PUBLIC_SOCKET_URL || 'https://dev-indexer.unify.mx/',
+
+  IPFS_UPLOAD_SERVER_URL:
+    process.env.NEXT_PUBLIC_IPFS_UPLOAD_SERVER_URL ??
+    'https://ipfs-ops-api.rep.run',
+  IPFS_BASE_URL:
+    process.env.NEXT_PUBLIC_IPFS_BASE_URL ??
+    'https://ipfs-ops-api.rep.run/ipfs/',
+  IPFS_UPLOAD_FILE_PATHNAME:
+    process.env.NEXT_PUBLIC_IPFS_UPLOAD_FILE_PATHNAME ?? '/api/v1/uploadFile'
 };

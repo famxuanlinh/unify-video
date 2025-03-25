@@ -14,3 +14,4 @@ export * from './messages-box';
 export * from './start-video-chat-overlay';
 export * from './remote-video-overlay';
 export * from './welcome-overlay';
+export * from './upload-button';
