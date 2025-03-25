@@ -1,6 +1,10 @@
+import { env } from '@/constants';
+
 export * from './auth';
 export * from './base64';
 export * from './helpers';
+export * from './ipfs.utils';
+export * from './image-compression';
 
 export function b64EncodeUnicode(str: string) {
   return btoa(
@@ -19,4 +23,10 @@ export function b64DecodeUnicode(str: string) {
       })
       .join('')
   );
+}
+
+export function getImageUrl(hash?: string | null) {
+  if (!hash) return undefined;
+
+  return env.IPFS_BASE_URL + hash;
 }

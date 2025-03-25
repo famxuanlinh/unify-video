@@ -13,6 +13,8 @@ import { useEffect, useState } from 'react';
 
 import { peerConfig } from '@/lib';
 
+import { useGetProfile } from './use-get-profile';
+
 export function usePeer() {
   const {
     setError,
@@ -35,6 +37,7 @@ export function usePeer() {
     clearPeer
   } = usePeerStore();
   const { socket: socketInit } = useSocketStore();
+  const { handleGetProfile } = useGetProfile();
 
   const [myPeerId, setMyPeerId] = useState<string | null>(null);
 
@@ -42,13 +45,17 @@ export function usePeer() {
     const socket = useSocketStore.getState().socket;
     if (!socket || socket?.connected) return;
 
-    log('Setting up socket listeners', socket);
+    log('Setting up socket listeners');
 
-    socket.on(MESSAGE_EVENTS.MATCH, ({ peerId }: { peerId: string }) => {
-      log('Matched with peer:', peerId);
-      setWaitingForMatch(false);
-      connectToPeer(peerId);
-    });
+    socket.on(
+      MESSAGE_EVENTS.MATCH,
+      ({ peerId, userId }: { peerId: string; userId: string }) => {
+        log('Matched with peer:', peerId);
+        handleGetProfile(userId);
+        setWaitingForMatch(false);
+        connectToPeer(peerId);
+      }
+    );
 
     socket.on(MESSAGE_EVENTS.WAITING, () => {
       log('Waiting for a match...');
@@ -137,15 +144,15 @@ export function usePeer() {
       const conn = peer.connect(peerId);
       setDataConnection(conn);
 
-      conn.on('open', () => log('Data connection opened'));
-      conn.on('data', data => {
-        addMessage({ text: data as string, isMine: false });
-      });
+      // conn.on('open', () => log('Data connection opened'));
+      // conn.on('data', data => {
+      //   addMessage({ text: data as string, isMine: false });
+      // });
 
-      conn.on('close', () => {
-        log('Connection closed');
-        clearMessages();
-      });
+      // conn.on('close', () => {
+      //   log('Connection closed');
+      //   clearMessages();
+      // });
 
       makeCall(peerId);
     } catch (err) {
@@ -179,6 +186,7 @@ export function usePeer() {
     call.on('close', () => {
       log('Remote stream received');
       socket?.emit(MESSAGE_EVENTS.SKIP);
+      clearMessages();
     });
     call.on('error', err => log('Call error:', err));
 

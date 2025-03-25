@@ -35,6 +35,7 @@
     "@tanstack/react-query": "^5.62.11",
     "@worldcoin/minikit-js": "^1.6.1",
     "axios": "^1.7.7",
+    "browser-image-compression": "^2.0.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "2.1.1",
     "cmdk": "1.0.0",

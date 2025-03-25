@@ -2,7 +2,7 @@
 
 import { AUTH_TOKEN_KEY } from '@/constants';
 import { useAuthStore } from '@/store';
-import { parseToUsername } from '@/utils';
+import { getImageUrl, parseToUsername } from '@/utils';
 import { deleteCookie } from 'cookies-next';
 import React, { useState } from 'react';
 
@@ -43,7 +43,10 @@ const Header = () => {
           <DropdownMenu>
             <DropdownMenuTrigger>
               <Avatar className="size-10">
-                <AvatarImage src={me?.avatar || ''} />
+                <AvatarImage
+                  className="object-cover"
+                  src={getImageUrl(me?.avatar)}
+                />
                 <AvatarFallback>
                   {me?.fullName?.slice(0, 2) ||
                     parseToUsername(me.userId).slice(0, 2)}

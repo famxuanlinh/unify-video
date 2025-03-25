@@ -19,7 +19,7 @@ export const VideoPlayer: FC<VideoPlayerProps> = ({
       ref={videoRef}
       className={
         'absolute top-0 left-0 h-full w-full object-cover ' +
-        (isLocal ? 'bg-[#07012c]' : 'bg-[#644af1]') +
+        (isLocal ? 'bg-[#07012c]' : 'bg-gray-500') +
         (isLocal ? ' scale-x-[-1] transform' : '')
       }
       {...props}
