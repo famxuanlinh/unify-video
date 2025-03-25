@@ -1,7 +1,10 @@
 'use client';
-import { useUpdateUser } from '@/hooks';
+import { UploadButton } from '@/app/_components';
+import { env } from '@/constants';
+import { useUpdateProfile } from '@/hooks';
 import { useAuthStore } from '@/store';
 import { Gender, UpdateUserPayload } from '@/types';
+import { parseToUsername } from '@/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { format } from 'date-fns';
 import { Calendar as CalendarIcon } from 'lucide-react';
@@ -32,7 +35,10 @@ import {
   FormLabel,
   FormMessage,
   Input,
-  DualRangeSlider
+  DualRangeSlider,
+  Avatar,
+  AvatarImage,
+  AvatarFallback
 } from '@/components';
 
 import { cn } from '@/lib';
@@ -53,8 +59,14 @@ export function ProfileForm() {
     me?.seekingSettings.location.limit || false
   );
 
-  console.log('🚀 ~ ProfileForm ~ me:', me);
-  const { isLoading, handleUpdateUser } = useUpdateUser();
+  const {
+    isLoading,
+    handleUpdateProfile,
+    handleUploadAvatar,
+    handleDeleteAvatar,
+    avatarFile,
+    isUploading
+  } = useUpdateProfile();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -91,7 +103,7 @@ export function ProfileForm() {
       }
     };
 
-    handleUpdateUser(payload);
+    handleUpdateProfile(payload);
     try {
       console.log(values);
     } catch (error) {
@@ -106,6 +118,34 @@ export function ProfileForm() {
         onSubmit={form.handleSubmit(onSubmit)}
         className="mx-auto max-w-3xl space-y-8"
       >
+        <div className="flex items-center gap-6">
+          <Avatar className="size-20">
+            <AvatarImage
+              className="object-cover"
+              src={env.IPFS_BASE_URL + avatarFile}
+            />
+            <AvatarFallback>
+              {me?.fullName?.slice(0, 2) ||
+                parseToUsername(me?.userId as string).slice(0, 2)}
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex gap-4">
+            <UploadButton
+              accept="image/*"
+              isLoading={isUploading}
+              onFileUpload={handleUploadAvatar}
+            >
+              Upload avatar
+            </UploadButton>
+            <Button
+              variant={'secondary'}
+              size={'sm'}
+              onClick={handleDeleteAvatar}
+            >
+              Delete
+            </Button>
+          </div>
+        </div>
         <FormField
           control={form.control}
           name="name"
