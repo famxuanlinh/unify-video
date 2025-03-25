@@ -2,6 +2,7 @@
 
 import { useMainStore } from '@/store';
 import { getImageUrl, parseToUsername } from '@/utils';
+import { MicOff } from 'lucide-react';
 import React, { FC, ReactNode, RefObject } from 'react';
 
 import { Avatar, AvatarFallback, AvatarImage, VideoPlayer } from '@/components';
@@ -19,7 +20,7 @@ const SideComponent: FC<SideProps> = ({
   className = '',
   isLocal = true
 }) => {
-  const { incomingUserInfo } = useMainStore();
+  const { incomingUserInfo, isIncomingMicOn } = useMainStore();
 
   const userName = incomingUserInfo?.fullName
     ? incomingUserInfo?.fullName
@@ -28,16 +29,23 @@ const SideComponent: FC<SideProps> = ({
   return (
     <div className={`relative portrait:h-1/2 landscape:w-1/2 ${className}`}>
       {!isLocal && incomingUserInfo ? (
-        <div className="absolute top-4 left-4 z-20 flex items-center space-x-2">
-          <Avatar className="size-10">
-            <AvatarImage
-              className="object-cover"
-              src={getImageUrl(incomingUserInfo?.avatar)}
-            />
-            <AvatarFallback>{userName.slice(0, 2)}</AvatarFallback>
-          </Avatar>
-          <p> {userName}</p>
-        </div>
+        <>
+          <div className="absolute top-4 left-4 z-20 flex items-center space-x-2">
+            <Avatar className="size-10">
+              <AvatarImage
+                className="object-cover"
+                src={getImageUrl(incomingUserInfo?.avatar)}
+              />
+              <AvatarFallback>{userName.slice(0, 2)}</AvatarFallback>
+            </Avatar>
+            <p> {userName}</p>
+          </div>
+          <div className="absolute right-4 bottom-4 z-50">
+            {isIncomingMicOn === false ? (
+              <MicOff className="size-4.5 text-white" />
+            ) : null}
+          </div>
+        </>
       ) : null}
       {videoRef && (
         <VideoPlayer videoRef={videoRef} isLocal={isLocal} muted={isLocal} />

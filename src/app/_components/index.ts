@@ -15,3 +15,5 @@ export * from './start-video-chat-overlay';
 export * from './remote-video-overlay';
 export * from './welcome-overlay';
 export * from './upload-button';
+export * from './camera-button';
+export * from './mic-button';
