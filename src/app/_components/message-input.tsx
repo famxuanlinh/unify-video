@@ -8,8 +8,16 @@ import React from 'react';
 export const MessageInput = () => {
   const { send } = usePeer();
 
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const input = e.currentTarget.elements[0] as HTMLInputElement;
+    if (!input.value) return;
+    send({ text: input.value });
+    input.value = '';
+  };
+
   return (
-    <form className="flex gap-3 text-white" onSubmit={send}>
+    <form className="flex gap-3 text-white" onSubmit={handleSubmit}>
       <div className="relative flex-1">
         <input
           className="h-12 w-full rounded-full bg-[#00000052] px-4 pr-10 text-xs text-white placeholder-gray-300 focus:outline-hidden"

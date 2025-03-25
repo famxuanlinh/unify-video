@@ -1,5 +1,6 @@
 'use client';
 
+import { MEDIA_STATUS } from '@/constants';
 import {
   useMainStore,
   useMessagingStore,
@@ -23,6 +24,9 @@ export function usePeer() {
     setStarted,
     setOnlineUsersCount,
     setWaitingForMatch,
+    setIncomingUserInfo,
+    setIsIncomingCameraOn,
+    setIsIncomingMicOn,
     ready
   } = useMainStore();
   const { addMessage, clearMessages } = useMessagingStore();
@@ -107,9 +111,36 @@ export function usePeer() {
 
     peerConfig.on('connection', conn => {
       setPeerConnection(conn);
-      conn.on('data', data =>
-        addMessage({ text: data as string, isMine: false })
-      );
+      conn.on('data', rawData => {
+        const data = rawData as {
+          type?: MEDIA_STATUS;
+          isCameraOn?: boolean;
+          isMicOn?: boolean;
+          text?: string;
+        };
+
+        if (
+          data?.type === MEDIA_STATUS.CAMERA_STATUS &&
+          data.isCameraOn !== undefined
+        ) {
+          setIsIncomingCameraOn(data.isCameraOn);
+
+          return;
+        }
+
+        if (
+          data?.type === MEDIA_STATUS.MIC_STATUS &&
+          data.isMicOn !== undefined
+        ) {
+          setIsIncomingMicOn(data.isMicOn);
+
+          return;
+        }
+
+        if (data?.text) {
+          addMessage({ text: data.text, isMine: false });
+        }
+      });
       conn.on('close', () => {
         log('Data connection closed');
 
@@ -186,6 +217,7 @@ export function usePeer() {
     call.on('close', () => {
       log('Remote stream received');
       socket?.emit(MESSAGE_EVENTS.SKIP);
+      setIncomingUserInfo(null);
       clearMessages();
     });
     call.on('error', err => log('Call error:', err));
@@ -216,6 +248,8 @@ export function usePeer() {
     call.on('close', () => {
       log('Remote Call closed');
       socket?.emit(MESSAGE_EVENTS.SKIP);
+      setIncomingUserInfo(null);
+      clearMessages();
     });
     call.on('error', err => {
       log('Call error:', err);
@@ -268,6 +302,7 @@ export function usePeer() {
   };
 
   const skip = () => {
+    setIncomingUserInfo(null);
     const dataConnection = usePeerStore.getState().dataConnection;
     const mediaConnection = usePeerStore.getState().mediaConnection;
     const peerConnection = usePeerStore.getState().peerConnection;
@@ -290,23 +325,25 @@ export function usePeer() {
     }
   };
 
-  const send = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const send = (data: {
+    type?: MEDIA_STATUS;
+    isCameraOn?: boolean;
+    isMicOn?: boolean;
+    text?: string;
+  }) => {
     const peerConnection = usePeerStore.getState().peerConnection;
     const dataConnection = usePeerStore.getState().dataConnection;
 
-    const input = e.currentTarget.elements[0] as HTMLInputElement;
-    if (!input.value) return;
-
-    addMessage({ text: input.value, isMine: true });
+    if (data.text) {
+      addMessage({ text: data.text, isMine: true });
+    }
 
     if (dataConnection) {
-      dataConnection.send(input.value);
+      dataConnection.send(data);
     }
     if (peerConnection) {
-      peerConnection.send(input.value);
+      peerConnection.send(data);
     }
-    input.value = '';
   };
 
   const end = () => {
