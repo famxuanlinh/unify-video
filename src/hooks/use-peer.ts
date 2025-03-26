@@ -122,34 +122,7 @@ export function usePeer() {
     peerConfig.on('connection', conn => {
       setPeerConnection(conn);
       conn.on('data', rawData => {
-        const data = rawData as {
-          type?: MEDIA_STATUS;
-          isCameraOn?: boolean;
-          isMicOn?: boolean;
-          text?: string;
-        };
-
-        if (
-          data?.type === MEDIA_STATUS.CAMERA_STATUS &&
-          data.isCameraOn !== undefined
-        ) {
-          setIsIncomingCameraOn(data.isCameraOn);
-
-          return;
-        }
-
-        if (
-          data?.type === MEDIA_STATUS.MIC_STATUS &&
-          data.isMicOn !== undefined
-        ) {
-          setIsIncomingMicOn(data.isMicOn);
-
-          return;
-        }
-
-        if (data?.text) {
-          addMessage({ text: data.text, isMine: false });
-        }
+        getData(rawData);
       });
       conn.on('close', () => {
         log('Data connection closed');
@@ -186,9 +159,9 @@ export function usePeer() {
       setDataConnection(conn);
 
       // conn.on('open', () => log('Data connection opened'));
-      // conn.on('data', data => {
-      //   addMessage({ text: data as string, isMine: false });
-      // });
+      conn.on('data', rawData => {
+        getData(rawData);
+      });
 
       // conn.on('close', () => {
       //   log('Connection closed');
@@ -311,6 +284,34 @@ export function usePeer() {
     }
   };
 
+  const getData = (rawData: unknown) => {
+    const data = rawData as {
+      type?: MEDIA_STATUS;
+      isCameraOn?: boolean;
+      isMicOn?: boolean;
+      text?: string;
+    };
+
+    if (
+      data?.type === MEDIA_STATUS.CAMERA_STATUS &&
+      data.isCameraOn !== undefined
+    ) {
+      setIsIncomingCameraOn(data.isCameraOn);
+
+      return;
+    }
+
+    if (data?.type === MEDIA_STATUS.MIC_STATUS && data.isMicOn !== undefined) {
+      setIsIncomingMicOn(data.isMicOn);
+
+      return;
+    }
+
+    if (data?.text) {
+      addMessage({ text: data.text, isMine: false });
+    }
+  };
+
   const skip = () => {
     setIncomingUserInfo(null);
     const dataConnection = usePeerStore.getState().dataConnection;
@@ -358,25 +359,6 @@ export function usePeer() {
 
   const end = () => {
     window.location.reload();
-    // const socket = useSocketStore.getState().socket;
-    // socket?.emit(MESSAGE_EVENTS.END);
-
-    // const peer = usePeerStore.getState().peer;
-    // socket?.emit(MESSAGE_EVENTS.END);
-
-    // if (peer) {
-    //   peer.destroy(); // Close WebRTC connection
-    // }
-
-    // if (localStream) {
-    //   localStream.getTracks().forEach(track => track.stop());
-    // }
-
-    // setLoading(false);
-    // setStarted(false);
-    // setWaitingForMatch(false);
-    // setRemoteStream(null);
-    // setLocalStream(null);
   };
 
   return {
