@@ -53,11 +53,21 @@ export function usePeer() {
 
     socket.on(
       MESSAGE_EVENTS.MATCH,
-      ({ peerId, userId }: { peerId: string; userId: string }) => {
+      ({
+        peerId,
+        userId,
+        isCaller
+      }: {
+        peerId: string;
+        userId: string;
+        isCaller: boolean;
+      }) => {
         log('Matched with peer:', peerId);
         handleGetProfile(userId);
         setWaitingForMatch(false);
-        connectToPeer(peerId);
+        if (isCaller) {
+          connectToPeer(peerId);
+        }
       }
     );
 
@@ -347,9 +357,9 @@ export function usePeer() {
   };
 
   const end = () => {
-    const socket = useSocketStore.getState().socket;
-    socket?.emit(MESSAGE_EVENTS.END);
     window.location.reload();
+    // const socket = useSocketStore.getState().socket;
+    // socket?.emit(MESSAGE_EVENTS.END);
 
     // const peer = usePeerStore.getState().peer;
     // socket?.emit(MESSAGE_EVENTS.END);
