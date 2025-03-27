@@ -27,7 +27,7 @@ export const LocalSide = () => {
 
   const renderOverlay = () => {
     if (error) {
-      return <ErrorOverlay message={error} />;
+      return <ErrorOverlay />;
     }
 
     if (loading) {

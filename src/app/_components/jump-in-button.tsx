@@ -6,7 +6,7 @@ import { VideoIcon } from 'lucide-react';
 import React from 'react';
 
 export const JumpInButton = () => {
-  const { started } = useMainStore();
+  const { started, error } = useMainStore();
   const { ready } = useMainStore();
   const { join } = usePeer();
   const { socket } = useSocketStore();
@@ -20,6 +20,9 @@ export const JumpInButton = () => {
       toast({
         description: 'Please signin first'
       });
+    }
+    if (error) {
+      window.location.reload();
     }
 
     if (me && isReady) {
