@@ -29,7 +29,7 @@ export const CameraButton = () => {
       onClick={() => toggleCamera()}
       className={`w-fit self-center rounded-full p-3 opacity-60 transition-all hover:scale-110 hover:opacity-100 ${isCameraOn ? 'bg-gray-100/10 text-white' : 'bg-white/90 text-gray-900'}`}
     >
-      {isCameraOn ? (
+      {!isCameraOn ? (
         <CameraOff className="size-4.5" />
       ) : (
         <Camera className="size-4.5" />
