@@ -4,7 +4,7 @@ import {
   MessagesBox,
   CameraButton,
   MicButton
-} from '@/app/_components';
+} from '@/app/(main)/_components';
 import { useMainStore } from '@/store';
 import React from 'react';
 

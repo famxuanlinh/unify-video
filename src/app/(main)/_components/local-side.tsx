@@ -5,7 +5,7 @@ import {
   ErrorOverlay,
   LoadingOverlay,
   StartVideoChatOverlay
-} from '@/app/_components';
+} from '@/app/(main)/_components';
 import { useMainStore, usePeerStore } from '@/store';
 import React, { useEffect, useRef } from 'react';
 

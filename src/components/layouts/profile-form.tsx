@@ -1,16 +1,13 @@
 'use client';
-import { UploadButton } from '@/app/_components';
+import { GetLocationButton, UploadButton } from '@/app/(main)/_components';
 import { env } from '@/constants';
 import { useUpdateProfile } from '@/hooks';
 import { useAuthStore } from '@/store';
 import { Gender, UpdateUserPayload } from '@/types';
 import { parseToUsername } from '@/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { format } from 'date-fns';
-import { Calendar as CalendarIcon } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
 import * as z from 'zod';
 
 import {
@@ -22,10 +19,6 @@ import {
   Slider,
   Checkbox,
   Switch,
-  Calendar,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
   Button,
   Form,
   FormControl,
@@ -38,10 +31,10 @@ import {
   DualRangeSlider,
   Avatar,
   AvatarImage,
-  AvatarFallback
+  AvatarFallback,
+  DatePicker
 } from '@/components';
-
-import { cn } from '@/lib';
+import { GoogleMapEmbed } from '@/components';
 
 const formSchema = z.object({
   name: z.string().min(1).min(1).max(32),
@@ -64,8 +57,10 @@ export function ProfileForm() {
     handleUpdateProfile,
     handleUploadAvatar,
     handleDeleteAvatar,
+    handleGetLocation,
     avatarFile,
-    isUploading
+    isUploading,
+    coordinate
   } = useUpdateProfile();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -104,12 +99,6 @@ export function ProfileForm() {
     };
 
     handleUpdateProfile(payload);
-    try {
-      console.log(values);
-    } catch (error) {
-      console.error('Form submission error', error);
-      toast.error('Failed to submit the form. Please try again.');
-    }
   }
 
   return (
@@ -140,6 +129,7 @@ export function ProfileForm() {
             <Button
               variant={'secondary'}
               size={'sm'}
+              type="button"
               onClick={handleDeleteAvatar}
             >
               Delete
@@ -166,37 +156,31 @@ export function ProfileForm() {
             control={form.control}
             name="dob"
             render={({ field }) => (
-              <FormItem className="flex flex-col">
+              <FormItem className="w-full">
                 <FormLabel>Date of birth</FormLabel>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <FormControl>
-                      <Button
-                        variant={'outline'}
-                        className={cn(
-                          'w-full pl-3 text-left font-normal',
-                          !field.value && 'text-muted-foreground'
-                        )}
-                      >
-                        {field.value ? (
-                          format(field.value, 'PPP')
-                        ) : (
-                          <span>Pick a date</span>
-                        )}
-                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                      </Button>
-                    </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={field.value}
-                      onSelect={field.onChange}
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
 
+                <FormControl>
+                  <DatePicker
+                    date={field.value ? new Date(field.value) : undefined}
+                    setDate={date => {
+                      if (date) {
+                        field.onChange(date);
+                      }
+                    }}
+                    disabled={date => {
+                      const today = new Date();
+                      const minDate = new Date();
+                      minDate.setFullYear(today.getFullYear() - 18);
+
+                      return (
+                        date > today ||
+                        date > minDate ||
+                        date < new Date('1900-01-01')
+                      );
+                    }}
+                    endYear={new Date().getFullYear() - 18}
+                  />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}
@@ -231,6 +215,16 @@ export function ProfileForm() {
               </FormItem>
             )}
           />
+        </div>
+
+        <div className="mt-6 space-y-2">
+          <GetLocationButton
+            coordinate={coordinate}
+            onGetLocation={handleGetLocation}
+          />
+          {coordinate.lat && coordinate.long && (
+            <GoogleMapEmbed lat={coordinate.lat} lng={coordinate.long} />
+          )}
         </div>
 
         <div className="space-y-8 rounded-2xl border border-gray-500 p-4">

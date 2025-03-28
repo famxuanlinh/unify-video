@@ -1,4 +1,4 @@
-import { LocalSide, RemoteSide } from '@/app/_components';
+import { LocalSide, RemoteSide } from '@/app/(main)/_components';
 import React from 'react';
 
 import { JumpInButton } from './jump-in-button';

@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { ReactNode } from 'react';
 
-import { MainLayout, Toaster } from '@/components';
+import { Toaster } from '@/components';
 
 import { cn } from '@/lib';
 
@@ -38,7 +38,7 @@ const RootLayout = async ({ children }: RootLayoutProps) => {
         className={cn(inter.variable, 'font-primary')}
         suppressHydrationWarning
       >
-        <MainLayout>{children}</MainLayout>
+        {children}
         <Toaster />
       </body>
     </html>
