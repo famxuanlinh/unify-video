@@ -29,7 +29,11 @@ export const MicButton = () => {
       onClick={() => toggleMic()}
       className={`w-fit self-center rounded-full p-3 opacity-60 transition-all hover:scale-110 hover:opacity-100 ${isMicOn ? 'bg-gray-100/10 text-white' : 'bg-white/90 text-gray-900'}`}
     >
-      {isMicOn ? <MicOff className="size-4.5" /> : <Mic className="size-4.5" />}
+      {!isMicOn ? (
+        <MicOff className="size-4.5" />
+      ) : (
+        <Mic className="size-4.5" />
+      )}
     </button>
   );
 };
