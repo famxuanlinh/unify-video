@@ -17,3 +17,5 @@ export * from './welcome-overlay';
 export * from './upload-button';
 export * from './camera-button';
 export * from './mic-button';
+export * from './mic-button';
+export * from './get-location-button';

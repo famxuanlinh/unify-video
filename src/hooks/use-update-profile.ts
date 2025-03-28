@@ -15,12 +15,23 @@ export const useUpdateProfile = () => {
 
   const [avatarFile, setAvatarFile] = useState<string>(me?.avatar || '');
   const [isUploading, setIsUploading] = useState(false);
+  const [coordinate, setCoordinate] = useState<{
+    lat?: number;
+    long?: number;
+  }>({
+    lat: me?.location?.lat,
+    long: me?.location?.long
+  });
 
   const handleUpdateProfile = async (payload: UpdateUserPayload) => {
     try {
       setIsLoading(true);
       const res = await UnifyApi.user.update({
         ...payload,
+        location: {
+          lat: coordinate.lat,
+          long: coordinate.long
+        },
         avatar: avatarFile
       });
       setData(res);
@@ -54,10 +65,27 @@ export const useUpdateProfile = () => {
     setAvatarFile('');
   };
 
+  const handleGetLocation = () => {
+    navigator.geolocation.getCurrentPosition(pos => {
+      const { latitude, longitude } = pos.coords;
+      console.log(latitude, longitude);
+      setCoordinate({
+        lat: latitude,
+        long: longitude
+      });
+      // const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`;
+      // fetch(url)
+      //   .then(res => res.json())
+      //   .then(data => setAdd(data.address));
+    });
+  };
+
   return {
     data,
+    coordinate,
     isLoading,
     avatarFile,
+    handleGetLocation,
     handleUpdateProfile,
     isUploading,
     handleDeleteAvatar,

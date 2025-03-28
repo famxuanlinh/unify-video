@@ -6,6 +6,10 @@ export type User = {
   dob: string | null;
   gender: string;
   seekingSettings: SeekingSettings;
+  location: {
+    lat?: number;
+    long?: number;
+  };
 };
 
 interface Location {
@@ -32,6 +36,10 @@ export type UpdateUserPayload = {
   dob: string;
   gender: string;
   seekingSettings: SeekingSettings;
+  location?: {
+    lat?: number;
+    long?: number;
+  };
 };
 
 interface SeekingSettings {

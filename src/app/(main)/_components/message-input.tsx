@@ -1,6 +1,6 @@
 'use client';
 
-import { ClearChatButton } from '@/app/_components';
+import { ClearChatButton } from '@/app/(main)/_components';
 import { usePeer } from '@/hooks';
 import { SendIcon } from 'lucide-react';
 import React from 'react';
