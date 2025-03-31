@@ -34,7 +34,7 @@ export function DatePicker({
     date ? date.getMonth() : new Date().getMonth()
   );
   const [year, setYear] = React.useState<number>(
-    date ? date.getFullYear() : new Date().getFullYear()
+    date ? date.getFullYear() : new Date().getFullYear() - 18
   );
 
   const years = React.useMemo(() => {

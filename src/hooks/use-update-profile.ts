@@ -10,6 +10,7 @@ import { toast } from './use-toast';
 
 export const useUpdateProfile = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [isGettingCoordinate, setIsGettingCoordinate] = useState(false);
   const [data, setData] = useState({});
   const { setMe, me } = useAuthStore();
 
@@ -66,13 +67,14 @@ export const useUpdateProfile = () => {
   };
 
   const handleGetLocation = () => {
+    setIsGettingCoordinate(true);
     navigator.geolocation.getCurrentPosition(pos => {
       const { latitude, longitude } = pos.coords;
-      console.log(latitude, longitude);
       setCoordinate({
         lat: latitude,
         long: longitude
       });
+      setIsGettingCoordinate(false);
       // const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`;
       // fetch(url)
       //   .then(res => res.json())
@@ -85,6 +87,7 @@ export const useUpdateProfile = () => {
     coordinate,
     isLoading,
     avatarFile,
+    isGettingCoordinate,
     handleGetLocation,
     handleUpdateProfile,
     isUploading,

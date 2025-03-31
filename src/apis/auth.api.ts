@@ -37,7 +37,7 @@ export const auth = {
       }));
   },
   async refreshSession(payload: { refreshToken: string }): Promise<JWT> {
-    return await apiAuth
+    return apiAuth
       .post('/auth/refresh-session', {
         refresh: payload.refreshToken
       })

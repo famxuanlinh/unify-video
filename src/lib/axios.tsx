@@ -28,26 +28,40 @@ const onRefreshed = (token: string) => {
   refreshSubscribers = [];
 };
 
-export const handleRefresh = async () => {
-  const token = getCookie(AUTH_TOKEN_KEY);
+export const refreshToken = async () => {
+  if (isRefreshing) {
+    return new Promise<string>(resolve => {
+      refreshSubscribers.push(resolve);
+    });
+  }
 
-  if (!token) return null;
+  isRefreshing = true;
 
-  const tokens = JSON.parse(token);
+  const tokenData = getCookie(AUTH_TOKEN_KEY);
+  if (!tokenData) {
+    console.log('No refresh token available');
+    isRefreshing = false;
+
+    return null;
+  }
 
   try {
+    const tokens = JSON.parse(tokenData);
     const res = await UnifyApi.auth.refreshSession({
       refreshToken: tokens.refresh
     });
 
     if (res.access) {
       setCookie(AUTH_TOKEN_KEY, JSON.stringify(res));
+      isRefreshing = false;
+      onRefreshed(res.access);
 
-      return res;
+      return res.access;
     }
   } catch (error) {
-    console.error('Refresh token failed:', error);
+    console.log('Refresh token failed:', error);
     deleteCookie(AUTH_TOKEN_KEY);
+    isRefreshing = false;
 
     return null;
   }
@@ -86,28 +100,15 @@ const setupInterceptors = (apiInstance: AxiosInstance) => {
     response => response,
     async error => {
       const originalRequest = error.config;
+
       if (error.response?.status === 401 && !originalRequest._retry) {
         originalRequest._retry = true;
-        if (isRefreshing) {
-          return new Promise(resolve => {
-            refreshSubscribers.push(token => {
-              originalRequest.headers['x-authorization'] = token;
-              resolve(apiInstance(originalRequest));
-            });
-          });
-        }
-        isRefreshing = true;
-        const newToken = await handleRefresh();
 
-        originalRequest.headers['x-authorization'] = newToken;
-        isRefreshing = false;
+        const newToken = await refreshToken();
         if (newToken) {
-          onRefreshed(newToken.access);
           originalRequest.headers['x-authorization'] = newToken;
 
           return apiInstance(originalRequest);
-        } else {
-          return null;
         }
       }
 
