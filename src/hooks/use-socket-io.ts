@@ -5,7 +5,7 @@ import { getCookie } from 'cookies-next';
 import { useState, useEffect, useRef } from 'react';
 import { io, Socket } from 'socket.io-client';
 
-import { handleRefresh } from '@/lib';
+import { refreshToken } from '@/lib';
 
 export const useSocket = () => {
   const [isConnected, setIsConnected] = useState(false);
@@ -38,14 +38,14 @@ export const useSocket = () => {
 
         if (error?.message === 'Unauthorized') {
           console.log('🔄 Token expired, refreshing...');
-          const newAccessToken = await handleRefresh(); // Refresh token
+          const newAccessToken = await refreshToken(); // Refresh token
 
           if (newAccessToken) {
             console.log('🔄 Reconnecting socket with new token...');
             if (socketRef.current) {
               socketRef.current.io.opts.extraHeaders = {
                 ...socketRef.current.io.opts.extraHeaders,
-                'x-authorization': newAccessToken.access
+                'x-authorization': newAccessToken
               };
               socketRef.current.connect();
             }
