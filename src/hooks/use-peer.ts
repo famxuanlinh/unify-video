@@ -47,6 +47,7 @@ export function usePeer() {
 
   useEffect(() => {
     const socket = useSocketStore.getState().socket;
+
     if (!socket || socket?.connected) return;
 
     log('Setting up socket listeners');
@@ -107,6 +108,7 @@ export function usePeer() {
     const socket = useSocketStore.getState().socket;
 
     if (!socket || socket?.connected) return;
+
     log('Socket is connected, setting up PeerJS');
     const peer = usePeerStore.getState().peer;
     if (peer) return;

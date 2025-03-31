@@ -12,7 +12,6 @@ export const AuthLayout = ({ children }: { children: React.ReactNode }) => {
   const queryClient = new QueryClient();
   const { initSocket } = useSocketStore();
   const { handleGetProfile } = useGetProfile();
-  const { data: profile } = useGetProfile();
 
   useEffect(() => {
     initSocket();
@@ -20,10 +19,8 @@ export const AuthLayout = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   useEffect(() => {
-    if (!profile) {
-      handleGetProfile();
-    }
-  }, [profile]);
+    handleGetProfile();
+  }, []);
 
   return (
     <>

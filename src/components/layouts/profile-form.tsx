@@ -1,5 +1,5 @@
 'use client';
-import { GetLocationButton, UploadButton } from '@/app/(main)/_components';
+import { UploadButton } from '@/app/(main)/_components';
 import { env } from '@/constants';
 import { useUpdateProfile } from '@/hooks';
 import { useAuthStore } from '@/store';
@@ -54,6 +54,7 @@ export function ProfileForm() {
 
   const {
     isLoading,
+    isGettingCoordinate,
     handleUpdateProfile,
     handleUploadAvatar,
     handleDeleteAvatar,
@@ -124,9 +125,10 @@ export function ProfileForm() {
               isLoading={isUploading}
               onFileUpload={handleUploadAvatar}
             >
-              Upload avatar
+              {avatarFile ? 'Update' : 'Upload'} avatar
             </UploadButton>
             <Button
+              disabled={Boolean(!avatarFile)}
               variant={'secondary'}
               size={'sm'}
               type="button"
@@ -218,13 +220,17 @@ export function ProfileForm() {
         </div>
 
         <div className="mt-6 space-y-2">
-          <GetLocationButton
-            coordinate={coordinate}
-            onGetLocation={handleGetLocation}
-          />
-          {coordinate.lat && coordinate.long && (
-            <GoogleMapEmbed lat={coordinate.lat} lng={coordinate.long} />
-          )}
+          <Button
+            disabled={isGettingCoordinate}
+            type="button"
+            loading={isGettingCoordinate}
+            variant={'secondary'}
+            size={'sm'}
+            onClick={handleGetLocation}
+          >
+            {!coordinate.lat ? 'Get location' : 'Update location'}
+          </Button>
+          {coordinate && <GoogleMapEmbed coordinate={coordinate} />}
         </div>
 
         <div className="space-y-8 rounded-2xl border border-gray-500 p-4">
