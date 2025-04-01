@@ -59,9 +59,10 @@ export const peerConfig = new Peer({
       //   credential: 'G0Jf2GvnWd4IOGj6'
       // },
       {
-        urls: 'turn:206.189.151.6:3478?transport=udp',
-        username: 'test',
-        credential: 'test123'
+        urls: 'turn:206.189.151.6:5349?transport=udp',
+        username:
+          'ad8abd2ac8351cd2311c12b183b706987de2de2f02c339664f8988448bea0162',
+        credential: 'secret'
       }
     ],
     iceCandidatePoolSize: 10
