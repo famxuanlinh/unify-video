@@ -230,7 +230,9 @@ export function ProfileForm() {
           >
             {!coordinate.lat ? 'Get location' : 'Update location'}
           </Button>
-          {coordinate && <GoogleMapEmbed coordinate={coordinate} />}
+          {coordinate.lat && coordinate.long && (
+            <GoogleMapEmbed coordinate={coordinate} />
+          )}
         </div>
 
         <div className="space-y-8 rounded-2xl border border-gray-500 p-4">
