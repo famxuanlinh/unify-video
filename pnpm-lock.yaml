@@ -63,8 +63,8 @@ importers:
         specifier: ^5.62.11
         version: 5.67.2(react@19.0.0)
       '@worldcoin/minikit-js':
-        specifier: ^1.6.1
-        version: 1.6.1(@types/react@19.0.2)(react@19.0.0)(typescript@5.6.3)(viem@2.23.5(typescript@5.6.3)(zod@3.23.8))(zod@3.23.8)
+        specifier: ^1.8.0
+        version: 1.8.0(@types/react@19.0.2)(react@19.0.0)(typescript@5.6.3)(viem@2.23.5(typescript@5.6.3)(zod@3.23.8))(zod@3.23.8)
       axios:
         specifier: ^1.7.7
         version: 1.8.2
@@ -133,7 +133,7 @@ importers:
         version: 3.23.8
       zustand:
         specifier: ^5.0.3
-        version: 5.0.3(@types/react@19.0.2)(react@19.0.0)(use-sync-external-store@1.4.0(react@19.0.0))
+        version: 5.0.3(@types/react@19.0.2)(react@19.0.0)(use-sync-external-store@1.5.0(react@19.0.0))
     devDependencies:
       '@eslint/compat':
         specifier: ^1.2.2
@@ -1498,15 +1498,15 @@ packages:
     resolution: {integrity: sha512-2z8JQJWAzPdDd51dRQ/oqIJxe99/hoLIqmf8RMCAJQtYDc535W/Jt2+RTP4bP0aKeBG1F65yjIZuczOXCmbWwg==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
-  '@worldcoin/idkit-core@1.4.3':
-    resolution: {integrity: sha512-lLi9Kwug+4O8tZmv7olD+uczpAmNn3MrcE1DdALZ8+ab2ybh6sE15icrJ85y5eMpQOtSB3NNZ4qT2LJrlB6Xsw==}
+  '@worldcoin/idkit-core@2.0.2':
+    resolution: {integrity: sha512-GqBNAI+OyG+YXoMOI9PJDlO+MeiUnclrdjaXDYYCjmXBQi+tx0rQjNJfxwS9H6jQSVPSYaa/crcgYYMJvwdS0A==}
     engines: {node: '>=12.4'}
 
-  '@worldcoin/minikit-js@1.6.1':
-    resolution: {integrity: sha512-JdigcLWwHwEG3TdX90IK0LAFIE2WbhRg8V5YGE6FLX9EYsgLv7111R/Wjg6+NYXV/1CYph3limokHjKUe2L9BA==}
+  '@worldcoin/minikit-js@1.8.0':
+    resolution: {integrity: sha512-P6RKZqpwYoXsDYoJzvYVI5sEyVcVMrdEo9Ki2ptdE70YD0HhwCJqW56Pnop05flJqTVGdqub/woDY3fctDSMSA==}
     engines: {node: '>= 16'}
     peerDependencies:
-      viem: 2.23.5
+      viem: ^2.23.5
 
   abitype@1.0.8:
     resolution: {integrity: sha512-ZeiI6h3GnW06uYDLx0etQtX/p8E24UaHHBj57RSjK7YBFe7iuVn07EDpOeP451D06sF27VOz9JJPlIKJmXgkEg==}
@@ -3280,8 +3280,8 @@ packages:
       '@types/react':
         optional: true
 
-  use-sync-external-store@1.4.0:
-    resolution: {integrity: sha512-9WXSPC5fMv61vaupRkCKCxsPxBocVnwakBEkMIHHpkTTg6icbJtg6jzgtLDm4bl3cSHAca52rYWih0k4K3PfHw==}
+  use-sync-external-store@1.5.0:
+    resolution: {integrity: sha512-Rb46I4cGGVBmjamjphe8L/UnvJD+uPPtTkNvX5mZgqdbavhI4EbgIWJiIHXJ8bc/i9EQGPRh4DwEURJ552Do0A==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
@@ -4658,7 +4658,7 @@ snapshots:
       '@typescript-eslint/types': 8.26.0
       eslint-visitor-keys: 4.2.0
 
-  '@worldcoin/idkit-core@1.4.3(@types/react@19.0.2)(react@19.0.0)(typescript@5.6.3)(zod@3.23.8)':
+  '@worldcoin/idkit-core@2.0.2(@types/react@19.0.2)(react@19.0.0)(typescript@5.6.3)(zod@3.23.8)':
     dependencies:
       browser-or-node: 3.0.0-pre.0
       buffer: 6.0.3
@@ -4671,9 +4671,9 @@ snapshots:
       - typescript
       - zod
 
-  '@worldcoin/minikit-js@1.6.1(@types/react@19.0.2)(react@19.0.0)(typescript@5.6.3)(viem@2.23.5(typescript@5.6.3)(zod@3.23.8))(zod@3.23.8)':
+  '@worldcoin/minikit-js@1.8.0(@types/react@19.0.2)(react@19.0.0)(typescript@5.6.3)(viem@2.23.5(typescript@5.6.3)(zod@3.23.8))(zod@3.23.8)':
     dependencies:
-      '@worldcoin/idkit-core': 1.4.3(@types/react@19.0.2)(react@19.0.0)(typescript@5.6.3)(zod@3.23.8)
+      '@worldcoin/idkit-core': 2.0.2(@types/react@19.0.2)(react@19.0.0)(typescript@5.6.3)(zod@3.23.8)
       abitype: 1.0.8(typescript@5.6.3)(zod@3.23.8)
       viem: 2.23.5(typescript@5.6.3)(zod@3.23.8)
     transitivePeerDependencies:
@@ -6626,7 +6626,7 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.0.2
 
-  use-sync-external-store@1.4.0(react@19.0.0):
+  use-sync-external-store@1.5.0(react@19.0.0):
     dependencies:
       react: 19.0.0
 
@@ -6722,13 +6722,13 @@ snapshots:
 
   zustand@4.5.6(@types/react@19.0.2)(react@19.0.0):
     dependencies:
-      use-sync-external-store: 1.4.0(react@19.0.0)
+      use-sync-external-store: 1.5.0(react@19.0.0)
     optionalDependencies:
       '@types/react': 19.0.2
       react: 19.0.0
 
-  zustand@5.0.3(@types/react@19.0.2)(react@19.0.0)(use-sync-external-store@1.4.0(react@19.0.0)):
+  zustand@5.0.3(@types/react@19.0.2)(react@19.0.0)(use-sync-external-store@1.5.0(react@19.0.0)):
     optionalDependencies:
       '@types/react': 19.0.2
       react: 19.0.0
-      use-sync-external-store: 1.4.0(react@19.0.0)
+      use-sync-external-store: 1.5.0(react@19.0.0)
