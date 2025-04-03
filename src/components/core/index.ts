@@ -19,3 +19,4 @@ export * from './scroll-area';
 export * from './location-input';
 export * from './dual-range-slider';
 export * from './date-picker';
+export * from './sheet';

@@ -18,3 +18,5 @@ export * from './upload-button';
 export * from './camera-button';
 export * from './mic-button';
 export * from './mic-button';
+export * from './start-overlay';
+export * from './header';

@@ -132,7 +132,7 @@ export const UpdateProfileForm = ({
           <div className="flex h-10 items-center justify-between">
             {step !== 0 ? (
               <div className="cursor-pointer" onClick={onBack}>
-                <ArrowLeft />
+                <ArrowLeft className="fill-dark-grey" />
               </div>
             ) : (
               <p></p>

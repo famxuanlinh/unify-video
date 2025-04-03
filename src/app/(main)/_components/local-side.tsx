@@ -11,7 +11,7 @@ import React, { useEffect, useRef } from 'react';
 
 import { Side } from '@/components';
 
-export const LocalSide = () => {
+export const LocalSide = ({ isShowChat }: { isShowChat: boolean }) => {
   const { started, loading, error } = useMainStore();
   const { localStream } = usePeerStore();
 
@@ -34,12 +34,19 @@ export const LocalSide = () => {
       return <LoadingOverlay />;
     }
 
-    if (!started) {
+    if (started) {
       return <StartVideoChatOverlay />;
     }
 
-    return <ChatOverlay />;
+    return <ChatOverlay isShowChat={isShowChat} />;
   };
 
-  return <Side videoRef={localVideoRef}>{renderOverlay()}</Side>;
+  return (
+    <Side
+      className="from-orange to-red bg-gradient-to-b"
+      videoRef={localVideoRef}
+    >
+      {renderOverlay()}
+    </Side>
+  );
 };

@@ -87,8 +87,8 @@ importers:
         specifier: ^4.1.0
         version: 4.1.0
       google-map-react:
-        specifier: ^2.2.1
-        version: 2.2.1(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+        specifier: 2.1.7
+        version: 2.1.7(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       lodash:
         specifier: ^4.17.21
         version: 4.17.21
@@ -2217,12 +2217,12 @@ packages:
     resolution: {integrity: sha512-jhIXaOzy1sb8IyocaruWSn1TjmnBVs8Ayhcy83rmxNJ8q2uWKCAj3CnJY+KpGSXCueAPc0i05kVvVKtP1t9S3g==}
     engines: {node: '>=10'}
 
-  google-map-react@2.2.1:
-    resolution: {integrity: sha512-Dg8aexf5rNSmywj0XKQ5m4RNzVcWwKEM2BGDj5aPChD0um8ZRjB5Upcb/yg/i0oG1aES29asQ5+6BHVgrK5xGA==}
+  google-map-react@2.1.7:
+    resolution: {integrity: sha512-B13cV2JMLGjelLyfv4hAk08/EmvIVBLnwSJrshw3Dfd3RsqPapP34SvAslPErkY+sxba+5me6vH3IQqqCqLvIw==}
     engines: {node: '>=10'}
     peerDependencies:
-      react: ^16.0.0 || ^17.0.0 || ^18.0.0
-      react-dom: ^16.0.0 || ^17.0.0 || ^18.0.0
+      react: ^16.0.0
+      react-dom: ^16.0.0
 
   gopd@1.2.0:
     resolution: {integrity: sha512-ZUKRh6/kUFoAiTAtTYPZJ3hw9wNxx+BIBOijnlG9PnrJsCcSjs1wyyD6vJpaYtgnzDrKYRSqf3OO6Rfa93xsRg==}
@@ -5574,7 +5574,7 @@ snapshots:
       merge2: 1.4.1
       slash: 3.0.0
 
-  google-map-react@2.2.1(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
+  google-map-react@2.1.7(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
     dependencies:
       '@googlemaps/js-api-loader': 1.16.8
       '@mapbox/point-geometry': 0.1.0

@@ -17,18 +17,18 @@ export const MessageInput = () => {
   };
 
   return (
-    <form className="flex gap-3 text-white" onSubmit={handleSubmit}>
+    <form className="flex gap-2" onSubmit={handleSubmit}>
       <div className="relative flex-1">
         <input
-          className="h-12 w-full rounded-full bg-[#00000052] px-4 pr-10 text-xs text-white placeholder-gray-300 focus:outline-hidden"
+          className="text-body-m h-10 w-full rounded-full bg-black/20 pr-4 pl-3 text-white placeholder-gray-300 focus:outline-hidden"
           type="text"
           placeholder="Send Message"
         />
         <button
           type="submit"
-          className="absolute top-1/3 right-4 text-gray-300"
+          className="absolute top-2.5 right-4 text-gray-300"
         >
-          <SendIcon size={16} />
+          <SendIcon color="white" size={20} />
         </button>
       </div>
 

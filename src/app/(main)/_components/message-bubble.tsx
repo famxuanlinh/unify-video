@@ -1,11 +1,10 @@
-import { Message, useMainStore } from '@/store';
-import { getImageUrl, parseToUsername } from '@/utils';
+import { Message } from '@/store';
 import React from 'react';
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components';
+import { Avatar, AvatarImage } from '@/components';
 
 export const MessageBubble = ({ message }: { message: Message }) => {
-  const { incomingUserInfo } = useMainStore();
+  // const { incomingUserInfo } = useMainStore();
 
   return (
     <div
@@ -14,17 +13,13 @@ export const MessageBubble = ({ message }: { message: Message }) => {
       {!message.isMine ? (
         <Avatar className="size-6">
           <AvatarImage
-            className="object-cover"
-            src={getImageUrl(incomingUserInfo?.avatar)}
+            className="rounded-full object-cover"
+            src={'/images/avatar-default.png'}
           />
-          <AvatarFallback className="text-xs">
-            {incomingUserInfo?.fullName?.slice(0, 2) ||
-              parseToUsername(incomingUserInfo?.userId as string).slice(0, 2)}
-          </AvatarFallback>
         </Avatar>
       ) : null}
 
-      <div className="max-w-[200px] rounded-md bg-[#00000048] p-2 text-xs break-words text-white">
+      <div className="text-body-m flex min-h-10 max-w-[200px] items-center rounded-full bg-black/20 px-3 py-2.5 break-words text-white">
         {message.text}
       </div>
     </div>

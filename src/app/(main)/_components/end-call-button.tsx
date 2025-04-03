@@ -1,8 +1,9 @@
 'use client';
 
 import { usePeer } from '@/hooks';
-import { Phone } from 'lucide-react';
 import React from 'react';
+
+import { PhoneXIcon } from '@/components';
 
 export const EndCallButton = () => {
   const { end } = usePeer();
@@ -10,9 +11,9 @@ export const EndCallButton = () => {
   return (
     <button
       onClick={() => end()}
-      className="w-fit self-center rounded-full bg-red-600 p-3 text-white opacity-60 transition-all hover:scale-110 hover:opacity-100"
+      className="bg-red flex size-10 items-center justify-center rounded-full"
     >
-      <Phone size={18} />
+      <PhoneXIcon />
     </button>
   );
 };

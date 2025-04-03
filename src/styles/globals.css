@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@plugin 'tailwindcss-animate';
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -113,6 +114,8 @@
   --color-white-300: #f7f7f7;
   --color-white-400: #dadee2;
   --color-white-500: #c9ced4;
+
+  --shadow-color: 0px 0px 20px 0px #ea4644 inset;
 }
 
 @layer base {

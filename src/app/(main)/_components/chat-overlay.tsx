@@ -5,26 +5,43 @@ import {
   CameraButton,
   MicButton
 } from '@/app/(main)/_components';
-import { useMainStore } from '@/store';
+import { useAuthStore, useMainStore } from '@/store';
+import { getImageUrl } from '@/utils';
 import React from 'react';
 
-export const ChatOverlay = () => {
+import { Avatar, AvatarImage } from '@/components';
+
+export const ChatOverlay = ({ isShowChat }: { isShowChat: boolean }) => {
   const { waitingForMatch } = useMainStore();
+  const { me } = useAuthStore();
 
   return (
-    <div className="flex h-full flex-col gap-5 p-8 max-md:pt-5">
-      <div className="flex items-center gap-3">
-        <EndCallButton />
-        <MicButton />
+    <div
+      className={`shadow-color m-0.5 h-[calc(100%-4px)] gap-3 rounded-4xl bg-gray-200 p-4 ${!isShowChat ? '' : 'flex flex-col justify-center'}`}
+    >
+      <div className="absolute top-4 left-4 z-20 flex h-8 items-center space-x-2 rounded-full bg-black/20 p-1 !pr-2.5">
+        <Avatar className="size-6">
+          <AvatarImage
+            className="rounded-full object-cover"
+            src={getImageUrl(me?.avatar) || '/images/avatar-default.png'}
+          />
+        </Avatar>
+        <p className="text-body-m text-white"> you</p>
+      </div>
+      <div className="flex items-center justify-center gap-3">
         <CameraButton />
+        <MicButton />
+        <EndCallButton />
       </div>
 
-      {!waitingForMatch && (
+      {!waitingForMatch && isShowChat ? (
         <>
           <MessagesBox />
 
           <MessageInput />
         </>
+      ) : (
+        <p></p>
       )}
     </div>
   );
