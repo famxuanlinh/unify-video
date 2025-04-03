@@ -12,6 +12,7 @@ export const HomePage = () => {
       <RemoteSide />
       <LocalSide />
       <JumpInButton />
+      {/* <StartOverlay /> */}
       {/* <DiagnosticOverlay /> */}
     </div>
   );
