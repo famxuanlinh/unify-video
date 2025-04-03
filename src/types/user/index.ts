@@ -34,7 +34,7 @@ export type UpdateUserPayload = {
   coverImage?: string;
   fullName: string;
   dob: string;
-  gender: string;
+  gender?: string;
   seekingSettings: SeekingSettings;
   location?: {
     lat?: number;
@@ -43,9 +43,9 @@ export type UpdateUserPayload = {
 };
 
 interface SeekingSettings {
-  genders: string[];
-  ageRange: AgeRange;
-  location: Location;
+  genders?: string[];
+  ageRange?: AgeRange;
+  location?: Location;
 }
 
 interface Location {

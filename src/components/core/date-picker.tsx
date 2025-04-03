@@ -1,10 +1,10 @@
 import { format, startOfYear, endOfYear, eachMonthOfInterval } from 'date-fns';
-import { Calendar as CalendarIcon } from 'lucide-react';
 import * as React from 'react';
 
 import {
   Popover,
   Calendar,
+  CalenderIcon,
   Button,
   PopoverContent,
   PopoverTrigger,
@@ -22,13 +22,15 @@ interface DatePickerProps {
   setDate: (date: Date | undefined) => void;
   endYear?: number;
   disabled?: (date: any) => boolean;
+  error?: string;
 }
 
 export function DatePicker({
   date,
   setDate,
   endYear,
-  disabled
+  disabled,
+  error
 }: DatePickerProps) {
   const [month, setMonth] = React.useState<number>(
     date ? date.getMonth() : new Date().getMonth()
@@ -93,12 +95,17 @@ export function DatePicker({
         <Button
           variant={'outline'}
           className={cn(
-            'h-9 w-full justify-start text-left font-normal',
-            !date && 'text-muted-foreground'
+            'text-body-m bg-white-200 flex h-12 w-full min-w-0 justify-between rounded-md border border-transparent px-3 py-1 font-light',
+            !date && 'text-light-grey',
+            `${error ? 'border-red border-2 bg-[#FDEEEC]' : ''}`
           )}
         >
-          <CalendarIcon className="mr-2 h-4 w-4" />
-          {date ? format(date, 'PPP') : <span>Pick a date</span>}
+          {date ? (
+            format(date, 'dd/MM/yyyy')
+          ) : (
+            <span className="text-body-m">Pick a date</span>
+          )}
+          <CalenderIcon className="h-4 w-4" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">

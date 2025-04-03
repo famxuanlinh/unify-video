@@ -35,7 +35,7 @@ const DualRangeSlider: React.FC<DualRangeSliderProps> = ({
         return (
           <SliderPrimitive.Root
             className={cn(
-              'relative flex w-full touch-none items-center select-none'
+              'relative flex w-[98%] touch-none items-center select-none'
             )}
             value={sliderValue}
             min={min}
@@ -43,20 +43,20 @@ const DualRangeSlider: React.FC<DualRangeSliderProps> = ({
             step={step}
             onValueChange={onChange}
           >
-            <SliderPrimitive.Track className="relative h-2 w-full grow overflow-hidden rounded-full bg-gray-100">
-              <SliderPrimitive.Range className="absolute h-full bg-gray-800" />
+            <SliderPrimitive.Track className="relative h-1 w-full grow overflow-hidden rounded-full bg-[#9999990D]">
+              <SliderPrimitive.Range className="bg-red absolute h-full" />
             </SliderPrimitive.Track>
 
             {sliderValue.map((val, index) => (
               <SliderPrimitive.Thumb
                 key={index}
-                className="ring-offset-background focus-visible:ring-ring relative block h-4 w-4 rounded-full border-2 border-b-gray-800 bg-gray-800 transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
+                className="ring-offset-red focus-visible:ring-ring border-red relative block h-3 w-3 rounded-full border-2 bg-white transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
               >
                 {label && (
                   <span
                     className={cn(
-                      'absolute flex w-full justify-center text-black',
-                      labelPosition === 'top' && '-top-7',
+                      'text-red absolute flex w-full justify-center text-xs',
+                      labelPosition === 'top' && '-top-5',
                       labelPosition === 'bottom' && 'top-4'
                     )}
                   >

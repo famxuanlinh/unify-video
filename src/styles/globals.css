@@ -52,6 +52,67 @@
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
+
+  /* For design system */
+  /* Headings */
+  --text-mobile-head-li: 1.125rem; /* 18px */
+  --text-mobile-head-li--line-height: 1.625rem; /* 26px */
+
+  --text-mobile-head-lii: 1.125rem; /* 18px */
+  --text-mobile-head-lii--line-height: 1.625rem; /* 26px */
+  --text-mobile-head-lii--font-weight: 500;
+
+  --text-mobile-head-m: 1rem; /* 16px */
+  --text-mobile-head-s: 0.875rem; /* 14px */
+  --text-mobile-head-s--line-height: 1.25rem; /* 20px */
+  --text-mobile-head-sx: 0.75rem; /* 12px */
+
+  /* Body */
+  --text-mobile-body-xl: 1rem; /* 16px */
+  --text-mobile-body-xl--font-weight: 400;
+
+  --text-mobile-body-l: 0.875rem; /* 14px */
+  --text-mobile-body-l--line-height: 1.25rem; /* 20px */
+  --text-mobile-body-l--font-weight: 300;
+
+  --text-mobile-body-m: 0.75rem; /* 12px */
+  --text-mobile-body-m--font-weight: 300;
+
+  --text-mobile-body-s: 0.625rem; /* 10px */
+  --text-mobile-body-s--line-height: 0.875rem; /* 14px */
+  --text-mobile-body-s--font-weight: 300;
+
+  --text-mobile-body-note: 0.5rem; /* 8px */
+  --text-mobile-body-note--font-weight: 300;
+
+  /* Label */
+  --text-mobile-label-l: 0.75rem; /* 12px */
+  --text-mobile-label-l--font-weight: 500;
+
+  --text-mobile-label-m: 0.625rem; /* 10px */
+  --text-mobile-label-m--line-height: 0.875rem; /* 14px */
+
+  --text-mobile-label-s: 0.5rem; /* 8px */
+  --text-mobile-label-s--font-weight: 500;
+
+  --gradient-orange-red: linear-gradient(
+    180deg,
+    var(--ORANGE, #ffa941) 0%,
+    var(--RED, #e94057) 100%
+  );
+
+  --color-red: #e94057;
+  --color-purple: #7f72e2;
+  --color-orange: #ffa941;
+  --color-green: #2aac7a;
+  --color-dark-grey: #262628;
+  --color-light-grey: #999999;
+  --color-white-0: #ffffff;
+  --color-white-100: #fdfdfd;
+  --color-white-200: #fbfbfb;
+  --color-white-300: #f7f7f7;
+  --color-white-400: #dadee2;
+  --color-white-500: #c9ced4;
 }
 
 @layer base {
@@ -109,6 +170,94 @@
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
+
+    --color-red: #e94057;
+    --color-purple: #7f72e2;
+    --color-orange: #ffa941;
+    --color-green: #2aac7a;
+    --color-dark-grey: #262628;
+    --color-light-grey: #999999;
+    --color-white-0: #ffffff;
+    --color-white-100: #fdfdfd;
+    --color-white-200: #fbfbfb;
+    --color-white-300: #f7f7f7;
+    --color-white-400: #dadee2;
+    --color-white-500: #c9ced4;
+  }
+}
+
+@layer utilities {
+  /* Headings */
+  .text-head-li {
+    font-size: var(--text-mobile-head-li);
+    line-height: var(--text-mobile-head-li--line-height);
+  }
+
+  .text-head-lii {
+    font-size: var(--text-mobile-head-lii);
+    line-height: var(--text-mobile-head-lii--line-height);
+    font-weight: var(--text-mobile-head-lii--font-weight);
+  }
+
+  .text-head-m {
+    font-size: var(--text-mobile-head-m);
+  }
+
+  .text-head-s {
+    font-size: var(--text-mobile-head-s);
+    line-height: var(--text-mobile-head-s--line-height);
+  }
+
+  .text-head-sx {
+    font-size: var(--text-mobile-head-sx);
+  }
+
+  /* Body */
+  .text-body-xl {
+    font-size: var(--text-mobile-body-xl);
+    font-weight: var(--text-mobile-body-xl--font-weight);
+  }
+
+  .text-body-l {
+    font-size: var(--text-mobile-body-l);
+    line-height: var(--text-mobile-body-l--line-height);
+    font-weight: var(--text-mobile-body-l--font-weight);
+  }
+
+  .text-body-m {
+    font-size: var(--text-mobile-body-m);
+    font-weight: var(--text-mobile-body-m--font-weight);
+  }
+
+  .text-body-s {
+    font-size: var(--text-mobile-body-s);
+    line-height: var(--text-mobile-body-s--line-height);
+    font-weight: var(--text-mobile-body-s--font-weight);
+  }
+
+  .text-body-note {
+    font-size: var(--text-mobile-body-note);
+    font-weight: var(--text-mobile-body-note--font-weight);
+  }
+
+  /* Labels */
+  .text-label-l {
+    font-size: var(--text-mobile-label-l);
+    font-weight: var(--text-mobile-label-l--font-weight);
+  }
+
+  .text-label-m {
+    font-size: var(--text-mobile-label-m);
+    line-height: var(--text-mobile-label-m--line-height);
+  }
+
+  .text-label-s {
+    font-size: var(--text-mobile-label-s);
+    font-weight: var(--text-mobile-label-s--font-weight);
+  }
+
+  .bg-gradient-orange-red {
+    background: var(--gradient-orange-red);
   }
 }
 

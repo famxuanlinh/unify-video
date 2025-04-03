@@ -49,7 +49,7 @@ const formSchema = z.object({
 export function ProfileForm() {
   const { me } = useAuthStore();
   const [isShowLimitRange, setIsShowLimitRange] = useState(
-    me?.seekingSettings.location.limit || false
+    me?.seekingSettings.location?.limit || false
   );
 
   const {
@@ -74,8 +74,8 @@ export function ProfileForm() {
         ? [me.seekingSettings.ageRange.min, me.seekingSettings.ageRange.max]
         : [18, 99],
       seekingGender: me?.seekingSettings.genders,
-      isLimit: me?.seekingSettings.location.limit,
-      miles: me?.seekingSettings.location.miles
+      isLimit: me?.seekingSettings.location?.limit,
+      miles: me?.seekingSettings.location?.miles
     }
   });
 
@@ -363,7 +363,7 @@ export function ProfileForm() {
                         max={100}
                         step={5}
                         defaultValue={[
-                          me?.seekingSettings.location.miles || 25
+                          me?.seekingSettings.location?.miles || 25
                         ]}
                         onValueChange={vals => {
                           onChange(vals[0]);
