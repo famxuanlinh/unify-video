@@ -81,7 +81,6 @@ export const Header = () => {
           </div>
         </div>
         <div onClick={() => setIsOpenSheet(true)}>
-          {' '}
           <ListIcon />
         </div>
       </div>

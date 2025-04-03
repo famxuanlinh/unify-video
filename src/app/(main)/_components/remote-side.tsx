@@ -1,17 +1,13 @@
 'use client';
 
-import {
-  LoadingOverlay,
-  RemoteVideoOverlay,
-  WelcomeOverlay
-} from '@/app/(main)/_components';
+import { LoadingOverlay, RemoteVideoOverlay } from '@/app/(main)/_components';
 import { useMainStore, usePeerStore } from '@/store';
 import React, { useEffect, useRef } from 'react';
 
 import { Side } from '@/components';
 
 export const RemoteSide = () => {
-  const { started, loading, waitingForMatch } = useMainStore();
+  const { waitingForMatch } = useMainStore();
   const { remoteStream } = usePeerStore();
 
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
@@ -25,12 +21,12 @@ export const RemoteSide = () => {
   }, [remoteStream]);
 
   function renderOverlay() {
-    if (loading) return <LoadingOverlay />;
+    // if (loading) return <LoadingOverlay />;
 
     if (waitingForMatch)
       return <LoadingOverlay message="Waiting for a match..." />;
 
-    if (!started) return <WelcomeOverlay />;
+    // if (!started) return <WelcomeOverlay />;
 
     return <RemoteVideoOverlay />;
   }

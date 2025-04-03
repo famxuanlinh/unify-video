@@ -9,9 +9,9 @@ export const ClearChatButton = () => {
     <button
       onClick={() => clearMessages()}
       type="button"
-      className="flex h-12 w-12 items-center justify-center rounded-full bg-[#00000052] font-medium text-gray-200"
+      className="flex size-10 items-center justify-center rounded-full bg-black/20 font-medium"
     >
-      <Trash2Icon size={16} />
+      <Trash2Icon color="white" size={16} />
     </button>
   );
 };

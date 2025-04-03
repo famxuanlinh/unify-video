@@ -3,8 +3,9 @@
 import { MEDIA_STATUS } from '@/constants';
 import { usePeer } from '@/hooks';
 import { useMainStore, usePeerStore } from '@/store';
-import { Mic, MicOff } from 'lucide-react';
 import React from 'react';
+
+import { MicIcon, MicSlashIcon } from '@/components';
 
 export const MicButton = () => {
   const { setIsMicOn, isMicOn } = useMainStore();
@@ -27,12 +28,12 @@ export const MicButton = () => {
   return (
     <button
       onClick={() => toggleMic()}
-      className={`w-fit self-center rounded-full p-3 opacity-60 transition-all hover:scale-110 hover:opacity-100 ${isMicOn ? 'bg-gray-100/10 text-white' : 'bg-white/90 text-gray-900'}`}
+      className={`flex size-10 items-center justify-center rounded-full opacity-60 transition-all ${isMicOn ? 'bg-black/20' : 'bg-red/10'}`}
     >
       {!isMicOn ? (
-        <MicOff className="size-4.5" />
+        <MicSlashIcon className="fill-red size-5" />
       ) : (
-        <Mic className="size-4.5" />
+        <MicIcon className="size-5 fill-white" />
       )}
     </button>
   );
