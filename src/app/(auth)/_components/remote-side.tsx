@@ -1,6 +1,6 @@
 'use client';
 
-import { LoadingOverlay, RemoteVideoOverlay } from '@/app/(main)/_components';
+import { LoadingOverlay, RemoteVideoOverlay } from '@/app/(auth)/_components';
 import { useMainStore, usePeerStore } from '@/store';
 import React, { useEffect, useRef } from 'react';
 

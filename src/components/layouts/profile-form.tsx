@@ -1,5 +1,5 @@
 'use client';
-import { UploadButton } from '@/app/(main)/_components';
+import { UploadButton } from '@/app/(auth)/_components';
 import { env } from '@/constants';
 import { useUpdateProfile } from '@/hooks';
 import { useAuthStore } from '@/store';

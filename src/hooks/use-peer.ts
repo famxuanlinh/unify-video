@@ -9,26 +9,18 @@ import {
 } from '@/store';
 import { MESSAGE_EVENTS } from '@/types';
 import { log } from '@/utils';
-import Peer, { MediaConnection } from 'peerjs';
-import { useEffect, useState } from 'react';
-
-import { peerConfig } from '@/lib';
-
-import { useGetProfile } from './use-get-profile';
+import { MediaConnection } from 'peerjs';
 
 export function usePeer() {
   const {
     setError,
     setLoading,
-    setReady,
     setStarted,
-    setOnlineUsersCount,
-    setWaitingForMatch,
     setIncomingUserInfo,
     setIsIncomingCameraOn,
     setIsIncomingMicOn,
     ready
-  } = useMainStore();
+  } = useMainStore.getState();
   const { addMessage, clearMessages } = useMessagingStore();
   const {
     setLocalStream,
@@ -37,120 +29,8 @@ export function usePeer() {
     setDataConnection,
     setMediaConnection,
     setPeerConnection,
-    setPeer,
-    clearPeer
+    myPeerId
   } = usePeerStore();
-  const { socket: socketInit } = useSocketStore();
-  const { handleGetProfile } = useGetProfile();
-
-  const [myPeerId, setMyPeerId] = useState<string | null>(null);
-
-  useEffect(() => {
-    const socket = useSocketStore.getState().socket;
-
-    if (!socket || socket?.connected) return;
-
-    log('Setting up socket listeners');
-
-    socket.on(
-      MESSAGE_EVENTS.MATCH,
-      ({
-        peerId,
-        userId,
-        isCaller
-      }: {
-        peerId: string;
-        userId: string;
-        isCaller: boolean;
-      }) => {
-        log('Matched with peer:', peerId);
-        handleGetProfile(userId);
-        setWaitingForMatch(false);
-        if (isCaller) {
-          connectToPeer(peerId);
-        }
-      }
-    );
-
-    socket.on(MESSAGE_EVENTS.WAITING, () => {
-      log('Waiting for a match...');
-      setRemoteStream(null);
-      setWaitingForMatch(true);
-    });
-
-    socket.on(MESSAGE_EVENTS.ONLINE, ({ count }: { count: number }) => {
-      setOnlineUsersCount(count);
-    });
-
-    socket.on(MESSAGE_EVENTS.END, () => {
-      log('Call ended');
-
-      // end();
-    });
-
-    socket.on(MESSAGE_EVENTS.ERROR, ({ message }: { message: string }) => {
-      if (message === 'No current match to skip') {
-        setWaitingForMatch(true);
-
-        return;
-      }
-      log('Error:', message);
-      setError('Socket error');
-    });
-
-    return () => {
-      log('Cleaning up socket listeners');
-      Object.values(MESSAGE_EVENTS).forEach(event => socket.off(event));
-    };
-  }, [socketInit]);
-
-  useEffect(() => {
-    const socket = useSocketStore.getState().socket;
-
-    if (!socket || socket?.connected) return;
-
-    log('Socket is connected, setting up PeerJS');
-    const peer = usePeerStore.getState().peer;
-    if (peer) return;
-
-    setPeer(peerConfig);
-
-    peerConfig.on('open', id => {
-      log('Peer open with ID:', id);
-      setMyPeerId(id);
-      setReady(true);
-    });
-
-    peerConfig.on('connection', conn => {
-      setPeerConnection(conn);
-      conn.on('data', rawData => {
-        getData(rawData);
-      });
-      conn.on('close', () => {
-        log('Data connection closed');
-
-        clearMessages();
-      });
-    });
-
-    peerConfig.on('call', call => {
-      log('Incoming call from:', call.peer);
-      answerCall(call);
-    });
-
-    peerConfig.on('error', err => {
-      log('Peer error:', err);
-      setError('Peer error');
-    });
-
-    return () => {
-      if (peer && socket.connected) {
-        console.log('Destroying Peer instance...');
-        (peer as Peer).destroy();
-        clearPeer();
-      }
-    };
-  }, [socketInit]);
 
   const connectToPeer = (peerId: string) => {
     const peer = usePeerStore.getState().peer;
@@ -232,6 +112,7 @@ export function usePeer() {
 
     call.on('close', () => {
       log('Remote Call closed');
+
       socket?.emit(MESSAGE_EVENTS.SKIP);
       setIncomingUserInfo(null);
       clearMessages();
@@ -279,7 +160,7 @@ export function usePeer() {
 
     if (streamInitialized) {
       log('Joining with peer ID:', myPeerId);
-      socket.emit('JOIN', { peerId: myPeerId });
+      socket.emit(MESSAGE_EVENTS.JOIN, { peerId: myPeerId });
     } else {
       log('Failed to join - stream not initialized');
       setError('Failed to join - stream not initialized');
@@ -310,7 +191,7 @@ export function usePeer() {
     }
 
     if (data?.text) {
-      addMessage({ text: data.text, isMine: false });
+      addMessage({ text: data.text, isMine: false, isNewest: true });
     }
   };
 
@@ -367,6 +248,9 @@ export function usePeer() {
     join,
     skip,
     send,
-    end
+    end,
+    connectToPeer,
+    answerCall,
+    getData
   };
 }

@@ -1,5 +1,6 @@
 export enum MESSAGE_EVENTS {
   MATCH = 'MATCH',
+  JOIN = 'JOIN',
   WAITING = 'WAITING',
   ONLINE = 'ONLINE',
   END = 'END',

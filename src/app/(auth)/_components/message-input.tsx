@@ -1,12 +1,14 @@
 'use client';
 
-import { ClearChatButton } from '@/app/(main)/_components';
+import { ClearChatButton } from '@/app/(auth)/_components';
 import { usePeer } from '@/hooks';
+import { useMessagingStore } from '@/store';
 import { SendIcon } from 'lucide-react';
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 
 export const MessageInput = () => {
   const { send } = usePeer();
+  const { isShowChat } = useMessagingStore();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -16,12 +18,21 @@ export const MessageInput = () => {
     input.value = '';
   };
 
+  const ref = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isShowChat) {
+      ref.current?.focus();
+    }
+  }, [isShowChat]);
+
   return (
     <form className="flex gap-2" onSubmit={handleSubmit}>
       <div className="relative flex-1">
         <input
           className="text-body-m h-10 w-full rounded-full bg-black/20 pr-4 pl-3 text-white placeholder-gray-300 focus:outline-hidden"
           type="text"
+          ref={ref}
           placeholder="Send Message"
         />
         <button

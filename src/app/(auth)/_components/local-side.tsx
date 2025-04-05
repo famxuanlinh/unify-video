@@ -3,17 +3,19 @@
 import {
   ChatOverlay,
   ErrorOverlay,
-  LoadingOverlay,
-  StartVideoChatOverlay
-} from '@/app/(main)/_components';
+  LoadingOverlay
+} from '@/app/(auth)/_components';
+import { MEDIA_STATUS } from '@/constants';
+import { usePeer } from '@/hooks';
 import { useMainStore, usePeerStore } from '@/store';
 import React, { useEffect, useRef } from 'react';
 
 import { Side } from '@/components';
 
 export const LocalSide = ({ isShowChat }: { isShowChat: boolean }) => {
-  const { started, loading, error } = useMainStore();
+  const { loading, error } = useMainStore();
   const { localStream } = usePeerStore();
+  const { send } = usePeer();
 
   const localVideoRef = useRef<HTMLVideoElement>(null);
 
@@ -25,6 +27,17 @@ export const LocalSide = ({ isShowChat }: { isShowChat: boolean }) => {
     }
   }, [localStream]);
 
+  useEffect(() => {
+    if (!localStream) return;
+    const audioTrack = localStream.getAudioTracks()[0];
+    if (audioTrack && !audioTrack.enabled) {
+      send({
+        type: MEDIA_STATUS.MIC_STATUS,
+        isMicOn: !audioTrack.enabled
+      });
+    }
+  }, []);
+
   const renderOverlay = () => {
     if (error) {
       return <ErrorOverlay />;
@@ -34,9 +47,9 @@ export const LocalSide = ({ isShowChat }: { isShowChat: boolean }) => {
       return <LoadingOverlay />;
     }
 
-    if (started) {
-      return <StartVideoChatOverlay />;
-    }
+    // if (started) {
+    //   return <StartVideoChatOverlay />;
+    // }
 
     return <ChatOverlay isShowChat={isShowChat} />;
   };

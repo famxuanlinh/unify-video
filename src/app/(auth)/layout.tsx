@@ -1,13 +1,13 @@
 import { ReactNode } from 'react';
 
-import { MainLayout } from '@/components';
+import { AuthLayout } from '@/components';
 
 interface RootLayoutProps {
   children: ReactNode;
 }
 
 const RootLayout = async ({ children }: RootLayoutProps) => {
-  return <MainLayout>{children}</MainLayout>;
+  return <AuthLayout>{children}</AuthLayout>;
 };
 
 export default RootLayout;

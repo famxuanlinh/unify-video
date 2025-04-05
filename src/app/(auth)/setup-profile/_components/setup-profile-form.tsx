@@ -25,7 +25,8 @@ import {
   SelectTrigger,
   SelectValue,
   SelectItem,
-  SelectContent
+  SelectContent,
+  GoogleMap
 } from '@/components';
 
 interface UpdateProfileRaw {
@@ -91,7 +92,6 @@ export const UpdateProfileForm = ({
 
   const onSubmit = (data: UpdateProfileRaw) => {
     const finalData = { ...formData, ...data };
-    console.log('Final Data:', finalData);
 
     const payload: UpdateUserPayload = {
       avatar: '',
@@ -111,7 +111,6 @@ export const UpdateProfileForm = ({
         }
       }
     };
-    console.log('🚀 ~ onSubmit ~ payload:', payload);
     handleUpdateProfile(payload);
   };
 
@@ -402,7 +401,7 @@ export const UpdateProfileForm = ({
                   control={form.control}
                   name="limit"
                   render={({ field }) => (
-                    <FormItem className="flex flex-row items-center justify-between rounded-lg pb-3">
+                    <FormItem className="flex flex-row items-center justify-between rounded-lg">
                       <FormLabel className="text-body-m">
                         Limit by location
                       </FormLabel>
@@ -425,6 +424,8 @@ export const UpdateProfileForm = ({
                       handleOnPlaceChange={setPlaceChest}
                       onMapLoaded={() => {}}
                     /> */}
+
+                    <GoogleMap />
                     <FormField
                       control={form.control}
                       name="gender"

@@ -1,4 +1,4 @@
-import { MessageBubble } from '@/app/(main)/_components';
+import { MessageBubble } from '@/app/(auth)/_components';
 import { useMessagingStore } from '@/store';
 import React from 'react';
 

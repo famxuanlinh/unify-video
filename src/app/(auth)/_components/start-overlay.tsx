@@ -1,5 +1,7 @@
 'use client';
 
+import { usePeer } from '@/hooks';
+import { useMainStore, useSocketStore } from '@/store';
 import Image from 'next/image';
 import React from 'react';
 
@@ -8,6 +10,22 @@ import { Button, VideoCameraIcon } from '@/components';
 import { Header } from './header';
 
 export const StartOverlay = () => {
+  const { ready, error } = useMainStore();
+  const { socket } = useSocketStore();
+  const { join } = usePeer();
+
+  const isReady = ready && socket?.connect;
+
+  const handleJumpIn = () => {
+    if (error) {
+      window.location.reload();
+    }
+
+    if (isReady) {
+      join();
+    }
+  };
+
   return (
     <div className="relative flex h-screen flex-col justify-end bg-white">
       <Header />
@@ -29,7 +47,7 @@ export const StartOverlay = () => {
           opportunity!
         </p>
 
-        <Button className="w-full">
+        <Button className="w-full" onClick={handleJumpIn}>
           <VideoCameraIcon className="mr-2" />
           Jump In
         </Button>

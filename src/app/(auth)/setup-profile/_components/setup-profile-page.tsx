@@ -1,7 +1,9 @@
 'use client';
 
+import { useAuthStore } from '@/store';
 import { zodResolver } from '@hookform/resolvers/zod';
-import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -35,6 +37,8 @@ const stepSchemas = [
 
 export const SetupProfilePage = () => {
   const [step, setStep] = useState(0);
+  const me = useAuthStore.getState().me;
+  const router = useRouter();
   const form = useForm({
     resolver: zodResolver(stepSchemas[step]),
     mode: 'onChange',
@@ -53,6 +57,14 @@ export const SetupProfilePage = () => {
   const handleSetStep = (value: number) => {
     setStep(value);
   };
+
+  useEffect(() => {
+    if (me) {
+      if (me.fullName && me.dob) {
+        router.push('/');
+      }
+    }
+  }, []);
 
   return (
     <FormProvider {...form}>
