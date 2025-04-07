@@ -4,7 +4,7 @@ import {
   MessagesBox,
   CameraButton,
   MicButton
-} from '@/app/(main)/_components';
+} from '@/app/(auth)/_components';
 import { useAuthStore, useMainStore } from '@/store';
 import { getImageUrl } from '@/utils';
 import React from 'react';
@@ -17,7 +17,7 @@ export const ChatOverlay = ({ isShowChat }: { isShowChat: boolean }) => {
 
   return (
     <div
-      className={`shadow-color m-0.5 h-[calc(100%-4px)] gap-3 rounded-4xl bg-gray-200 p-4 ${!isShowChat ? '' : 'flex flex-col justify-center'}`}
+      className={`shadow-color m-0.5 flex h-[calc(100%-4px)] flex-col justify-start gap-3 rounded-4xl p-4 ${!isShowChat && waitingForMatch ? '' : 'justify-center'}`}
     >
       <div className="absolute top-4 left-4 z-20 flex h-8 items-center space-x-2 rounded-full bg-black/20 p-1 !pr-2.5">
         <Avatar className="size-6">

@@ -1,29 +1,32 @@
-// import { cookies } from 'next/headers';
+import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 
-// import { AUTH_TOKEN_KEY } from './constants/common';
+import { AUTH_TOKEN_KEY } from './constants/common';
 
-// const privateRoutes = ['/order', '/custom-link'];
+const privateRoutes = ['/allow-access', '/auth', '/setup-profile', '/'];
 
-export async function middleware(_request: NextRequest) {
-  // const cookieStore = await cookies();
-  // const cookie = cookieStore.get(AUTH_TOKEN_KEY);
-  // const url = request.nextUrl.clone();
-  // if (!cookie && url.pathname.includes('/login')) return NextResponse.next();
+export async function middleware(request: NextRequest) {
+  const cookieStore = await cookies();
+  const cookie = cookieStore.get(AUTH_TOKEN_KEY);
+  const url = request.nextUrl.clone();
+  if (!cookie && url.pathname.includes('/login')) return NextResponse.next();
 
-  // if (cookie && (url.pathname.includes('/login') || url.pathname === '/')) {
-  //   url.pathname = '/order';
-  //   url.search = '';
+  if (cookie && url.pathname.includes('/login')) {
+    url.pathname = '/';
+    url.search = '';
 
-  //   return NextResponse.redirect(url);
-  // }
+    return NextResponse.redirect(url);
+  }
 
-  // if (!cookie && (privateRoutes.includes(url.pathname) || url.pathname === '/')) {
-  //   url.pathname = '/login';
-  //   url.search = '';
+  if (
+    !cookie &&
+    (privateRoutes.includes(url.pathname) || url.pathname === '/')
+  ) {
+    url.pathname = '/login';
+    url.search = '';
 
-  //   return NextResponse.redirect(url);
-  // }
+    return NextResponse.redirect(url);
+  }
 
   return NextResponse.next();
 }

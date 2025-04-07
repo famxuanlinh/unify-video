@@ -6,3 +6,4 @@ export * from './use-toast';
 export * from './use-oauth-direct';
 export * from './use-update-profile';
 export * from './use-get-profile';
+export * from './use-autocomplete-suggestions';

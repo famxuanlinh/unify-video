@@ -11,11 +11,12 @@ export const useGetProfile = () => {
   const { setMe } = useAuthStore();
   const { setIncomingUserInfo } = useMainStore();
 
-  const handleGetProfile = async (userId?: string) => {
+  const getProfile = async (userId?: string) => {
     try {
       setIsLoading(true);
       const res = await UnifyApi.user.get({ userId });
       setData(res);
+
       if (userId) {
         setIncomingUserInfo(res);
       } else {
@@ -32,5 +33,5 @@ export const useGetProfile = () => {
     }
   };
 
-  return { data, isLoading, handleGetProfile };
+  return { data, isLoading, getProfile };
 };

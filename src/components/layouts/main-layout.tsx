@@ -1,16 +1,11 @@
-import React from 'react';
+'use client';
 
-import { AuthLayout } from './auth-layout';
+import React from 'react';
 
 interface MainLayoutProps {
   children: React.ReactNode;
 }
 
-export const MainLayout = async ({ children }: MainLayoutProps) => {
-  return (
-    <div className="relative">
-      {/* <Header /> */}
-      <AuthLayout>{children}</AuthLayout>
-    </div>
-  );
+export const MainLayout = ({ children }: MainLayoutProps) => {
+  return <>{children}</>;
 };

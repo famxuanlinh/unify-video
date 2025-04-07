@@ -1,9 +1,11 @@
 'use client';
 
+import { AUTH_TOKEN_KEY } from '@/constants';
 import { useAuthStore } from '@/store';
 import { getImageUrl } from '@/utils';
+import { deleteCookie } from 'cookies-next';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 
 import {
@@ -61,7 +63,15 @@ const menus: {
 
 export const Header = () => {
   const [isOpenSheet, setIsOpenSheet] = useState(false);
-  const { me } = useAuthStore();
+
+  const { me, setMe } = useAuthStore();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    router.push('/login');
+    deleteCookie(AUTH_TOKEN_KEY);
+    setMe(null);
+  };
 
   const pathName = usePathname();
 
@@ -77,7 +87,7 @@ export const Header = () => {
           </Avatar>
           <div>
             <p className="text-body-m text-light-grey">Hello,</p>
-            <p className="text-head-sx text-dark-grey">Eleanor Pena</p>
+            <p className="text-head-sx text-dark-grey">{me?.fullName}</p>
           </div>
         </div>
         <div onClick={() => setIsOpenSheet(true)}>
@@ -96,7 +106,7 @@ export const Header = () => {
                 />
               </Avatar>
               <div className="mt-4 flex items-center justify-center">
-                <p className="text-head-l text-dark-grey">Eleanor Pena</p>{' '}
+                <p className="text-head-l text-dark-grey">{me?.fullName}</p>
                 <VerifiedBadgeIcon className="ml-2" />
               </div>
             </SheetTitle>
@@ -122,7 +132,10 @@ export const Header = () => {
             </SheetDescription>
           </SheetHeader>
           <div className="flex justify-end p-6">
-            <div className="text-red flex cursor-pointer gap-2">
+            <div
+              onClick={handleLogout}
+              className="text-red flex cursor-pointer gap-2"
+            >
               <LeaveIcon />
               <p className="text-label-l">Sign Out</p>
             </div>

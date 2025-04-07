@@ -19,3 +19,4 @@ export * from './mic-slash-icon';
 export * from './camera-icon';
 export * from './camera-slash-icon';
 export * from './phone-x-icon';
+export * from './location-icon';

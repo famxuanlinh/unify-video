@@ -5,7 +5,9 @@ import { Button } from '@/components';
 
 export const LoginPage = () => {
   return (
-    <div className="relative flex h-screen flex-col justify-end bg-[url(/images/login-bg.png)] bg-cover">
+    <div
+      className={`relative flex h-screen flex-col justify-end bg-[url(/images/login-bg.png)] bg-cover`}
+    >
       <div className="relative h-full w-full">
         <Image
           src="/images/login-img.png"
