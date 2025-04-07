@@ -6,6 +6,7 @@ import { APIProvider } from '@vis.gl/react-google-maps';
 import { MiniKit } from '@worldcoin/minikit-js';
 import React, { useEffect } from 'react';
 
+import { Toaster } from '../core';
 import { ErudaProvider } from './eruda-provider';
 
 export const PublicLayout = ({ children }: { children: React.ReactNode }) => {
@@ -16,10 +17,13 @@ export const PublicLayout = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <APIProvider apiKey={MapConfig.GOOGLE_MAP_API_KEY} version={'beta'}>
-        <ErudaProvider>{children}</ErudaProvider>
-      </APIProvider>
-    </QueryClientProvider>
+    <>
+      <QueryClientProvider client={queryClient}>
+        <APIProvider apiKey={MapConfig.GOOGLE_MAP_API_KEY} version={'beta'}>
+          <ErudaProvider>{children}</ErudaProvider>
+        </APIProvider>
+      </QueryClientProvider>
+      <Toaster />
+    </>
   );
 };

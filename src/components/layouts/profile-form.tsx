@@ -34,7 +34,6 @@ import {
   AvatarFallback,
   DatePicker
 } from '@/components';
-import { GoogleMapEmbed } from '@/components';
 
 const formSchema = z.object({
   name: z.string().min(1).min(1).max(32),
@@ -230,9 +229,6 @@ export function ProfileForm() {
           >
             {!coordinate.lat ? 'Get location' : 'Update location'}
           </Button>
-          {coordinate.lat && coordinate.long && (
-            <GoogleMapEmbed coordinate={coordinate} />
-          )}
         </div>
 
         <div className="space-y-8 rounded-2xl border border-gray-500 p-4">

@@ -4,11 +4,14 @@ import UnifyApi from '@/apis';
 import { useAuthStore } from '@/store';
 import { UpdateUserPayload } from '@/types';
 import { handleImageCompression, IPFSUtils } from '@/utils';
-import { useCallback, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useCallback, useEffect, useState } from 'react';
 
 import { toast } from './use-toast';
 
 export const useUpdateProfile = () => {
+  const router = useRouter();
+
   const [isLoading, setIsLoading] = useState(false);
   const [isGettingCoordinate, setIsGettingCoordinate] = useState(false);
   const [data, setData] = useState({});
@@ -37,6 +40,7 @@ export const useUpdateProfile = () => {
       });
       setData(res);
       setMe(res);
+      router.push('/');
       toast({
         description: 'Update user successful'
       });
@@ -66,6 +70,10 @@ export const useUpdateProfile = () => {
     setAvatarFile('');
   };
 
+  const handleGerCoordinate = (values: { lat: number; long: number }) => {
+    setCoordinate(values);
+  };
+
   const handleGetLocation = () => {
     setIsGettingCoordinate(true);
     navigator.geolocation.getCurrentPosition(pos => {
@@ -82,6 +90,30 @@ export const useUpdateProfile = () => {
     });
   };
 
+  useEffect(() => {
+    if (me) {
+      if (!me?.location.lat && !me?.location.long) {
+        navigator.geolocation.getCurrentPosition(pos => {
+          const { latitude, longitude } = pos.coords;
+          setCoordinate({
+            lat: latitude,
+            long: longitude
+          });
+          setIsGettingCoordinate(false);
+          // const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`;
+          // fetch(url)
+          //   .then(res => res.json())
+          //   .then(data => setAdd(data.address));
+        });
+      } else {
+        setCoordinate({
+          lat: me?.location?.lat,
+          long: me?.location?.long
+        });
+      }
+    }
+  }, [me]);
+
   return {
     data,
     coordinate,
@@ -92,6 +124,7 @@ export const useUpdateProfile = () => {
     handleUpdateProfile,
     isUploading,
     handleDeleteAvatar,
-    handleUploadAvatar
+    handleUploadAvatar,
+    handleGerCoordinate
   };
 };

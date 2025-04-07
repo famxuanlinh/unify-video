@@ -1,0 +1,163 @@
+'use client';
+
+import { useAutocompleteSuggestions } from '@/hooks';
+import { useMapsLibrary } from '@vis.gl/react-google-maps';
+import debounce from 'lodash/debounce';
+import { ChevronDown, LoaderCircle } from 'lucide-react';
+import React, {
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
+
+import { Input } from '@/components';
+
+interface Props {
+  onPlaceSelect: (place: google.maps.places.Place | null) => void;
+  onGetCoordinate: (values: { lat: number; long: number }) => void;
+}
+
+export interface AutocompleteCustomRef {
+  setPlaceByLatLng: (lat: number, lng: number) => void;
+}
+
+export const Autocomplete = React.forwardRef<AutocompleteCustomRef, Props>(
+  ({ onPlaceSelect, onGetCoordinate }, ref) => {
+    const places = useMapsLibrary('places');
+    const [open, setOpen] = useState(false);
+    const [inputValue, setInputValue] = useState<string>('');
+    const [searchDebounce, setSearchDebounce] = useState('');
+    const { suggestions, resetSession, isLoading } =
+      useAutocompleteSuggestions(searchDebounce);
+    const containerRef = useRef<HTMLDivElement>(null);
+
+    const setPlaceByLatLng = useCallback(
+      async (lat: number, lng: number) => {
+        // if (!places) return;
+        onGetCoordinate({ lat, long: lng });
+
+        const location = new google.maps.LatLng(lat, lng);
+
+        const geocoder = new google.maps.Geocoder();
+        const results = await geocoder.geocode({ location });
+
+        if (results && results.results.length > 0) {
+          const result = results.results[0];
+
+          // simulate the place object
+          const place: google.maps.places.Place = {
+            formattedAddress: result.formatted_address,
+            location: result.geometry.location,
+            viewport: result.geometry.viewport
+          } as google.maps.places.Place;
+
+          setInputValue(result.formatted_address || '');
+          onPlaceSelect(place);
+        }
+      },
+      [places, onPlaceSelect]
+    );
+
+    useImperativeHandle(ref, () => ({
+      setPlaceByLatLng
+    }));
+
+    React.useImperativeHandle(ref, () => ({
+      setPlaceByLatLng
+    }));
+
+    const debounceSearch = useMemo(
+      () =>
+        debounce(event => {
+          setSearchDebounce((event.target as HTMLInputElement).value);
+        }, 500),
+      []
+    );
+
+    const handleInput = (event: React.FormEvent<HTMLInputElement>) => {
+      debounceSearch(event);
+      setInputValue((event.target as HTMLInputElement).value);
+    };
+
+    const handleSuggestionClick = useCallback(
+      async (suggestion: google.maps.places.AutocompleteSuggestion) => {
+        if (!places) return;
+        if (!suggestion.placePrediction) return;
+        setInputValue(suggestion.placePrediction?.text.text);
+        setOpen(false);
+
+        const place = suggestion.placePrediction.toPlace();
+        await place.fetchFields({
+          fields: ['viewport', 'location']
+        });
+
+        resetSession();
+        if (place.location) {
+          const lat = place.location?.lat();
+          const long = place.location?.lng();
+          onGetCoordinate({
+            lat,
+            long
+          });
+          onPlaceSelect(place);
+        }
+      },
+      [places, onPlaceSelect]
+    );
+
+    useEffect(() => {
+      const handleClickOutside = (e: MouseEvent) => {
+        if (
+          containerRef.current &&
+          !containerRef.current.contains(e.target as Node)
+        ) {
+          setOpen(false);
+        }
+      };
+
+      document.addEventListener('mousedown', handleClickOutside);
+
+      return () =>
+        document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
+    return (
+      <div ref={containerRef}>
+        <div className="relative">
+          <Input
+            onClick={() => setOpen(true)}
+            placeholder="Type location"
+            type="text"
+            value={inputValue}
+            onInput={handleInput}
+          />
+          <div className="absolute top-3 right-4">
+            {isLoading ? (
+              <LoaderCircle className="text-dark-grey animate-spin" />
+            ) : (
+              <ChevronDown className="text-dark-grey" />
+            )}
+          </div>
+
+          {suggestions.length > 0 && open && (
+            <ul className="relative z-10 max-h-30 overflow-y-auto rounded-lg bg-gray-100 p-2">
+              {suggestions.map((suggestion, index) => (
+                <li
+                  key={index}
+                  className="line-clamp-1 cursor-pointer py-0.5 text-sm"
+                  onClick={() => handleSuggestionClick(suggestion)}
+                >
+                  {suggestion.placePrediction?.text.text}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </div>
+    );
+  }
+);
+Autocomplete.displayName = 'AutocompleteCustom';

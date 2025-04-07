@@ -2,7 +2,7 @@
 
 import { useUpdateProfile } from '@/hooks';
 import { Gender, UpdateUserPayload } from '@/types';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 
 import {
@@ -17,15 +17,9 @@ import {
   FormLabel,
   FormMessage,
   Input,
-  Location,
   Slider,
   Switch,
   DatePicker,
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectItem,
-  SelectContent,
   GoogleMap
 } from '@/components';
 
@@ -38,7 +32,6 @@ interface UpdateProfileRaw {
   lat?: number;
   lng?: number;
   label?: string;
-  location?: Location | null;
   miles?: number;
   limit: boolean;
 }
@@ -55,27 +48,8 @@ export const UpdateProfileForm = ({
   const [formData, setFormData] = useState({});
   const form = useFormContext();
 
-  const { isLoading, handleUpdateProfile } = useUpdateProfile();
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [placeChest, setPlaceChest] = useState<Location | undefined | null>();
-
-  useEffect(() => {
-    if (!placeChest) {
-      form.setValue('location', null);
-
-      return;
-    }
-
-    const place_chest = {
-      lat: placeChest.position.lat,
-      lng: placeChest.position.lng,
-      label: placeChest.place_id
-    };
-    console.log('place chest: ', place_chest);
-
-    form.setValue('location', place_chest);
-  }, [placeChest]);
+  const { isLoading, handleUpdateProfile, coordinate, handleGerCoordinate } =
+    useUpdateProfile();
 
   const onNext = async () => {
     console.log('Error', form.formState.errors['dob']);
@@ -425,40 +399,10 @@ export const UpdateProfileForm = ({
                       onMapLoaded={() => {}}
                     /> */}
 
-                    <GoogleMap />
-                    <FormField
-                      control={form.control}
-                      name="gender"
-                      render={({ field }) => (
-                        <FormItem>
-                          <Select
-                            onValueChange={field.onChange}
-                            defaultValue={field.value}
-                          >
-                            <FormControl>
-                              <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Select gender" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              <SelectItem value={Gender.Male}>
-                                {Gender.Male}
-                              </SelectItem>
-                              <SelectItem value={Gender.Female}>
-                                {Gender.Female}
-                              </SelectItem>
-                              <SelectItem value={Gender.NonBinary}>
-                                Non Binary
-                              </SelectItem>
-                              <SelectItem value={Gender.Other}>
-                                {Gender.Other}
-                              </SelectItem>
-                            </SelectContent>
-                          </Select>
-
-                          <FormMessage />
-                        </FormItem>
-                      )}
+                    <GoogleMap
+                      lat={coordinate.lat}
+                      long={coordinate.long}
+                      onGetCoordinate={handleGerCoordinate}
                     />
 
                     <FormField

@@ -3,7 +3,7 @@ import { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { ReactNode } from 'react';
 
-import { PublicLayout, Toaster } from '@/components';
+import { PublicLayout } from '@/components';
 
 import { cn } from '@/lib';
 
@@ -39,7 +39,6 @@ const RootLayout = async ({ children }: RootLayoutProps) => {
         suppressHydrationWarning
       >
         <PublicLayout> {children}</PublicLayout>
-        <Toaster />
       </body>
     </html>
   );
