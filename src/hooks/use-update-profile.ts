@@ -92,7 +92,7 @@ export const useUpdateProfile = () => {
 
   useEffect(() => {
     if (me) {
-      if (!me?.location.lat && !me?.location.long) {
+      if (!me?.location?.lat && !me?.location?.long) {
         navigator.geolocation.getCurrentPosition(pos => {
           const { latitude, longitude } = pos.coords;
           setCoordinate({
