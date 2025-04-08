@@ -3,4 +3,4 @@ export * from './signin-button';
 export * from './layouts';
 export * from './core';
 export * from './icons';
-export * from './google-map';
+export * from './upload-button';

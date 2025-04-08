@@ -19,9 +19,9 @@ import {
   Input,
   Slider,
   Switch,
-  DatePicker,
-  GoogleMap
+  DatePicker
 } from '@/components';
+import { GoogleMap } from '@/components/google-map';
 
 interface UpdateProfileRaw {
   fullName: string;
