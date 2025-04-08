@@ -1,5 +1,4 @@
 'use client';
-import { UploadButton } from '@/app/(auth)/_components';
 import { env } from '@/constants';
 import { useUpdateProfile } from '@/hooks';
 import { useAuthStore } from '@/store';
@@ -10,6 +9,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
+import { UploadButton } from '@/components';
 import {
   Select,
   SelectContent,
