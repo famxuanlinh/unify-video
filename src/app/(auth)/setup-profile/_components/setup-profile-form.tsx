@@ -2,6 +2,7 @@
 
 import { useUpdateProfile } from '@/hooks';
 import { Gender, UpdateUserPayload } from '@/types';
+import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 
@@ -44,12 +45,16 @@ export const UpdateProfileForm = ({
   step: number;
 }) => {
   const [isShowLimitRange, setIsShowLimitRange] = useState(false);
-  //   const [step, onSetStep] = useState(0);
+  const router = useRouter();
   const [formData, setFormData] = useState({});
   const form = useFormContext();
 
-  const { isLoading, handleUpdateProfile, coordinate, handleGerCoordinate } =
-    useUpdateProfile();
+  const { isLoading, handleUpdateProfile, coordinate, handleGetCoordinate } =
+    useUpdateProfile({
+      onSuccess: () => {
+        router.push('/');
+      }
+    });
 
   const onNext = async () => {
     console.log('Error', form.formState.errors['dob']);
@@ -137,7 +142,7 @@ export const UpdateProfileForm = ({
                   name="fullName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>
+                      <FormLabel className="text-head-s text-dark-grey mb-4">
                         Your Name<span className="text-red">*</span>
                       </FormLabel>
                       <FormControl>
@@ -157,7 +162,7 @@ export const UpdateProfileForm = ({
                     name="dob"
                     render={({ field }) => (
                       <FormItem className="w-full">
-                        <FormLabel>
+                        <FormLabel className="text-head-s text-dark-grey mb-4">
                           {' '}
                           Your Birthday<span className="text-red">*</span>
                         </FormLabel>
@@ -402,7 +407,7 @@ export const UpdateProfileForm = ({
                     <GoogleMap
                       lat={coordinate.lat}
                       long={coordinate.long}
-                      onGetCoordinate={handleGerCoordinate}
+                      onGetCoordinate={handleGetCoordinate}
                     />
 
                     <FormField

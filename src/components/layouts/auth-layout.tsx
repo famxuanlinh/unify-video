@@ -49,8 +49,6 @@ export const AuthLayout = ({ children }: { children: React.ReactNode }) => {
     if (me) {
       if (!me.fullName || !me.dob) {
         router.push('/setup-profile');
-      } else {
-        router.push('/');
       }
     }
   }, [me]);
