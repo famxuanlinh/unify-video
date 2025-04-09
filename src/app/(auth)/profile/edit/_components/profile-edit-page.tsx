@@ -25,12 +25,13 @@ import {
   Input,
   DatePicker
 } from '@/components';
+import { LocationInput } from '@/components/google-map/location-input';
 
 const formSchema = z.object({
   fullName: z.string().min(1).min(1).max(32),
   dob: z.coerce.date(),
   gender: z.string(),
-  bio: z.string()
+  bio: z.string().optional()
 });
 
 export function ProfileEditPage() {
@@ -42,9 +43,15 @@ export function ProfileEditPage() {
     handleUpdateProfile,
     handleUploadAvatar,
     handleDeleteAvatar,
+    handleGetHometownAddress,
+    hometown,
     avatarFile,
     isUploading
-  } = useUpdateProfile();
+  } = useUpdateProfile({
+    onSuccess: () => {
+      router.push('/profile');
+    }
+  });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -71,7 +78,7 @@ export function ProfileEditPage() {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="grid h-10 grid-cols-3 items-center px-4 pt-1">
-          <div className="w-fit" onClick={() => router.push('/')}>
+          <div className="w-fit" onClick={() => router.push('/profile')}>
             <ArrowLeft className="fill-dark-grey" />
           </div>
           <div className="text-head-li flex justify-center">Edit Profile</div>
@@ -87,7 +94,7 @@ export function ProfileEditPage() {
           </div>
         </div>
         <div className="bg-white-200 my-4 h-2 w-full"></div>
-        <div className="max-w-3xl space-y-8 px-4">
+        <div className="max-w-3xl flex-1 space-y-8 overflow-auto px-4">
           <div className="flex flex-col items-center gap-4">
             <div>
               <UploadButton
@@ -192,6 +199,10 @@ export function ProfileEditPage() {
               )}
             />
           </div>
+          <LocationInput
+            onSelectAddress={handleGetHometownAddress}
+            address={hometown}
+          />
           <FormField
             control={form.control}
             name="bio"
@@ -200,6 +211,7 @@ export function ProfileEditPage() {
                 <FormLabel>Bio</FormLabel>
                 <FormControl>
                   <Textarea
+                    maxLength={256}
                     placeholder="Placeholder"
                     className="resize-none"
                     {...field}

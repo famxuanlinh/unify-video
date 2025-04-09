@@ -2,6 +2,7 @@
 
 import { useUpdateProfile } from '@/hooks';
 import { Gender, UpdateUserPayload } from '@/types';
+import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 
@@ -44,12 +45,16 @@ export const UpdateProfileForm = ({
   step: number;
 }) => {
   const [isShowLimitRange, setIsShowLimitRange] = useState(false);
-  //   const [step, onSetStep] = useState(0);
+  const router = useRouter();
   const [formData, setFormData] = useState({});
   const form = useFormContext();
 
-  const { isLoading, handleUpdateProfile, coordinate, handleGerCoordinate } =
-    useUpdateProfile();
+  const { isLoading, handleUpdateProfile, coordinate, handleGetCoordinate } =
+    useUpdateProfile({
+      onSuccess: () => {
+        router.push('/');
+      }
+    });
 
   const onNext = async () => {
     console.log('Error', form.formState.errors['dob']);
@@ -402,7 +407,7 @@ export const UpdateProfileForm = ({
                     <GoogleMap
                       lat={coordinate.lat}
                       long={coordinate.long}
-                      onGetCoordinate={handleGerCoordinate}
+                      onGetCoordinate={handleGetCoordinate}
                     />
 
                     <FormField

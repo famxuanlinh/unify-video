@@ -17,7 +17,7 @@ import { Input } from '@/components';
 
 interface Props {
   onPlaceSelect: (place: google.maps.places.Place | null) => void;
-  onGetCoordinate: (values: { lat: number; long: number }) => void;
+  onGetCoordinate?: (values: { lat: number; long: number }) => void;
 }
 
 export interface AutocompleteCustomRef {
@@ -37,7 +37,7 @@ export const Autocomplete = React.forwardRef<AutocompleteCustomRef, Props>(
     const setPlaceByLatLng = useCallback(
       async (lat: number, lng: number) => {
         // if (!places) return;
-        onGetCoordinate({ lat, long: lng });
+        onGetCoordinate?.({ lat, long: lng });
 
         const location = new google.maps.LatLng(lat, lng);
 
@@ -65,10 +65,6 @@ export const Autocomplete = React.forwardRef<AutocompleteCustomRef, Props>(
       setPlaceByLatLng
     }));
 
-    React.useImperativeHandle(ref, () => ({
-      setPlaceByLatLng
-    }));
-
     const debounceSearch = useMemo(
       () =>
         debounce(event => {
@@ -77,7 +73,7 @@ export const Autocomplete = React.forwardRef<AutocompleteCustomRef, Props>(
       []
     );
 
-    const handleInput = (event: React.FormEvent<HTMLInputElement>) => {
+    const handleSearch = (event: React.FormEvent<HTMLInputElement>) => {
       debounceSearch(event);
       setInputValue((event.target as HTMLInputElement).value);
     };
@@ -98,7 +94,7 @@ export const Autocomplete = React.forwardRef<AutocompleteCustomRef, Props>(
         if (place.location) {
           const lat = place.location?.lat();
           const long = place.location?.lng();
-          onGetCoordinate({
+          onGetCoordinate?.({
             lat,
             long
           });
@@ -132,7 +128,7 @@ export const Autocomplete = React.forwardRef<AutocompleteCustomRef, Props>(
             placeholder="Type location"
             type="text"
             value={inputValue}
-            onInput={handleInput}
+            onInput={handleSearch}
           />
           <div className="absolute top-3 right-4">
             {isLoading ? (

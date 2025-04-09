@@ -4,18 +4,19 @@ import UnifyApi from '@/apis';
 import { useAuthStore } from '@/store';
 import { UpdateUserPayload } from '@/types';
 import { handleImageCompression, IPFSUtils } from '@/utils';
-import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 
 import { toast } from './use-toast';
 
-export const useUpdateProfile = () => {
-  const router = useRouter();
+export const useUpdateProfile = ({
+  onSuccess
+}: { onSuccess?: () => void } = {}) => {
+  const { setMe, me } = useAuthStore();
 
   const [isLoading, setIsLoading] = useState(false);
   const [isGettingCoordinate, setIsGettingCoordinate] = useState(false);
+  const [hometown, setHometown] = useState('');
   const [data, setData] = useState({});
-  const { setMe, me } = useAuthStore();
 
   const [avatarFile, setAvatarFile] = useState<string>(me?.avatar || '');
   const [isUploading, setIsUploading] = useState(false);
@@ -40,10 +41,10 @@ export const useUpdateProfile = () => {
       });
       setData(res);
       setMe(res);
-      router.push('/');
       toast({
         description: 'Update user successful'
       });
+      onSuccess?.();
     } catch (error) {
       console.log('🚀 ~ handleUpdateUser ~ error:', error);
     } finally {
@@ -70,8 +71,11 @@ export const useUpdateProfile = () => {
     setAvatarFile('');
   };
 
-  const handleGerCoordinate = (values: { lat: number; long: number }) => {
+  const handleGetCoordinate = (values: { lat: number; long: number }) => {
     setCoordinate(values);
+  };
+  const handleGetHometownAddress = (value: string) => {
+    setHometown(value);
   };
 
   const handleGetLocation = () => {
@@ -83,10 +87,6 @@ export const useUpdateProfile = () => {
         long: longitude
       });
       setIsGettingCoordinate(false);
-      // const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`;
-      // fetch(url)
-      //   .then(res => res.json())
-      //   .then(data => setAdd(data.address));
     });
   };
 
@@ -100,10 +100,6 @@ export const useUpdateProfile = () => {
             long: longitude
           });
           setIsGettingCoordinate(false);
-          // const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`;
-          // fetch(url)
-          //   .then(res => res.json())
-          //   .then(data => setAdd(data.address));
         });
       } else {
         setCoordinate({
@@ -119,12 +115,14 @@ export const useUpdateProfile = () => {
     coordinate,
     isLoading,
     avatarFile,
+    handleGetHometownAddress,
+    hometown,
     isGettingCoordinate,
     handleGetLocation,
     handleUpdateProfile,
     isUploading,
     handleDeleteAvatar,
     handleUploadAvatar,
-    handleGerCoordinate
+    handleGetCoordinate
   };
 };

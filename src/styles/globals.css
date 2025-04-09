@@ -228,7 +228,7 @@
   }
 
   .text-body-m {
-    font-size: var(--text-mobile-body-m);
+    font-size: var(--text-mobile-body-m) !important;
     font-weight: var(--text-mobile-body-m--font-weight);
   }
 
