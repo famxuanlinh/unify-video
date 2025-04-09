@@ -37,6 +37,9 @@ export const useUpdateProfile = ({
           lat: coordinate.lat,
           long: coordinate.long
         },
+        hometown: {
+          name: hometown
+        },
         avatar: avatarFile
       });
       setData(res);

@@ -83,9 +83,9 @@ export const LocationInput: React.FC<Props> = ({
           value={address}
           onInput={handleSearch}
         />
-        <div className="bg-white-200 absolute top-3 right-3">
+        <div className="bg-white-200 absolute top-4 right-3">
           {isLoading ? (
-            <LoaderCircle className="text-dark-grey animate-spin" />
+            <LoaderCircle className="text-dark-grey size-4 animate-spin" />
           ) : (
             <>
               {address ? (
@@ -93,11 +93,12 @@ export const LocationInput: React.FC<Props> = ({
                   onClick={() => {
                     onSelectAddress('');
                     setOpen(false);
+                    resetSession();
                   }}
-                  className="text-dark-grey"
+                  className="text-dark-grey size-4"
                 />
               ) : (
-                <ChevronDown className="text-dark-grey" />
+                <ChevronDown className="text-dark-grey size-4" />
               )}
             </>
           )}

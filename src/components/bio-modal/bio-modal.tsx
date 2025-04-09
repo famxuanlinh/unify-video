@@ -34,12 +34,7 @@ export const BioModal: React.FC<BioModalProps> = ({
         <div className="mb-4 p-4 pt-0">
           <div className="text-body-m text-light-grey mb-2">Bio</div>
           <div className="bg-white-200 gap-4 rounded-2xl p-4">
-            <div className="text-body-m">
-              I&apos;m an explorer at heart, always searching for the next great
-              adventure. Looking for someone who&apos;s not afraid to get their
-              hands dirty or their feet wet. Let&apos;s create unforgettable
-              memories together.
-            </div>
+            <div className="text-body-m">{data?.bio || 'No bio available'}</div>
           </div>
         </div>
       </DialogContent>

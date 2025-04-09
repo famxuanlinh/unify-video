@@ -58,7 +58,8 @@ export function ProfileEditPage() {
     defaultValues: {
       fullName: me?.fullName || '',
       dob: me?.dob ? new Date(me?.dob) : undefined,
-      gender: me?.gender
+      gender: me?.gender,
+      bio: me?.bio || ''
     }
   });
 
@@ -68,7 +69,8 @@ export function ProfileEditPage() {
       coverImage: '',
       fullName: values.fullName,
       dob: values.dob.toISOString(),
-      gender: values.gender
+      gender: values.gender,
+      bio: values.bio
     };
 
     handleUpdateProfile(payload);
@@ -212,7 +214,7 @@ export function ProfileEditPage() {
                 <FormControl>
                   <Textarea
                     maxLength={256}
-                    placeholder="Placeholder"
+                    placeholder="Type bio"
                     className="resize-none"
                     {...field}
                   />
