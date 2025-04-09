@@ -17,7 +17,7 @@ const buttonVariants = cva(
         outline: 'border-[2px] border-[#262628] text-[#262628] bg-white',
         secondary: 'bg-white text-[#E94057]',
         ghost: 'hover:bg-accent hover:text-accent-foreground',
-        link: 'text-primary underline-offset-4 hover:underline'
+        link: '!text-[#5682F4] text-head-s'
       },
       size: {
         default: 'h-11 rounded-lg py-3 px-5 text-base font-semibold',

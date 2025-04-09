@@ -137,7 +137,7 @@ export const UpdateProfileForm = ({
                   name="fullName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>
+                      <FormLabel className="text-head-s text-dark-grey mb-4">
                         Your Name<span className="text-red">*</span>
                       </FormLabel>
                       <FormControl>
@@ -157,7 +157,7 @@ export const UpdateProfileForm = ({
                     name="dob"
                     render={({ field }) => (
                       <FormItem className="w-full">
-                        <FormLabel>
+                        <FormLabel className="text-head-s text-dark-grey mb-4">
                           {' '}
                           Your Birthday<span className="text-red">*</span>
                         </FormLabel>

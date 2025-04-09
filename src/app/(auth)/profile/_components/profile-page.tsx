@@ -51,7 +51,12 @@ export const ProfilePage = () => {
             <ArrowSquareOutIcon />
             Preview
           </Button>
-          <Button className="min-w-29 gap-2" variant="outline" size="sm">
+          <Button
+            onClick={() => router.push('/profile/edit')}
+            className="min-w-29 gap-2"
+            variant="outline"
+            size="sm"
+          >
             <EditIcon />
             Edit profile
           </Button>

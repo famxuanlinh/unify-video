@@ -94,7 +94,10 @@ function FormLabel({
     <Label
       data-slot="form-label"
       data-error={!!error}
-      className={cn('text-head-s text-dark-grey mb-4 gap-0', className)}
+      className={cn(
+        'text-body-m text-light-grey mb-3 gap-0 font-light',
+        className
+      )}
       htmlFor={formItemId}
       {...props}
     />

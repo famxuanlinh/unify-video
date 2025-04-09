@@ -35,7 +35,7 @@ export type UpdateUserPayload = {
   fullName: string;
   dob: string;
   gender?: string;
-  seekingSettings: SeekingSettings;
+  seekingSettings?: SeekingSettings;
   location?: {
     lat?: number;
     long?: number;
