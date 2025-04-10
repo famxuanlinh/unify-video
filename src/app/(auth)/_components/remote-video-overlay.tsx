@@ -22,7 +22,7 @@ export const RemoteVideoOverlay = () => {
   return (
     <div className="relative flex h-full flex-col items-center justify-end">
       {isIncomingCameraOn === false ? (
-        <div className="absolute top-0 left-0 z-10 flex h-full w-full items-center justify-center rounded-4xl bg-[url(/images/login-bg.png)] bg-cover bg-right-top">
+        <div className="absolute top-0 left-0 z-10 flex h-full w-full items-center justify-center rounded-4xl bg-[url(/images/main-bg.png)] bg-cover bg-right-top">
           <CameraOff className="size-20 text-white" />
         </div>
       ) : null}

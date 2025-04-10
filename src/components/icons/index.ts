@@ -20,3 +20,6 @@ export * from './camera-icon';
 export * from './camera-slash-icon';
 export * from './phone-x-icon';
 export * from './location-icon';
+export * from './edit-icon';
+export * from './map-in-outline-icon';
+export * from './arrow-square-out';

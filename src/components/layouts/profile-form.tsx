@@ -123,9 +123,7 @@ export function ProfileForm() {
               accept="image/*"
               isLoading={isUploading}
               onFileUpload={handleUploadAvatar}
-            >
-              {avatarFile ? 'Update' : 'Upload'} avatar
-            </UploadButton>
+            ></UploadButton>
             <Button
               disabled={Boolean(!avatarFile)}
               variant={'secondary'}

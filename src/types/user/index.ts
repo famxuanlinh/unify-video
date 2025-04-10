@@ -5,17 +5,11 @@ export type User = {
   fullName: string | null;
   dob: string | null;
   gender: string;
+  bio: string;
   seekingSettings: SeekingSettings;
-  location: {
-    lat?: number;
-    long?: number;
-  };
+  location: Location;
+  hometown: Location;
 };
-
-interface Location {
-  limit: boolean;
-  miles: number;
-}
 
 interface AgeRange {
   min: number;
@@ -35,20 +29,25 @@ export type UpdateUserPayload = {
   fullName: string;
   dob: string;
   gender?: string;
-  seekingSettings: SeekingSettings;
-  location?: {
-    lat?: number;
-    long?: number;
-  };
+  bio?: string;
+  seekingSettings?: SeekingSettings;
+  location?: Location;
+  hometown?: Location;
 };
+
+interface Location {
+  lat?: number;
+  long?: number;
+  name?: string;
+}
 
 interface SeekingSettings {
   genders?: string[];
   ageRange?: AgeRange;
-  location?: Location;
+  location?: SeekingLocation;
 }
 
-interface Location {
+interface SeekingLocation {
   limit: boolean;
   miles: number;
 }

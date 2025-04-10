@@ -20,3 +20,4 @@ export * from './location-input';
 export * from './dual-range-slider';
 export * from './date-picker';
 export * from './sheet';
+export * from './textarea';
