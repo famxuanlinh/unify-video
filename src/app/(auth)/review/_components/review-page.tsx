@@ -1,6 +1,9 @@
 'use client';
 
+import { useCreateReview } from '@/hooks/use-create-review';
 import { useAuthStore, useMainStore } from '@/store';
+import { CreateReviewPayload } from '@/types/review';
+import { getImageUrl } from '@/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Flag } from 'lucide-react';
 import React from 'react';
@@ -29,36 +32,43 @@ const friendTypes = [
   { id: 'friend', label: '🤝 Friends' }
 ];
 
-const formSchema = z.object({
-  rating: z.number(),
-  connectionTypes: z.array(z.string()),
-  comment: z.string(),
-  pass: z.boolean()
-});
+const formSchema = z
+  .object({
+    rating: z.enum(['-2', '-1', '0', '1', '2']).transform(String),
+    connectionTypes: z.array(z.string()),
+    pass: z.boolean().optional().default(false)
+  })
+  .refine(data => data.connectionTypes.length > 0 || data.pass === true, {
+    message: 'Either connectionTypes or pass must be selected',
+    path: ['connectionTypes']
+  });
 
 export const ReviewPage = () => {
   const { me } = useAuthStore();
   const { incomingUserInfo } = useMainStore.getState();
-
-  // const { handleUpdateProfile } = useUpdateProfile();
+  const { isLoading, createReview } = useCreateReview();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      comment: '',
-      rating: 0,
+      rating: '',
       connectionTypes: [],
       pass: false
-    }
+    },
+    mode: 'onChange'
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log('🚀 ~ onSubmit ~ values:', { values, me, incomingUserInfo });
-    // const payload: UpdateUserPayload = {
+    if (!me) return;
+    const payload: CreateReviewPayload = {
+      reviewedUserId: me.userId,
+      rating: values.rating,
+      comment: '',
+      connectionTypes: values.connectionTypes,
+      pass: values.pass
+    };
 
-    // };
-
-    // handleUpdateProfile(payload);
+    createReview(payload);
   }
 
   return (
@@ -86,13 +96,18 @@ export const ReviewPage = () => {
                   <Avatar className="absolute left-0 size-[100px]">
                     <AvatarImage
                       className="rounded-full object-cover"
-                      src={'/images/avatar-default.png'}
+                      src={
+                        getImageUrl(me?.avatar) || '/images/avatar-default.png'
+                      }
                     />
                   </Avatar>
                   <Avatar className="absolute right-0 size-[100px]">
                     <AvatarImage
                       className="rounded-full object-cover"
-                      src={'/images/avatar-default.png'}
+                      src={
+                        getImageUrl(incomingUserInfo?.avatar) ||
+                        '/images/avatar-default.png'
+                      }
                     />
                   </Avatar>
                 </div>
@@ -161,6 +176,9 @@ export const ReviewPage = () => {
                                   checked={isChecked}
                                   type="checkbox"
                                   onChange={() => {
+                                    if (form.getValues('pass')) {
+                                      form.setValue('pass', false);
+                                    }
                                     const newValue = isChecked
                                       ? selectedValues.filter(
                                           g => g !== type.id
@@ -175,7 +193,7 @@ export const ReviewPage = () => {
                             );
                           })}
                         </div>
-                        <FormMessage />
+                        {/* <FormMessage /> */}
                       </FormItem>
                     );
                   }}
@@ -204,14 +222,17 @@ export const ReviewPage = () => {
                             id={'pass'}
                             className="peer hidden"
                             checked={field.value}
-                            type="radio"
+                            type="checkbox"
                             onChange={e => {
+                              if (e.target.checked) {
+                                form.setValue('connectionTypes', []);
+                              }
                               field.onChange(e.target.checked);
                             }}
                           />
                           ❌ Pass
                         </label>
-                        <FormMessage />
+                        {/* <FormMessage /> */}
                       </FormItem>
                     );
                   }}
@@ -229,8 +250,8 @@ export const ReviewPage = () => {
               <Button
                 variant="secondary"
                 className="w-full"
-                loading={false}
-                disabled={false}
+                loading={isLoading}
+                disabled={isLoading || !form.formState.isValid}
                 type="submit"
               >
                 Done

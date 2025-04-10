@@ -13,11 +13,11 @@ import { Terrible } from '@/components/icons/terrible';
 import { TerribleSelected } from '@/components/icons/terrible-selected';
 
 export enum Rating {
-  TERRIBLE = -2,
-  BAD = -1,
-  OKAY = 0,
-  GOOD = 1,
-  GREAT = 2
+  TERRIBLE = '-2',
+  BAD = '-1',
+  OKAY = '0',
+  GOOD = '1',
+  GREAT = '2'
 }
 
 const reactions = [
@@ -55,8 +55,8 @@ const reactions = [
 
 type Props = {
   field: {
-    value: number;
-    onChange: (value: number) => void;
+    value: string;
+    onChange: (value: string) => void;
   };
 };
 
@@ -73,7 +73,7 @@ export const ReactionRating = ({ field }: Props) => {
             className={`flex cursor-pointer flex-col items-center justify-center gap-1 rounded-2xl p-3 transition`}
           >
             <Input
-              id={reaction.id.toString()}
+              id={reaction.id}
               type="radio"
               checked={isSelected}
               onChange={() => field.onChange(reaction.id)}
