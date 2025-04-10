@@ -53,7 +53,7 @@ export const GoogleMap = ({ lat, long, onGetCoordinate }: GoogleMapProps) => {
         defaultCenter={{ lat: 22.54992, lng: 0 }}
         gestureHandling={'greedy'}
         disableDefaultUI={true}
-        className="relative h-full max-h-83 [&>div]:rounded-2xl"
+        className="relative h-83 [&>div]:rounded-2xl"
       >
         <AutocompleteResult place={selectedPlace} />
         <button

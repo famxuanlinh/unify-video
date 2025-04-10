@@ -2,6 +2,7 @@
 
 import { useAuthStore } from '@/store';
 import { getImageUrl, parseToUsername } from '@/utils';
+import { format } from 'date-fns';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 
@@ -90,19 +91,19 @@ export const ProfilePage = () => {
               <div className="flex items-center gap-2">
                 <CalenderIcon /> <span>DOB</span>
               </div>
-              <div>{me.fullName}</div>
+              <div>{format(me.dob || '', 'dd/MM/yyyy')}</div>
             </div>
             <div className="text-body-m flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <UserOutlineIcon /> <span>Gender</span>
               </div>
-              <div>{me.fullName}</div>
+              <div>{me.gender || '-'}</div>
             </div>
-            <div className="text-body-m flex items-center justify-between">
+            <div className="text-body-m flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <MapInOutlineIcon /> <span>Location</span>
               </div>
-              <div>{me.fullName}</div>
+              <div>{me.hometown.name || '-'}</div>
             </div>
           </div>
           <div className="text-head-s">Bio</div>
