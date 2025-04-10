@@ -15,7 +15,7 @@ export const useUpdateProfile = ({
 
   const [isLoading, setIsLoading] = useState(false);
   const [isGettingCoordinate, setIsGettingCoordinate] = useState(false);
-  const [hometown, setHometown] = useState('');
+  const [hometown, setHometown] = useState(me?.hometown?.name || '');
   const [data, setData] = useState({});
 
   const [avatarFile, setAvatarFile] = useState<string>(me?.avatar || '');

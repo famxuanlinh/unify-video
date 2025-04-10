@@ -130,20 +130,20 @@ export const Autocomplete = React.forwardRef<AutocompleteCustomRef, Props>(
             value={inputValue}
             onInput={handleSearch}
           />
-          <div className="absolute top-3 right-4">
+          <div className="bg-white-200 absolute top-4 right-3">
             {isLoading ? (
-              <LoaderCircle className="text-dark-grey animate-spin" />
+              <LoaderCircle className="text-dark-grey size-4 animate-spin" />
             ) : (
-              <ChevronDown className="text-dark-grey" />
+              <ChevronDown className="text-dark-grey size-4" />
             )}
           </div>
 
           {suggestions.length > 0 && open && (
-            <ul className="relative z-10 max-h-30 overflow-y-auto rounded-lg bg-gray-100 p-2">
+            <ul className="bg-white-200 relative z-10 mt-1 max-h-30 overflow-y-auto rounded-lg p-2">
               {suggestions.map((suggestion, index) => (
                 <li
                   key={index}
-                  className="line-clamp-1 cursor-pointer py-0.5 text-sm"
+                  className="text-body-m line-clamp-1 cursor-pointer py-0.5"
                   onClick={() => handleSuggestionClick(suggestion)}
                 >
                   {suggestion.placePrediction?.text.text}
