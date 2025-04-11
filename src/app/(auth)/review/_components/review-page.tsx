@@ -6,6 +6,7 @@ import { CreateReviewPayload } from '@/types/review';
 import { getImageUrl } from '@/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Flag } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
@@ -47,6 +48,7 @@ export const ReviewPage = () => {
   const { me } = useAuthStore();
   const { incomingUserInfo } = useMainStore.getState();
   const { isLoading, createReview } = useCreateReview();
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -78,15 +80,9 @@ export const ReviewPage = () => {
         className="mx-auto max-w-3xl space-y-8"
       >
         <div
-          className={`relative flex h-screen flex-col justify-end bg-[url('public/images/review-bg.jpg')] bg-cover`}
+          className={`relative flex h-screen flex-col justify-end bg-[url('/images/review-bg.jpg')] bg-cover`}
         >
           <div className="relative mt-[92px] h-full w-full">
-            {/* <Image
-              src="/images/login-img.png"
-              alt="login"
-              fill
-              className="size-full object-cover"
-            /> */}
             <div className="absolute left-1/2 z-20 -translate-x-1/2">
               <div className="flex w-full justify-center">
                 <div className="relative w-[184px]">
@@ -125,7 +121,7 @@ export const ReviewPage = () => {
               <div className="text-center text-sm font-bold text-white">
                 How’d it go?
               </div>
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <div>
                 <FormField
                   control={form.control}
                   name="rating"
@@ -156,7 +152,7 @@ export const ReviewPage = () => {
 
                     return (
                       <FormItem className="flex flex-col space-y-2">
-                        <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
+                        <div className="grid grid-cols-2 gap-2">
                           {friendTypes.map(type => {
                             const isChecked = selectedValues.includes(type.id);
 
@@ -239,8 +235,12 @@ export const ReviewPage = () => {
                 />
                 <div className="mt-10 flex justify-end">
                   <button
+                    onClick={e => {
+                      e.preventDefault();
+                      router.push('/report');
+                    }}
                     // onClick={toggleVisibility}
-                    className="flex items-center gap-1 text-white"
+                    className="flex cursor-pointer items-center gap-1 text-white"
                   >
                     <Flag /> <div className="text-xs">Report</div>
                   </button>
