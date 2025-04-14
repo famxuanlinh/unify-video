@@ -70,7 +70,7 @@ export const ReactionRating = ({ field }: Props) => {
           <label
             key={reaction.id}
             htmlFor={reaction.id.toString()}
-            className={`flex cursor-pointer flex-col items-center justify-center gap-1 rounded-2xl p-3 transition`}
+            className={`flex cursor-pointer flex-col items-center justify-center gap-1 rounded-2xl py-3 transition`}
           >
             <Input
               id={reaction.id}

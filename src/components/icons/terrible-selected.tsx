@@ -8,12 +8,12 @@ interface SVGProps {
 export const TerribleSelected: React.FC<SVGProps> = props => {
   return (
     <svg
-      {...props}
       width="41"
       height="40"
       viewBox="0 0 41 40"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      {...props}
     >
       <path
         d="M20.0982 37.4972C31.7663 37.4972 37.5968 29.6628 37.5968 19.9986C37.5968 10.3344 31.7663 2.5 20.0982 2.5C8.43015 2.5 2.59961 10.3344 2.59961 19.9986C2.59961 29.6628 8.43015 37.4972 20.0982 37.4972Z"
