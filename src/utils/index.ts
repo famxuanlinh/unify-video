@@ -31,3 +31,17 @@ export function getImageUrl(hash?: string | null) {
 
   return env.IPFS_BASE_URL + hash;
 }
+
+export function formatDuration(totalSeconds: number) {
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  const pad = (n: number) => n.toString().padStart(2, '0');
+
+  if (hours > 0) {
+    return `${hours}:${pad(minutes)}:${pad(seconds)}`;
+  } else {
+    return `${minutes}:${pad(seconds)}`;
+  }
+}

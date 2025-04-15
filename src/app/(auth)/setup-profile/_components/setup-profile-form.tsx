@@ -52,7 +52,7 @@ export const UpdateProfileForm = ({
   const { isLoading, handleUpdateProfile, coordinate, handleGetCoordinate } =
     useUpdateProfile({
       onSuccess: () => {
-        router.push('/');
+        router.push('/allow-access');
       }
     });
 

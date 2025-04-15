@@ -56,6 +56,8 @@ export const AuthLayout = ({ children }: { children: React.ReactNode }) => {
   }, [me]);
 
   useEffect(() => {
+    const myPeerId = usePeerStore.getState().myPeerId;
+    console.log('🚀 ~ useEffect ~ myPeerId:', myPeerId);
     // const socket = useSocketStore.getState().socket;
 
     if (!socket || !socket?.connected) return;
@@ -88,7 +90,7 @@ export const AuthLayout = ({ children }: { children: React.ReactNode }) => {
     );
 
     socket.on(MESSAGE_EVENTS.WAITING, () => {
-      log('Waiting for a match...');
+      log(`Waiting for a match with ${myPeerId}`);
 
       setRemoteStream(null);
       setWaitingForMatch(true);

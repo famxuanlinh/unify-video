@@ -4,10 +4,10 @@ import { usePeer } from '@/hooks';
 import { useCreateReview } from '@/hooks/use-create-review';
 import { useAuthStore, useMainStore } from '@/store';
 import { CreateReviewPayload } from '@/types/review';
-import { getImageUrl } from '@/utils';
+import { formatDuration, getImageUrl } from '@/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Flag } from 'lucide-react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
@@ -48,15 +48,14 @@ const formSchema = z
 export const ReviewPage = () => {
   const router = useRouter();
   const { handleReturnToHome } = usePeer();
-  const searchParams = useSearchParams();
-  const callId = searchParams.get('callId');
-  const incomingUserId = searchParams.get('incomingUserId');
 
   const { me } = useAuthStore();
-  const { incomingUserInfo } = useMainStore.getState();
+  const { incomingUserInfo, timeStreaming, setTimeStreaming, callId } =
+    useMainStore.getState();
   const { isLoading, createReview } = useCreateReview({
     onSuccess: () => {
       handleReturnToHome();
+      setTimeStreaming(0);
     }
   });
 
@@ -77,9 +76,9 @@ export const ReviewPage = () => {
   }, []);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    if (!incomingUserId) return;
+    if (!incomingUserInfo) return;
     const payload: CreateReviewPayload = {
-      reviewedUserId: incomingUserId,
+      reviewedUserId: incomingUserInfo?.userId as string,
       callId: callId as string,
       rating: Number(values.rating),
       comment: '',
@@ -130,7 +129,9 @@ export const ReviewPage = () => {
               <div className="text-center text-lg font-medium text-white">
                 Call Ended
               </div>
-              <div className="text-center text-sm text-white">11:03</div>
+              <div className="text-center text-sm text-white">
+                {formatDuration(timeStreaming)}
+              </div>
             </div>
           </div>
           <div className="mx-4 mt-8 mb-6 rounded-3xl bg-[#1E1E1E0D] pt-0 text-white">
@@ -254,9 +255,7 @@ export const ReviewPage = () => {
                   <button
                     onClick={e => {
                       e.preventDefault();
-                      router.push(
-                        `/report?callId=${callId}&reportedUserId=${incomingUserId}`
-                      );
+                      router.push(`/report`);
                     }}
                     // onClick={toggleVisibility}
                     className="flex cursor-pointer items-center gap-1 text-white"

@@ -94,7 +94,6 @@ export function usePeer() {
     const stream = localStream?.id
       ? localStream
       : usePeerStore.getState().localStream;
-
     if (!stream?.id) {
       log('Local stream not available');
       setError('makeCall Local stream not available');
@@ -169,13 +168,10 @@ export function usePeer() {
     const timeStreaming = useMainStore.getState().timeStreaming;
     const isEndCall = useMainStore.getState().isEndCall;
     const setIsEndCall = useMainStore.getState().setIsEndCall;
-    const incomingUserId = useMainStore.getState().incomingUserInfo;
-    setIncomingUserInfo(null);
+    // setIncomingUserInfo(null);
 
-    if (timeStreaming > 10) {
-      router.push(
-        `/review?callId=${useMainStore.getState().callId}&incomingUserId=${incomingUserId?.userId}`
-      );
+    if (timeStreaming > 1) {
+      router.push(`/review`);
     } else if (isEndCall) {
       setIncomingUserInfo(null);
       setLocalStream(null);
@@ -194,6 +190,7 @@ export function usePeer() {
 
   const handleEndCall = () => {
     const setIsEndCall = useMainStore.getState().setIsEndCall;
+
     setIsEndCall(true);
     handleDisconnectPeer();
   };
@@ -209,7 +206,6 @@ export function usePeer() {
   const stopStreamingTimer = () => {
     const stopTimer = useTimerStore.getState().stopTimer;
     stopTimer();
-    useMainStore.setState({ timeStreaming: 0 });
   };
 
   const getData = (rawData: unknown) => {
@@ -247,6 +243,7 @@ export function usePeer() {
     const socket = useSocketStore.getState().socket;
 
     setRemoteStream(null);
+    // setIncomingUserInfo(null);
 
     // For message
     const dataConnection = usePeerStore.getState().dataConnection;
@@ -275,13 +272,13 @@ export function usePeer() {
     }
 
     if (waitingForMatch && isEndCall) {
-      setIncomingUserInfo(null);
+      // setIncomingUserInfo(null);
       setLocalStream(null);
       setStarted(false);
       setIsEndCall(false);
-      socket?.emit(MESSAGE_EVENTS.END);
       router.push('/');
     }
+    socket?.emit(MESSAGE_EVENTS.END);
   };
 
   const send = (data: {
@@ -309,7 +306,6 @@ export function usePeer() {
   const handleReturnToHome = () => {
     const isEndCall = useMainStore.getState().isEndCall;
     const socket = useSocketStore.getState().socket;
-
     if (!isEndCall) {
       socket?.emit(MESSAGE_EVENTS.SKIP);
     } else {
