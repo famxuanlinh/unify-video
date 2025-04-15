@@ -36,7 +36,7 @@ const formSchema = z.object({
       name: z.string()
     })
     .nullable(),
-  miles: z.coerce.number().min(18).max(99),
+  miles: z.number(),
   limit: z.boolean()
 });
 
@@ -93,7 +93,9 @@ export const PreferencesPage = () => {
         : [18, 99],
       seekingGender: me?.seekingSettings.genders,
       location: null,
-      miles: me?.seekingSettings.location?.miles || 25,
+      miles: me?.seekingSettings.location?.miles
+        ? me?.seekingSettings.location?.miles
+        : 25,
       limit: me?.seekingSettings.location?.limit || false
     });
   }, [me]);
@@ -235,7 +237,7 @@ export const PreferencesPage = () => {
                           min={1}
                           max={100}
                           step={1}
-                          defaultValue={[25]}
+                          value={[value ?? 25]}
                           onValueChange={vals => {
                             onChange(vals[0]);
                           }}

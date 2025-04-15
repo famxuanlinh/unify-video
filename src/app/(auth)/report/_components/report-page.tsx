@@ -1,8 +1,9 @@
 'use client';
 
 import { useCreateReport } from '@/hooks/use-create-report';
+import { useMainStore } from '@/store';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import React, { useEffect } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { z } from 'zod';
@@ -84,13 +85,13 @@ const reasons = [
 ];
 
 export const ProfilePage = () => {
-  const searchParams = useSearchParams();
-  const reportedUserId = searchParams.get('reportedUserId');
+  const { setTimeStreaming, incomingUserInfo } = useMainStore();
 
   const router = useRouter();
   const { isLoading, createReport } = useCreateReport({
     onSuccess: () => {
       router.push('/report/confirmation');
+      setTimeStreaming(0);
     }
   });
 
@@ -108,18 +109,18 @@ export const ProfilePage = () => {
   const isOtherOptionSelected = reportType === ReportType.OTHER;
 
   useEffect(() => {
-    if (!reportedUserId) {
+    if (!incomingUserInfo) {
       router.push('/');
     }
   }, []);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    if (!reportedUserId) {
+    if (!incomingUserInfo) {
       return;
     }
     const payload = {
       ...values,
-      reportedUserId: reportedUserId as string
+      reportedUserId: incomingUserInfo.userId
     };
     createReport(payload);
   }

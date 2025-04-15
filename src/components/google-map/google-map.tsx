@@ -1,6 +1,7 @@
 'use client';
 
 import { MapConfig } from '@/configs';
+import { toast } from '@/hooks';
 import { Map } from '@vis.gl/react-google-maps';
 import React, { useRef, useState } from 'react';
 
@@ -33,8 +34,10 @@ export const GoogleMap = ({ lat, long, onGetCoordinate }: GoogleMapProps) => {
         autocompleteRef.current?.setPlaceByLatLng(latitude, longitude);
       },
       error => {
-        alert('Unable to retrieve your location.');
-        console.error(error);
+        toast({
+          description: 'Unable to retrieve your location.'
+        });
+        console.log(error);
       }
     );
   };

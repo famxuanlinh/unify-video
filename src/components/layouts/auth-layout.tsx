@@ -88,7 +88,7 @@ export const AuthLayout = ({ children }: { children: React.ReactNode }) => {
     );
 
     socket.on(MESSAGE_EVENTS.WAITING, () => {
-      log('Waiting for a match...');
+      log(`Waiting for a match ...`);
 
       setRemoteStream(null);
       setWaitingForMatch(true);

@@ -8,7 +8,7 @@ import React from 'react';
 import { ArrowLeft, ChatIcon } from '@/components';
 
 export const HomePage = () => {
-  const { started } = useMainStore();
+  const { started, waitingForMatch } = useMainStore();
   const { handleEndCall } = usePeer();
   const { messages, changeStatusMessages, isShowChat, setIsShowChat } =
     useMessagingStore();
@@ -28,15 +28,19 @@ export const HomePage = () => {
             <div onClick={handleEndCall}>
               <ArrowLeft className="fill-white" />
             </div>
-            <div
-              onClick={handleShowChat}
-              className={`relative flex size-10 items-center justify-center ${isShowChat ? 'rounded-full bg-white/16' : ''}`}
-            >
-              <ChatIcon />
-              {isNewestMessage >= 0 && !isShowChat && (
-                <div className="bg-red absolute right-2.5 bottom-2.5 size-[5px] rounded-full"></div>
-              )}
-            </div>
+            {!waitingForMatch ? (
+              <div
+                onClick={handleShowChat}
+                className={`relative flex size-10 items-center justify-center ${isShowChat ? 'rounded-full bg-white/16' : ''}`}
+              >
+                <ChatIcon />
+                {isNewestMessage >= 0 && !isShowChat && (
+                  <div className="bg-red absolute right-2.5 bottom-2.5 size-[5px] rounded-full"></div>
+                )}
+              </div>
+            ) : (
+              <p></p>
+            )}
           </div>
           <div className="flex h-[calc(100%-40px-16px)] flex-col gap-2 landscape:flex-row">
             <RemoteSide />
