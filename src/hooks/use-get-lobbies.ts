@@ -34,6 +34,7 @@ export const useGetLobbies = () => {
       return res;
     } catch (error) {
       console.log('Error:', error);
+      setHasMore(false);
 
       return null;
     } finally {
