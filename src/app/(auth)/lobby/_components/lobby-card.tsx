@@ -59,19 +59,12 @@ export const LobbyCard = ({ connection }: LobbyCardProps) => {
         </Button>
         <DropdownMenu>
           <DropdownMenuTrigger>
-            <Button
-              className="h-8 w-8 p-1"
-              variant={'ghost'}
-              size={'sm'}
-              type="button"
-            >
-              <EllipsisVertical />
-            </Button>
+            <EllipsisVertical />
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-[156px] p-1">
             <DropdownMenuItem
               className="text-dark-grey text-xs font-light"
-              onClick={() => setIsOpenModal(true)}
+              // onClick={() => setIsOpenModal(true)}
             >
               <div className="flex items-center gap-3">
                 <span>

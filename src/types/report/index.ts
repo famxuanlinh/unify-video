@@ -1,7 +1,7 @@
 export interface CreateReportPayload {
   reportedUserId: string;
   reportType: string;
-  description: string;
+  description?: string;
   other?: string;
 }
 

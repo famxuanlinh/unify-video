@@ -5,6 +5,7 @@ export * from './base64';
 export * from './helpers';
 export * from './ipfs.utils';
 export * from './image-compression';
+export * from './get-distance';
 
 export function b64EncodeUnicode(str: string) {
   return btoa(

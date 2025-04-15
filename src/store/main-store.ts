@@ -13,6 +13,9 @@ interface MainState {
   isMicOn: boolean;
   isIncomingCameraOn: boolean;
   isIncomingMicOn: boolean;
+  timeStreaming: number;
+  callId: string;
+  isEndCall: boolean;
 
   setStarted: (started: boolean) => void;
   setLoading: (loading: boolean) => void;
@@ -25,6 +28,9 @@ interface MainState {
   setIsMicOn: (value: boolean) => void;
   setIsIncomingCameraOn: (value: boolean) => void;
   setIsIncomingMicOn: (value: boolean) => void;
+  setTimeStreaming: (timeStreaming: number) => void;
+  setCallId: (callId: string) => void;
+  setIsEndCall: (isEndCall: boolean) => void;
 }
 
 export const useMainStore = create<MainState>(set => ({
@@ -39,6 +45,9 @@ export const useMainStore = create<MainState>(set => ({
   isMicOn: true,
   isIncomingCameraOn: true,
   isIncomingMicOn: true,
+  timeStreaming: 0,
+  callId: '',
+  isEndCall: false,
 
   setStarted: started => set({ started }),
   setLoading: loading => set({ loading }),
@@ -51,5 +60,8 @@ export const useMainStore = create<MainState>(set => ({
   setIsCameraOn: value => set(() => ({ isCameraOn: value })),
   setIsMicOn: value => set(() => ({ isMicOn: value })),
   setIsIncomingCameraOn: value => set(() => ({ isIncomingCameraOn: value })),
-  setIsIncomingMicOn: value => set(() => ({ isIncomingMicOn: value }))
+  setIsIncomingMicOn: value => set(() => ({ isIncomingMicOn: value })),
+  setTimeStreaming: value => set(() => ({ timeStreaming: value })),
+  setCallId: callId => set({ callId }),
+  setIsEndCall: isEndCall => set(() => ({ isEndCall }))
 }));

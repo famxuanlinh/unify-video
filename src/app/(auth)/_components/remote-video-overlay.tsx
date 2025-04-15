@@ -1,8 +1,8 @@
 'use client';
 
 import { usePeer } from '@/hooks';
-import { useMainStore } from '@/store';
-import { getImageUrl } from '@/utils';
+import { useAuthStore, useMainStore } from '@/store';
+import { getDistanceInKm, getImageUrl } from '@/utils';
 import { CameraOff } from 'lucide-react';
 import React from 'react';
 
@@ -15,9 +15,27 @@ import {
 } from '@/components';
 
 export const RemoteVideoOverlay = () => {
-  const { skip } = usePeer();
+  const { handleNextCall } = usePeer();
   const { incomingUserInfo, isIncomingMicOn, isIncomingCameraOn } =
     useMainStore();
+  const { me } = useAuthStore();
+
+  const distance = () => {
+    if (
+      !me?.location?.lat ||
+      me.location?.long ||
+      !incomingUserInfo?.location.lat ||
+      !incomingUserInfo?.location.long
+    )
+      return false;
+
+    return getDistanceInKm({
+      lat1: me.location.lat as number,
+      long1: me.location.long as number,
+      lat2: incomingUserInfo.location.lat as number,
+      long2: incomingUserInfo?.location.long as number
+    });
+  };
 
   return (
     <div className="relative flex h-full flex-col items-center justify-end">
@@ -56,10 +74,15 @@ export const RemoteVideoOverlay = () => {
             </p>
             <VerifiedBadgeIcon className="ml-2" />
           </div>
-          <p className="text-body-m text-light-grey mt-1">TORONTO • 5KM AWAY</p>
+          <p className="text-body-m text-light-grey mt-1">
+            {incomingUserInfo?.location.name
+              ? `${incomingUserInfo?.location.name} •`
+              : ''}
+            {distance()}
+          </p>
         </div>
         <button
-          onClick={() => skip()}
+          onClick={handleNextCall}
           className="flex size-10 cursor-pointer items-center justify-center rounded-full text-white transition-all"
         >
           <NextIcon />

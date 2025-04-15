@@ -1,9 +1,37 @@
+'use client';
+
+import { toast } from '@/hooks';
 import Image from 'next/image';
-import React from 'react';
+import { useRouter } from 'next/navigation';
+import React, { useState } from 'react';
 
 import { Button } from '@/components';
 
 export const AllowAccessPage = () => {
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+
+  const handleAllowAccess = async () => {
+    try {
+      setLoading(true);
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: true
+      });
+
+      stream.getTracks().forEach(track => track.stop());
+
+      router.push('/');
+    } catch (error) {
+      toast({
+        description: 'Error accessing camera and microphone'
+      });
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="h-screen overflow-hidden">
       <div className="flex h-full flex-col justify-between">
@@ -27,8 +55,14 @@ export const AllowAccessPage = () => {
           />
         </div>
         <div className="px-4 pb-4">
-          {' '}
-          <Button className="w-full">Allow Access</Button>
+          <Button
+            disabled={loading}
+            loading={loading}
+            onClick={handleAllowAccess}
+            className="w-full"
+          >
+            Allow Access
+          </Button>
         </div>
       </div>
     </div>

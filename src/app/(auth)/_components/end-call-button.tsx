@@ -6,11 +6,11 @@ import React from 'react';
 import { PhoneXIcon } from '@/components';
 
 export const EndCallButton = () => {
-  const { end } = usePeer();
+  const { handleEndCall } = usePeer();
 
   return (
     <button
-      onClick={() => end()}
+      onClick={handleEndCall}
       className="bg-red flex size-10 items-center justify-center rounded-full"
     >
       <PhoneXIcon />

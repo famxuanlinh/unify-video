@@ -1,9 +1,10 @@
 export interface CreateReviewPayload {
   reviewedUserId: string;
-  rating: string;
+  rating: number;
   comment: string;
   connectionTypes?: string[];
   pass?: boolean;
+  callId: string;
 }
 export interface CreateReviewResponse {
   review: Review;

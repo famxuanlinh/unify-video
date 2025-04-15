@@ -4,7 +4,7 @@ import UnifyApi from '@/apis';
 import { CreateReviewPayload, CreateReviewResponse } from '@/types/review';
 import { useState } from 'react';
 
-export const useCreateReview = () => {
+export const useCreateReview = ({ onSuccess }: { onSuccess?: () => void }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState<CreateReviewResponse | null>(null);
 
@@ -13,6 +13,7 @@ export const useCreateReview = () => {
       setIsLoading(true);
       const res = await UnifyApi.review.create(payload);
       setData(res);
+      onSuccess?.();
 
       return res;
     } catch (error) {

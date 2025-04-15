@@ -47,7 +47,11 @@ export const StartOverlay = () => {
           opportunity!
         </p>
 
-        <Button className="w-full" onClick={handleJumpIn}>
+        <Button
+          loading={Boolean(!isReady)}
+          className="w-full"
+          onClick={handleJumpIn}
+        >
           <VideoCameraIcon className="mr-2" />
           Jump In
         </Button>
