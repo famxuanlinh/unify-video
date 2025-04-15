@@ -1,7 +1,8 @@
+import { useAuthStore } from '@/store/auth-store';
 import { User } from '@/types';
-import { getImageUrl } from '@/utils';
+import { getDistanceInKm, getImageUrl } from '@/utils';
 import Image from 'next/image';
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { Dialog, DialogContent, DialogTitle } from '../core';
 import { VerifiedBadgeIcon } from '../icons';
@@ -17,6 +18,24 @@ export const BioModal: React.FC<BioModalProps> = ({
   onOpenChange,
   open
 }) => {
+  const { me } = useAuthStore();
+  const distance = useMemo(() => {
+    if (
+      !me?.location?.lat ||
+      me.location?.long ||
+      !data?.location.lat ||
+      !data?.location.long
+    )
+      return false;
+
+    return getDistanceInKm({
+      lat1: me.location.lat as number,
+      long1: me.location.long as number,
+      lat2: data.location.lat as number,
+      long2: data?.location.long as number
+    });
+  }, [me, data]);
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTitle></DialogTitle>
@@ -38,8 +57,11 @@ export const BioModal: React.FC<BioModalProps> = ({
               <p className="text-body-m text-light-grey mt-1 flex items-center">
                 <span className="line-clamp-1 w-2/3">
                   {data.hometown?.name}
-                </span>{' '}
-                • 5KM AWAY
+                </span>
+              </p>
+              <p className="text-body-m text-light-grey mt-1">
+                {data?.location?.name ? `${data?.location?.name} •` : ''}
+                {distance}
               </p>
             </div>
           </div>

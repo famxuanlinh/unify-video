@@ -44,6 +44,10 @@ export const LobbyPage = () => {
     }
   }, [inView, hasMore, isLoading, connectionType, offset]);
 
+  useEffect(() => {
+    getLobbies({ type: connectionType, offset, limit });
+  }, []);
+
   const handleConnectionTypeChange = (value: string) => {
     setConnectionType(value as 'MATCH' | 'FRIEND');
     reset();
@@ -51,7 +55,7 @@ export const LobbyPage = () => {
   const connections = data?.connections || [];
 
   return (
-    <div className="relative px-4">
+    <div className="relative min-h-screen px-4">
       <div className="pt-1">
         <div className="flex items-center justify-between">
           <div
@@ -87,25 +91,27 @@ export const LobbyPage = () => {
         </div>
       </div>
 
-      <div className="mt-6 flex flex-col gap-4">
+      <div className="mt-6 flex h-full flex-col gap-4">
         {connections.length === 0 && !isLoading ? (
           <div className="py-8 text-center text-gray-500">
             <LobbyNoData />
           </div>
         ) : (
-          connections.map(connection => (
-            <LobbyCard
-              key={connection.targetUserProfile.userId}
-              connection={connection}
-            />
-          ))
+          <div className="w-full">
+            {connections.map(connection => (
+              <LobbyCard
+                key={connection.targetUserProfile.userId}
+                connection={connection}
+              />
+            ))}
+          </div>
         )}
 
         <div ref={ref} className="py-4 text-center">
           {isLoading && <div>Loading...</div>}
         </div>
       </div>
-      <div className="sticky right-4 bottom-6">
+      <div className="absolute right-4 bottom-6">
         <div className="flex items-center justify-end">
           <div
             className="flex h-10 w-10 cursor-pointer items-center justify-center"

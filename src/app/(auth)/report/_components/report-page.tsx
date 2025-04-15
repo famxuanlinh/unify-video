@@ -85,7 +85,6 @@ const reasons = [
 
 export const ProfilePage = () => {
   const searchParams = useSearchParams();
-  const callId = searchParams.get('callId');
   const reportedUserId = searchParams.get('reportedUserId');
 
   const router = useRouter();
@@ -109,18 +108,17 @@ export const ProfilePage = () => {
   const isOtherOptionSelected = reportType === ReportType.OTHER;
 
   useEffect(() => {
-    if (!callId || !reportedUserId) {
+    if (!reportedUserId) {
       router.push('/');
     }
   }, []);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    if (!callId || !reportedUserId) {
+    if (!reportedUserId) {
       return;
     }
     const payload = {
       ...values,
-      callId,
       reportedUserId: reportedUserId as string
     };
     createReport(payload);
