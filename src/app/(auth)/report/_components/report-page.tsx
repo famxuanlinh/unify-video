@@ -1,6 +1,5 @@
 'use client';
 
-import { usePeer } from '@/hooks';
 import { useCreateReport } from '@/hooks/use-create-report';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -21,11 +20,25 @@ import {
   Button
 } from '@/components';
 
-const formSchema = z.object({
-  reportType: z.string(),
-  description: z.string().optional(),
-  other: z.string().optional()
-});
+const formSchema = z
+  .object({
+    reportType: z.string(),
+    description: z.string().optional(),
+    other: z.string().optional()
+  })
+  .refine(
+    data => {
+      if (data.reportType === ReportType.OTHER) {
+        return !!data.other && data.other.trim().length > 0;
+      }
+
+      return true;
+    },
+    {
+      message: "Please provide details for 'Other' option",
+      path: ['other']
+    }
+  );
 
 enum ReportType {
   INAPPROPRIATE_BEHAVIOR = 'INAPPROPRIATE_BEHAVIOR',
@@ -71,7 +84,6 @@ const reasons = [
 ];
 
 export const ProfilePage = () => {
-  const { handleReturnToHome } = usePeer();
   const searchParams = useSearchParams();
   const callId = searchParams.get('callId');
   const reportedUserId = searchParams.get('reportedUserId');
@@ -79,7 +91,7 @@ export const ProfilePage = () => {
   const router = useRouter();
   const { isLoading, createReport } = useCreateReport({
     onSuccess: () => {
-      handleReturnToHome();
+      router.push('/report/confirmation');
     }
   });
 
