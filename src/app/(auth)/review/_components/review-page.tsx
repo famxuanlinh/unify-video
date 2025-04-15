@@ -255,7 +255,7 @@ export const ReviewPage = () => {
                     onClick={e => {
                       e.preventDefault();
                       router.push(
-                        `/report?callId=${callId}&reportedUserId=${incomingUserInfo?.userId}`
+                        `/report?callId=${callId}&reportedUserId=${incomingUserId}`
                       );
                     }}
                     // onClick={toggleVisibility}
