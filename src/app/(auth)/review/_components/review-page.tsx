@@ -50,6 +50,7 @@ export const ReviewPage = () => {
   const { handleReturnToHome } = usePeer();
   const searchParams = useSearchParams();
   const callId = searchParams.get('callId');
+  const incomingUserId = searchParams.get('incomingUserId');
 
   const { me } = useAuthStore();
   const { incomingUserInfo } = useMainStore.getState();
@@ -76,9 +77,9 @@ export const ReviewPage = () => {
   }, []);
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    if (!me) return;
+    if (!incomingUserId) return;
     const payload: CreateReviewPayload = {
-      reviewedUserId: me.userId,
+      reviewedUserId: incomingUserId,
       callId: callId as string,
       rating: Number(values.rating),
       comment: '',

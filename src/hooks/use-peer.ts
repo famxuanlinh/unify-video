@@ -169,9 +169,13 @@ export function usePeer() {
     const timeStreaming = useMainStore.getState().timeStreaming;
     const isEndCall = useMainStore.getState().isEndCall;
     const setIsEndCall = useMainStore.getState().setIsEndCall;
+    const incomingUserId = useMainStore.getState().incomingUserInfo;
+    setIncomingUserInfo(null);
 
     if (timeStreaming > 10) {
-      router.push(`/review?callId=${useMainStore.getState().callId}`);
+      router.push(
+        `/review?callId=${useMainStore.getState().callId}&incomingUserId=${incomingUserId?.userId}`
+      );
     } else if (isEndCall) {
       setIncomingUserInfo(null);
       setLocalStream(null);
@@ -242,7 +246,6 @@ export function usePeer() {
     const setIsEndCall = useMainStore.getState().setIsEndCall;
     const socket = useSocketStore.getState().socket;
 
-    setIncomingUserInfo(null);
     setRemoteStream(null);
 
     // For message
