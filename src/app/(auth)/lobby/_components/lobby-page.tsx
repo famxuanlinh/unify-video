@@ -17,6 +17,7 @@ import {
 } from '@/components';
 
 import { LobbyCard } from './lobby-card';
+import { LobbyNoData } from './no-data';
 
 export const LobbyPage = () => {
   const router = useRouter();
@@ -85,7 +86,7 @@ export const LobbyPage = () => {
       <div className="mt-6 flex flex-col gap-4">
         {connections.length === 0 && !isLoading ? (
           <div className="py-8 text-center text-gray-500">
-            No {connectionType === 'MATCH' ? 'matches' : 'friends'} found
+            <LobbyNoData />
           </div>
         ) : (
           connections.map(connection => (
