@@ -30,7 +30,8 @@ export const AuthLayout = ({ children }: { children: React.ReactNode }) => {
     setReady,
     setOnlineUsersCount,
     setWaitingForMatch,
-    incomingUserInfo
+    incomingUserInfo,
+    setCallId
   } = useMainStore.getState();
 
   const { setRemoteStream, setPeerConnection, setPeer, clearPeer } =
@@ -39,6 +40,7 @@ export const AuthLayout = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     getProfile();
   }, []);
+
   useEffect(() => {
     if (!socket) {
       initSocket();
@@ -65,13 +67,15 @@ export const AuthLayout = ({ children }: { children: React.ReactNode }) => {
       ({
         peerId,
         userId,
-        isCaller
+        isCaller,
+        callId
       }: {
         peerId: string;
         userId: string;
         isCaller: boolean;
+        callId: string;
       }) => {
-        log('Matched with peer:', peerId);
+        setCallId(callId);
         if (!incomingUserInfo) {
           getProfile(userId);
         }
@@ -79,6 +83,7 @@ export const AuthLayout = ({ children }: { children: React.ReactNode }) => {
         if (isCaller) {
           connectToPeer(peerId);
         }
+        log('Matched with peer:', peerId);
       }
     );
 

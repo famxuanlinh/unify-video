@@ -1,10 +1,9 @@
 'use client';
 
 import { useCreateReport } from '@/hooks/use-create-report';
-import { useAuthStore } from '@/store';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'next/navigation';
-import React from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import React, { useEffect } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -21,11 +20,25 @@ import {
   Button
 } from '@/components';
 
-const formSchema = z.object({
-  reportType: z.string(),
-  description: z.string(),
-  other: z.string().optional()
-});
+const formSchema = z
+  .object({
+    reportType: z.string(),
+    description: z.string().optional(),
+    other: z.string().optional()
+  })
+  .refine(
+    data => {
+      if (data.reportType === ReportType.OTHER) {
+        return !!data.other && data.other.trim().length > 0;
+      }
+
+      return true;
+    },
+    {
+      message: "Please provide details for 'Other' option",
+      path: ['other']
+    }
+  );
 
 enum ReportType {
   INAPPROPRIATE_BEHAVIOR = 'INAPPROPRIATE_BEHAVIOR',
@@ -71,9 +84,15 @@ const reasons = [
 ];
 
 export const ProfilePage = () => {
-  const { me } = useAuthStore();
+  const searchParams = useSearchParams();
+  const reportedUserId = searchParams.get('reportedUserId');
+
   const router = useRouter();
-  const { isLoading, createReport } = useCreateReport();
+  const { isLoading, createReport } = useCreateReport({
+    onSuccess: () => {
+      router.push('/report/confirmation');
+    }
+  });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -88,11 +107,19 @@ export const ProfilePage = () => {
 
   const isOtherOptionSelected = reportType === ReportType.OTHER;
 
+  useEffect(() => {
+    if (!reportedUserId) {
+      router.push('/');
+    }
+  }, []);
+
   function onSubmit(values: z.infer<typeof formSchema>) {
-    if (!me) return;
+    if (!reportedUserId) {
+      return;
+    }
     const payload = {
       ...values,
-      reportedUserId: me?.userId
+      reportedUserId: reportedUserId as string
     };
     createReport(payload);
   }

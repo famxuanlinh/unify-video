@@ -1,13 +1,14 @@
 'use client';
 
+import { usePeer } from '@/hooks';
 import { useCreateReview } from '@/hooks/use-create-review';
 import { useAuthStore, useMainStore } from '@/store';
 import { CreateReviewPayload } from '@/types/review';
 import { getImageUrl } from '@/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Flag } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import React from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 
@@ -27,10 +28,10 @@ import { ReactionRating } from './reaction-rating';
 
 const friendTypes = [
   {
-    id: 'match',
+    id: 'MATCH',
     label: '❤️ Match'
   },
-  { id: 'friend', label: '🤝 Friends' }
+  { id: 'FRIEND', label: '🤝 Friends' }
 ];
 
 const formSchema = z
@@ -45,10 +46,19 @@ const formSchema = z
   });
 
 export const ReviewPage = () => {
+  const router = useRouter();
+  const { handleReturnToHome } = usePeer();
+  const searchParams = useSearchParams();
+  const callId = searchParams.get('callId');
+  const incomingUserId = searchParams.get('incomingUserId');
+
   const { me } = useAuthStore();
   const { incomingUserInfo } = useMainStore.getState();
-  const { isLoading, createReview } = useCreateReview();
-  const router = useRouter();
+  const { isLoading, createReview } = useCreateReview({
+    onSuccess: () => {
+      handleReturnToHome();
+    }
+  });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -60,11 +70,18 @@ export const ReviewPage = () => {
     mode: 'onChange'
   });
 
+  useEffect(() => {
+    if (!callId) {
+      router.push('/');
+    }
+  }, []);
+
   function onSubmit(values: z.infer<typeof formSchema>) {
-    if (!me) return;
+    if (!incomingUserId) return;
     const payload: CreateReviewPayload = {
-      reviewedUserId: me.userId,
-      rating: values.rating,
+      reviewedUserId: incomingUserId,
+      callId: callId as string,
+      rating: Number(values.rating),
       comment: '',
       connectionTypes: values.connectionTypes,
       pass: values.pass
@@ -80,7 +97,7 @@ export const ReviewPage = () => {
         className="mx-auto max-w-3xl space-y-8"
       >
         <div
-          className={`relative flex h-screen flex-col justify-end bg-[url('/images/review-bg.jpg')] bg-cover`}
+          className={`relative flex min-h-screen flex-col justify-end bg-[url('/images/review-bg.jpg')] bg-cover`}
         >
           <div className="relative mt-[92px] h-full w-full">
             <div className="absolute left-1/2 z-20 -translate-x-1/2">
@@ -116,7 +133,7 @@ export const ReviewPage = () => {
               <div className="text-center text-sm text-white">11:03</div>
             </div>
           </div>
-          <div className="mx-4 mb-6 rounded-3xl bg-[#1E1E1E0D] pt-0 text-white">
+          <div className="mx-4 mt-8 mb-6 rounded-3xl bg-[#1E1E1E0D] pt-0 text-white">
             <div className="p-4">
               <div className="text-center text-sm font-bold text-white">
                 How’d it go?
@@ -237,7 +254,9 @@ export const ReviewPage = () => {
                   <button
                     onClick={e => {
                       e.preventDefault();
-                      router.push('/report');
+                      router.push(
+                        `/report?callId=${callId}&reportedUserId=${incomingUserId}`
+                      );
                     }}
                     // onClick={toggleVisibility}
                     className="flex cursor-pointer items-center gap-1 text-white"

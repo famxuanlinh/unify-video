@@ -5,10 +5,12 @@ import {
   useMainStore,
   useMessagingStore,
   usePeerStore,
-  useSocketStore
+  useSocketStore,
+  useTimerStore
 } from '@/store';
 import { MESSAGE_EVENTS } from '@/types';
 import { log } from '@/utils';
+import { useRouter } from 'next/navigation';
 import { MediaConnection } from 'peerjs';
 
 export function usePeer() {
@@ -31,6 +33,7 @@ export function usePeer() {
     setPeerConnection,
     myPeerId
   } = usePeerStore();
+  const router = useRouter();
 
   const connectToPeer = (peerId: string) => {
     const peer = usePeerStore.getState().peer;
@@ -58,7 +61,6 @@ export function usePeer() {
   };
 
   const makeCall = (peerId: string) => {
-    const socket = useSocketStore.getState().socket;
     const peer = usePeerStore.getState().peer;
     const stream = localStream?.id
       ? localStream
@@ -75,15 +77,13 @@ export function usePeer() {
     if (!call) return;
 
     call.on('stream', stream => {
+      startStreamingTimer();
       log('Remote stream received');
       setRemoteStream(stream);
     });
 
     call.on('close', () => {
-      log('Remote stream received');
-      socket?.emit(MESSAGE_EVENTS.SKIP);
-      setIncomingUserInfo(null);
-      clearMessages();
+      handleCloseStream();
     });
     call.on('error', err => log('Call error:', err));
 
@@ -91,7 +91,6 @@ export function usePeer() {
   };
 
   const answerCall = (call: MediaConnection) => {
-    const socket = useSocketStore.getState().socket;
     const stream = localStream?.id
       ? localStream
       : usePeerStore.getState().localStream;
@@ -106,16 +105,13 @@ export function usePeer() {
     call.answer(stream);
 
     call.on('stream', stream => {
+      startStreamingTimer();
       log('Remote stream received from answer');
       setRemoteStream(stream);
     });
 
     call.on('close', () => {
-      log('Remote Call closed');
-
-      socket?.emit(MESSAGE_EVENTS.SKIP);
-      setIncomingUserInfo(null);
-      clearMessages();
+      handleCloseStream();
     });
     call.on('error', err => {
       log('Call error:', err);
@@ -162,9 +158,58 @@ export function usePeer() {
       log('Joining with peer ID:', myPeerId);
       socket.emit(MESSAGE_EVENTS.JOIN, { peerId: myPeerId });
     } else {
+      router.push('/allow-access');
       log('Failed to join - stream not initialized');
       setError('Failed to join - stream not initialized');
     }
+  };
+
+  const handleCloseStream = () => {
+    const socket = useSocketStore.getState().socket;
+    const timeStreaming = useMainStore.getState().timeStreaming;
+    const isEndCall = useMainStore.getState().isEndCall;
+    const setIsEndCall = useMainStore.getState().setIsEndCall;
+    const incomingUserId = useMainStore.getState().incomingUserInfo;
+    setIncomingUserInfo(null);
+
+    if (timeStreaming > 10) {
+      router.push(
+        `/review?callId=${useMainStore.getState().callId}&incomingUserId=${incomingUserId?.userId}`
+      );
+    } else if (isEndCall) {
+      setIncomingUserInfo(null);
+      setLocalStream(null);
+      setStarted(false);
+      setIsEndCall(false);
+      socket?.emit(MESSAGE_EVENTS.END);
+      router.push('/');
+    } else {
+      socket?.emit(MESSAGE_EVENTS.SKIP);
+    }
+
+    log('Remote Call closed');
+    stopStreamingTimer();
+    clearMessages();
+  };
+
+  const handleEndCall = () => {
+    const setIsEndCall = useMainStore.getState().setIsEndCall;
+    setIsEndCall(true);
+    handleDisconnectPeer();
+  };
+
+  const startStreamingTimer = () => {
+    const startTimer = useTimerStore.getState().startTimer;
+    startTimer(() => {
+      const timeStreaming = useMainStore.getState().timeStreaming;
+      useMainStore.setState({ timeStreaming: timeStreaming + 1 });
+    });
+  };
+
+  const stopStreamingTimer = () => {
+    const stopTimer = useTimerStore.getState().stopTimer;
+    stopTimer();
+    useMainStore.setState({ timeStreaming: 0 });
   };
 
   const getData = (rawData: unknown) => {
@@ -195,10 +240,21 @@ export function usePeer() {
     }
   };
 
-  const skip = () => {
-    setIncomingUserInfo(null);
+  const handleDisconnectPeer = () => {
+    const waitingForMatch = useMainStore.getState().waitingForMatch;
+    const isEndCall = useMainStore.getState().isEndCall;
+    const setIsEndCall = useMainStore.getState().setIsEndCall;
+    const socket = useSocketStore.getState().socket;
+
+    setRemoteStream(null);
+
+    // For message
     const dataConnection = usePeerStore.getState().dataConnection;
+
+    //For call receiver
     const mediaConnection = usePeerStore.getState().mediaConnection;
+
+    // For call sender
     const peerConnection = usePeerStore.getState().peerConnection;
 
     if (dataConnection) {
@@ -216,6 +272,15 @@ export function usePeer() {
       log('Closing media connection...');
       mediaConnection.close();
       setMediaConnection(null);
+    }
+
+    if (waitingForMatch && isEndCall) {
+      setIncomingUserInfo(null);
+      setLocalStream(null);
+      setStarted(false);
+      setIsEndCall(false);
+      socket?.emit(MESSAGE_EVENTS.END);
+      router.push('/');
     }
   };
 
@@ -235,22 +300,36 @@ export function usePeer() {
     if (dataConnection) {
       dataConnection.send(data);
     }
+
     if (peerConnection) {
       peerConnection.send(data);
     }
   };
 
-  const end = () => {
-    window.location.reload();
+  const handleReturnToHome = () => {
+    const isEndCall = useMainStore.getState().isEndCall;
+    const socket = useSocketStore.getState().socket;
+
+    if (!isEndCall) {
+      socket?.emit(MESSAGE_EVENTS.SKIP);
+    } else {
+      setStarted(false);
+      setLocalStream(null);
+      setStarted(false);
+      setIncomingUserInfo(null);
+    }
+    router.push('/');
   };
 
   return {
     join,
-    skip,
     send,
-    end,
+    handleEndCall,
+    handleNextCall: handleDisconnectPeer,
     connectToPeer,
     answerCall,
-    getData
+    getData,
+    startVideoStream,
+    handleReturnToHome
   };
 }

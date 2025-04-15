@@ -1,6 +1,7 @@
 'use client';
 
 import { LocalSide, RemoteSide, StartOverlay } from '@/app/(auth)/_components';
+import { usePeer } from '@/hooks';
 import { useMainStore, useMessagingStore } from '@/store';
 import React from 'react';
 
@@ -8,6 +9,7 @@ import { ArrowLeft, ChatIcon } from '@/components';
 
 export const HomePage = () => {
   const { started } = useMainStore();
+  const { handleEndCall } = usePeer();
   const { messages, changeStatusMessages, isShowChat, setIsShowChat } =
     useMessagingStore();
 
@@ -23,7 +25,7 @@ export const HomePage = () => {
       {started ? (
         <>
           <div className="mb-2 flex h-10 items-center justify-between px-4 pt-1">
-            <div>
+            <div onClick={handleEndCall}>
               <ArrowLeft className="fill-white" />
             </div>
             <div

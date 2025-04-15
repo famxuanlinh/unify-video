@@ -4,8 +4,6 @@ import { getCookie } from 'cookies-next';
 import { io, Socket } from 'socket.io-client';
 import { create } from 'zustand';
 
-import { refreshToken } from '@/lib';
-
 interface SocketState {
   socket: Socket | null;
   isConnected: boolean;
@@ -32,7 +30,7 @@ export const useSocketStore = create<SocketState>((set, get) => ({
     }
 
     console.log('Creating new socket instance');
-    let socketInstance = io(env.SOCKET_URL, {
+    const socketInstance = io(env.SOCKET_URL, {
       extraHeaders: { 'x-authorization': tokensRaw.access }
     });
 
@@ -46,26 +44,24 @@ export const useSocketStore = create<SocketState>((set, get) => ({
       set({ isConnected: false });
     });
 
-    socketInstance.on(
-      MESSAGE_EVENTS.AUTH_ERROR,
-      async ({ message }: { message: string }) => {
-        const newTokens = await refreshToken();
+    socketInstance.on(MESSAGE_EVENTS.AUTH_ERROR, async () => {
+      window.location.href = '/';
+      // const newTokens = await refreshToken();
 
-        if (newTokens) {
-          console.log(message);
-          socketInstance.disconnect();
+      // if (newTokens) {
+      //   console.log(message);
+      //   socketInstance.disconnect();
 
-          socketInstance = io(env.SOCKET_URL, {
-            extraHeaders: { 'x-authorization': newTokens }
-          });
+      //   socketInstance = io(env.SOCKET_URL, {
+      //     extraHeaders: { 'x-authorization': newTokens }
+      //   });
 
-          set({ socket: socketInstance });
-        } else {
-          console.log('Failed to refresh token, logging out');
-          socketInstance.disconnect();
-        }
-      }
-    );
+      //   set({ socket: socketInstance });
+      // } else {
+      //   console.log('Failed to refresh token, logging out');
+      //   socketInstance.disconnect();
+      // }
+    });
 
     set({ socket: socketInstance });
   },

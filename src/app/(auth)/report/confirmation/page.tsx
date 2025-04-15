@@ -2,11 +2,11 @@
 
 import React, { Suspense } from 'react';
 
-import { ReviewPage } from './_components';
+import { ReportConfirmationPage } from '../_components/report-confirmation-page ';
 
 const page = () => (
   <Suspense fallback={<div>Loading...</div>}>
-    <ReviewPage />
+    <ReportConfirmationPage />
   </Suspense>
 );
 

@@ -1,6 +1,8 @@
 'use client';
 
+import { usePeer } from '@/hooks';
 import { useGetLobbies } from '@/hooks/use-get-lobbies';
+import { Video } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
@@ -17,8 +19,11 @@ import {
 } from '@/components';
 
 import { LobbyCard } from './lobby-card';
+import { LobbyNoData } from './no-data';
 
 export const LobbyPage = () => {
+  const { handleReturnToHome } = usePeer();
+
   const router = useRouter();
   const { data, getLobbies, isLoading, hasMore, offset, reset } =
     useGetLobbies();
@@ -39,6 +44,10 @@ export const LobbyPage = () => {
     }
   }, [inView, hasMore, isLoading, connectionType, offset]);
 
+  useEffect(() => {
+    getLobbies({ type: connectionType, offset, limit });
+  }, []);
+
   const handleConnectionTypeChange = (value: string) => {
     setConnectionType(value as 'MATCH' | 'FRIEND');
     reset();
@@ -46,7 +55,7 @@ export const LobbyPage = () => {
   const connections = data?.connections || [];
 
   return (
-    <div className="px-4">
+    <div className="relative min-h-screen px-4">
       <div className="pt-1">
         <div className="flex items-center justify-between">
           <div
@@ -82,22 +91,40 @@ export const LobbyPage = () => {
         </div>
       </div>
 
-      <div className="mt-6 flex flex-col gap-4">
+      <div className="mt-6 flex h-full flex-col gap-4">
         {connections.length === 0 && !isLoading ? (
           <div className="py-8 text-center text-gray-500">
-            No {connectionType === 'MATCH' ? 'matches' : 'friends'} found
+            <LobbyNoData />
           </div>
         ) : (
-          connections.map(connection => (
-            <LobbyCard
-              key={connection.targetUserProfile.userId}
-              connection={connection}
-            />
-          ))
+          <div className="w-full">
+            {connections.map(connection => (
+              <LobbyCard
+                key={connection.targetUserProfile.userId}
+                connection={connection}
+              />
+            ))}
+          </div>
         )}
 
         <div ref={ref} className="py-4 text-center">
           {isLoading && <div>Loading...</div>}
+        </div>
+      </div>
+      <div className="absolute right-4 bottom-6">
+        <div className="flex items-center justify-end">
+          <div
+            className="flex h-10 w-10 cursor-pointer items-center justify-center"
+            style={{
+              borderRadius: '49px',
+              background:
+                'linear-gradient(135deg, var(--ORANGE, #FFA941) 0%, var(--RED, #E94057) 100%)',
+              boxShadow: '0px 4px 20px 0px rgba(0, 0, 0, 0.25)'
+            }}
+            onClick={handleReturnToHome}
+          >
+            <Video className="text-white" />
+          </div>
         </div>
       </div>
     </div>
