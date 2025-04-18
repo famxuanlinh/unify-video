@@ -28,7 +28,14 @@ import {
 import { LocationInput } from '@/components/google-map/location-input';
 
 const formSchema = z.object({
-  fullName: z.string().min(1).min(1).max(32),
+  fullName: z
+    .string()
+    .min(1, {
+      message: 'Min 1 character'
+    })
+    .max(32, {
+      message: 'Maximum 32 characters'
+    }),
   dob: z.coerce.date(),
   gender: z.string(),
   bio: z.string().optional()
@@ -136,17 +143,18 @@ export function ProfileEditPage() {
               )}
             />
 
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-2 items-start gap-6">
               <FormField
                 control={form.control}
                 name="dob"
-                render={({ field }) => (
+                render={({ field, fieldState }) => (
                   <FormItem className="w-full">
                     <FormLabel>DOB</FormLabel>
 
                     <FormControl>
                       <DatePicker
                         date={field.value ? new Date(field.value) : undefined}
+                        error={fieldState.error?.message}
                         setDate={date => {
                           if (date) {
                             field.onChange(date);

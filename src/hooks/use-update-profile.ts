@@ -40,12 +40,12 @@ export const useUpdateProfile = ({
         hometown: {
           name: hometown
         },
-        avatar: avatarFile
+        avatar: payload.avatar || avatarFile
       });
       setData(res);
       setMe(res);
       toast({
-        description: 'Update user successful'
+        description: 'Update profile successful'
       });
       onSuccess?.();
     } catch (error) {
@@ -59,11 +59,16 @@ export const useUpdateProfile = ({
     try {
       setIsUploading(true);
       const compressedFile = await handleImageCompression(file);
-      await IPFSUtils.uploadFileToIPFS({
-        file: compressedFile,
-        onSuccess: async url => {
-          setAvatarFile(url);
-        }
+
+      return new Promise<string>((resolve, reject) => {
+        IPFSUtils.uploadFileToIPFS({
+          file: compressedFile,
+          onSuccess: async url => {
+            setAvatarFile(url);
+            resolve(url);
+          },
+          onError: reject
+        });
       });
     } finally {
       setIsUploading(false);
@@ -105,6 +110,7 @@ export const useUpdateProfile = ({
       //     setIsGettingCoordinate(false);
       //   });
       // } else {
+      setAvatarFile(me?.avatar || '');
       setCoordinate({
         lat: me?.location?.lat,
         long: me?.location?.long
