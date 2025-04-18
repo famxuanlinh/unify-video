@@ -6,7 +6,7 @@ import { LobbyNoDataIcon } from '@/components/icons/lobby-nodata-icon';
 
 export const LobbyNoData = () => {
   return (
-    <div className="relative h-screen px-4">
+    <div className="relative px-4">
       <div className="mt-[49px] flex flex-col justify-center gap-4 px-10 text-center">
         <div className="flex cursor-pointer justify-center">
           <LobbyNoDataIcon className="cursor-pointer" />
