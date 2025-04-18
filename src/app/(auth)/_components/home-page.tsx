@@ -21,17 +21,17 @@ export const HomePage = () => {
   };
 
   return (
-    <div style={{ height: '100svh' }} className="w-screen bg-black">
+    <div className="h-screen w-screen bg-black">
       {started ? (
-        <>
-          <div className="mb-2 flex h-10 items-center justify-between px-4 pt-1">
-            <div onClick={handleEndCall}>
+        <div className="flex h-screen w-screen flex-col p-3 pt-0 md:p-10">
+          <div className="flex items-center justify-between pt-1 pb-2 max-md:h-10 md:pb-6">
+            <div onClick={handleEndCall} className="cursor-pointer md:py-3">
               <ArrowLeft className="fill-white" />
             </div>
             {!waitingForMatch ? (
               <div
                 onClick={handleShowChat}
-                className={`relative flex size-10 items-center justify-center ${isShowChat ? 'rounded-full bg-white/16' : ''}`}
+                className={`relative flex size-10 cursor-pointer items-center justify-center md:py-3 ${isShowChat ? 'rounded-full bg-white/16' : ''}`}
               >
                 <ChatIcon />
                 {isNewestMessage >= 0 && !isShowChat && (
@@ -42,11 +42,11 @@ export const HomePage = () => {
               <p></p>
             )}
           </div>
-          <div className="flex h-[calc(100%-40px-16px)] flex-col gap-2 landscape:flex-row">
+          <div className="flex flex-1 flex-col gap-2 md:gap-6 landscape:flex-row">
             <RemoteSide />
             <LocalSide isShowChat={isShowChat} />
           </div>
-        </>
+        </div>
       ) : (
         <StartOverlay />
       )}

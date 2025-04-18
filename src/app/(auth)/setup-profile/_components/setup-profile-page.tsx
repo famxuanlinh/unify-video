@@ -50,7 +50,7 @@ export const SetupProfilePage = () => {
       location: null,
       miles: [25],
       limit: false,
-      seekingGender: [] // Initial preferences (array)
+      seekingGender: []
     }
   });
 
@@ -68,7 +68,11 @@ export const SetupProfilePage = () => {
 
   return (
     <FormProvider {...form}>
-      <UpdateProfileForm step={step} onSetStep={handleSetStep} />
+      <div className="flex items-center justify-center sm:h-screen">
+        <div className="h-full max-h-181 w-full max-w-120">
+          <UpdateProfileForm step={step} onSetStep={handleSetStep} />
+        </div>
+      </div>
     </FormProvider>
   );
 };

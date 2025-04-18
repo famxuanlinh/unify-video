@@ -127,12 +127,12 @@ export const ProfilePage = () => {
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="mx-auto max-w-3xl space-y-8"
-      >
-        <div className="relative h-screen px-4">
-          <div className="grid h-10 grid-cols-3 items-center pt-1">
+      <div className="flex items-center justify-center sm:h-screen">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="mx-auto flex h-screen w-full max-w-120 flex-col sm:h-181"
+        >
+          <div className="grid h-10 grid-cols-3 items-center px-4 pt-1">
             <div
               className="w-fit cursor-pointer"
               onClick={() => router.push('/review')}
@@ -142,8 +142,7 @@ export const ProfilePage = () => {
             <div className="text-head-li flex justify-center">Report</div>
             <div></div>
           </div>
-
-          <div className="mt-6 flex flex-col gap-4">
+          <div className="mt-6 flex flex-1 flex-col gap-4 overflow-auto px-4">
             <div className="text-sm font-bold">
               Why are you submitting this report?
             </div>
@@ -229,19 +228,19 @@ export const ProfilePage = () => {
               )}
             />
           </div>
-        </div>
-        <div className="sticky bottom-0 bg-white p-4">
-          <Button
-            variant="default"
-            className="w-full"
-            loading={isLoading}
-            // disabled={isLoading || !form.formState.isValid}
-            type="submit"
-          >
-            Done
-          </Button>
-        </div>
-      </form>
+          <div className="p-4">
+            <Button
+              variant="default"
+              className="w-full"
+              loading={isLoading}
+              // disabled={isLoading || !form.formState.isValid}
+              type="submit"
+            >
+              Done
+            </Button>
+          </div>
+        </form>
+      </div>
     </Form>
   );
 };

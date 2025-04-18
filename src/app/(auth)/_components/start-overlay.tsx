@@ -27,34 +27,37 @@ export const StartOverlay = () => {
   };
 
   return (
-    <div className="relative flex h-screen flex-col justify-end bg-white">
-      <Header />
-      <div className="relative h-full w-full">
-        <Image
-          src="/images/start-img.png"
-          alt="login"
-          fill
-          className="size-full object-cover"
-        />
-      </div>
-      <div className="px-4 pb-6">
-        <h1 className="text-dark-grey pb-2 text-center text-[28px] font-semibold">
-          Ready to Meet Someone New?
-        </h1>
-        <p className="text-light-grey mb-10 text-center text-xs font-light">
-          Exciting connections are just one tap away. Whether you&apos;re here
-          to make friends or find something more, every chat is a new
-          opportunity!
-        </p>
-
-        <Button
-          loading={Boolean(!isReady)}
-          className="w-full"
-          onClick={handleJumpIn}
-        >
-          <VideoCameraIcon className="mr-2" />
-          Jump In
-        </Button>
+    <div className="flex items-center justify-center bg-white sm:h-screen">
+      <div className="relative flex h-181 w-full max-w-120 flex-col justify-end bg-white max-sm:h-screen">
+        <Header />
+        <div className="relative h-full w-full">
+          <Image
+            src="/images/start-img.png"
+            alt="login"
+            fill
+            className="size-full object-contain"
+          />
+        </div>
+        <div className="px-4 pb-6">
+          <h1 className="text-dark-grey pb-2 text-center text-[28px] font-semibold">
+            Ready to Meet Someone New?
+          </h1>
+          <p className="text-light-grey mb-10 text-center text-xs font-light">
+            Exciting connections are just one tap away. Whether you&apos;re here
+            to make friends or find something more, every chat is a new
+            opportunity!
+          </p>
+          <div className="flex justify-center">
+            <Button
+              loading={Boolean(!isReady)}
+              className="w-full sm:max-w-86"
+              onClick={handleJumpIn}
+            >
+              <VideoCameraIcon className="mr-2" />
+              Jump In
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   );

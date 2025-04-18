@@ -245,13 +245,13 @@ export function usePeer() {
     setRemoteStream(null);
     // setIncomingUserInfo(null);
 
-    // For message
+    // For message receiver
     const dataConnection = usePeerStore.getState().dataConnection;
 
-    //For call receiver
+    //For call
     const mediaConnection = usePeerStore.getState().mediaConnection;
 
-    // For call sender
+    // For message sender
     const peerConnection = usePeerStore.getState().peerConnection;
 
     if (dataConnection) {

@@ -98,7 +98,7 @@ export const UpdateProfileForm = ({
 
   return (
     <Form {...form}>
-      <div className="h-screen px-4">
+      <div className="h-181 w-full px-4 max-sm:h-screen">
         <div className="pt-1">
           <div className="relative h-1 w-full rounded bg-[#9999990D]">
             <div
@@ -266,7 +266,7 @@ export const UpdateProfileForm = ({
                   render={({ field }) => {
                     return (
                       <FormItem className="flex flex-col space-y-2">
-                        <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
+                        <div className="grid grid-cols-2 gap-2">
                           {Object.values(Gender).map(gender => (
                             <label
                               key={gender}
@@ -308,7 +308,7 @@ export const UpdateProfileForm = ({
 
                     return (
                       <FormItem className="flex flex-col space-y-2">
-                        <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
+                        <div className="grid grid-cols-2 gap-2">
                           {Object.values(Gender).map(gender => {
                             const isChecked = selectedValues.includes(gender);
 

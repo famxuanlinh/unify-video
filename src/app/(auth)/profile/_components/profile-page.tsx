@@ -34,8 +34,8 @@ export const ProfilePage = () => {
   if (!me) return;
 
   return (
-    <>
-      <div className="px-4">
+    <div className="flex h-screen w-full items-center justify-center">
+      <div className="flex w-full max-w-120 flex-col px-4 max-sm:h-screen sm:h-181">
         <div className="grid h-10 grid-cols-3 items-center pt-1">
           <div className="w-fit" onClick={() => router.push('/')}>
             <ArrowLeft className="fill-dark-grey" />
@@ -114,6 +114,6 @@ export const ProfilePage = () => {
       </div>
 
       <BioModal data={me} open={isOpenModal} onOpenChange={handleOpenModal} />
-    </>
+    </div>
   );
 };

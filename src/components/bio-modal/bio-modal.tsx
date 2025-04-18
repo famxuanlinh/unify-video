@@ -39,7 +39,7 @@ export const BioModal: React.FC<BioModalProps> = ({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTitle></DialogTitle>
-      <DialogContent className="overflow-auto rounded-3xl p-0">
+      <DialogContent className="max-w-120 overflow-auto rounded-3xl p-0">
         <div className="relative h-[70vh] w-full rounded-3xl">
           <Image
             alt={data?.fullName || ''}
