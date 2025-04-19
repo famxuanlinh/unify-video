@@ -44,7 +44,7 @@ export const useUpdateProfile = ({
       });
       onSuccess?.();
     } catch (error) {
-      console.log('🚀 ~ handleUpdateUser ~ error:', error);
+      console.log(error);
     } finally {
       setIsLoading(false);
     }
@@ -65,6 +65,10 @@ export const useUpdateProfile = ({
           onError: reject
         });
       });
+    } catch (error) {
+      console.log(error);
+
+      return '';
     } finally {
       setIsUploading(false);
     }

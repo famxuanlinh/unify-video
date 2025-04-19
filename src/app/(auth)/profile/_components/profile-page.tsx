@@ -15,15 +15,14 @@ import {
   EditIcon,
   MapInOutlineIcon,
   UploadButton,
-  UserOutlineIcon,
-  VerifiedBadgeIcon
+  UserOutlineIcon
 } from '@/components';
 
 export const ProfilePage = () => {
   const { me } = useAuthStore();
   const router = useRouter();
 
-  const { handleUpdateProfile, handleUploadAvatar, avatarFile, isUploading } =
+  const { handleUpdateProfile, handleUploadAvatar, avatarFile, isLoading } =
     useUpdateProfile({
       onSuccess: () => {
         router.push('/profile');
@@ -69,13 +68,13 @@ export const ProfilePage = () => {
               avatarFile={avatarFile}
               // className="absolute right-0 bottom-0 z-10 h-8 w-8 rounded-full bg-white"
               accept="image/*"
-              isLoading={isUploading}
+              isLoading={isLoading}
               onFileUpload={handleChangeAvatar}
             ></UploadButton>
           </div>
           <div className="mt-4 mb-2 flex items-center justify-center">
             <p className="text-head-l text-dark-grey">{me?.fullName}</p>
-            <VerifiedBadgeIcon className="ml-2" />
+            {/* <VerifiedBadgeIcon className="ml-2" /> */}
           </div>
           <div className="flex items-center gap-2">
             <Button
@@ -122,7 +121,7 @@ export const ProfilePage = () => {
               <div className="flex items-center gap-2">
                 <MapInOutlineIcon /> <span>Location</span>
               </div>
-              <div>{me.hometown.name || '-'}</div>
+              <div>{me.hometown?.name || '-'}</div>
             </div>
           </div>
           <div className="text-head-s">Bio</div>

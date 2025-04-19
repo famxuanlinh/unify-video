@@ -3,7 +3,18 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { AUTH_TOKEN_KEY } from './constants/common';
 
-const privateRoutes = ['/allow-access', '/auth', '/setup-profile', '/'];
+const privateRoutes = [
+  '/',
+  '/allow-access',
+  '/lobby',
+  '/setup-profile',
+  '/allow-access',
+  '/preferences',
+  '/profile',
+  '/report',
+  '/review',
+  '/report/confirmation'
+];
 
 export async function middleware(request: NextRequest) {
   const cookieStore = await cookies();
