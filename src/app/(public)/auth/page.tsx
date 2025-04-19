@@ -1,7 +1,7 @@
 import { Viewport } from 'next';
 import React from 'react';
 
-import { SetupProfilePage } from './_components';
+import { AuthPage } from './_components';
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -10,6 +10,6 @@ export const viewport: Viewport = {
   userScalable: false
 };
 
-const page = () => <SetupProfilePage />;
+const page = () => <AuthPage />;
 
 export default page;

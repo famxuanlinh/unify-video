@@ -208,6 +208,7 @@ export function usePeer() {
   const stopStreamingTimer = () => {
     const stopTimer = useTimerStore.getState().stopTimer;
     stopTimer();
+    useMainStore.setState({ timeStreaming: 0 });
   };
 
   const getData = (rawData: unknown) => {

@@ -1,5 +1,5 @@
 import { env } from '@/constants';
-import { JWT, SigninData } from '@/types';
+import { JWT, SigninData, User } from '@/types';
 import { parseToUsername } from '@/utils';
 import axios, { AxiosResponse } from 'axios';
 
@@ -43,7 +43,6 @@ export const auth = {
       })
       .then(res => res.data);
   },
-
   async checkUserExist(
     payload: { userId: string },
     signal: AbortSignal
@@ -52,5 +51,8 @@ export const auth = {
       baseURL: env.API_AUTH_URL,
       signal
     });
+  },
+  async delete(): Promise<User> {
+    return apiAuth.delete('/auth/delete').then(res => res.data);
   }
 };

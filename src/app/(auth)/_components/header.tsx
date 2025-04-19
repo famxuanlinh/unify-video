@@ -10,6 +10,7 @@ import React, { useState } from 'react';
 
 import {
   Avatar,
+  AvatarFallback,
   AvatarImage,
   GlobalIcon,
   GlobalOutlineIcon,
@@ -25,9 +26,10 @@ import {
   SheetHeader,
   SheetTitle,
   UserIcon,
-  UserOutlineIcon,
-  VerifiedBadgeIcon
+  UserOutlineIcon
 } from '@/components';
+
+import DeleteAccountButton from './delete-account-button';
 
 const menus: {
   name: string;
@@ -82,8 +84,9 @@ export const Header = () => {
           <Avatar className="size-10">
             <AvatarImage
               className="rounded-full object-cover"
-              src={getImageUrl(me?.avatar) || '/images/avatar-default.png'}
+              src={getImageUrl(me?.avatar)}
             />
+            <AvatarFallback>{me?.fullName?.slice(0, 1)}</AvatarFallback>
           </Avatar>
           <div>
             <p className="text-body-m text-light-grey">Hello,</p>
@@ -102,12 +105,15 @@ export const Header = () => {
               <Avatar className="size-20">
                 <AvatarImage
                   className="rounded-full object-cover"
-                  src={getImageUrl(me?.avatar) || '/images/avatar-default.png'}
+                  src={getImageUrl(me?.avatar)}
                 />
+                <AvatarFallback className="text-3xl">
+                  {me?.fullName?.slice(0, 2)}
+                </AvatarFallback>
               </Avatar>
               <div className="mt-4 flex items-center justify-center">
                 <p className="text-head-l text-dark-grey">{me?.fullName}</p>
-                <VerifiedBadgeIcon className="ml-2" />
+                {/* <VerifiedBadgeIcon className="ml-2" /> */}
               </div>
             </SheetTitle>
             <SheetDescription>
@@ -131,10 +137,11 @@ export const Header = () => {
               })}
             </SheetDescription>
           </SheetHeader>
-          <div className="flex justify-end p-6">
+          <div className="flex justify-end gap-10 p-6">
+            <DeleteAccountButton />
             <div
               onClick={handleLogout}
-              className="text-red flex cursor-pointer gap-2"
+              className="text-red flex cursor-pointer items-center gap-2"
             >
               <LeaveIcon />
               <p className="text-label-l">Sign Out</p>
