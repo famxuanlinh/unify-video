@@ -49,7 +49,7 @@ export const UpdateProfileForm = ({
   const [formData, setFormData] = useState({});
   const form = useFormContext();
 
-  const { isLoading, handleUpdateProfile, coordinate, handleGetCoordinate } =
+  const { isLoading, handleUpdateProfile, handleGetLocation, location } =
     useUpdateProfile({
       onSuccess: () => {
         router.push('/allow-access');
@@ -399,15 +399,9 @@ export const UpdateProfileForm = ({
                 />
                 {isShowLimitRange && (
                   <>
-                    {/* <Map
-                      handleOnPlaceChange={setPlaceChest}
-                      onMapLoaded={() => {}}
-                    /> */}
-
                     <GoogleMap
-                      lat={coordinate.lat}
-                      long={coordinate.long}
-                      onGetCoordinate={handleGetCoordinate}
+                      location={location}
+                      onGetLocation={handleGetLocation}
                     />
 
                     <FormField

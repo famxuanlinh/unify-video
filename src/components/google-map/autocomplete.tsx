@@ -1,6 +1,7 @@
 'use client';
 
 import { useAutocompleteSuggestions } from '@/hooks';
+import { Location } from '@/types';
 import { useMapsLibrary } from '@vis.gl/react-google-maps';
 import debounce from 'lodash/debounce';
 import { ChevronDown, LoaderCircle } from 'lucide-react';
@@ -17,7 +18,7 @@ import { Input } from '@/components';
 
 interface Props {
   onPlaceSelect: (place: google.maps.places.Place | null) => void;
-  onGetCoordinate?: (values: { lat: number; long: number }) => void;
+  onGetLocation: (values: Location) => void;
 }
 
 export interface AutocompleteCustomRef {
@@ -25,7 +26,7 @@ export interface AutocompleteCustomRef {
 }
 
 export const Autocomplete = React.forwardRef<AutocompleteCustomRef, Props>(
-  ({ onPlaceSelect, onGetCoordinate }, ref) => {
+  ({ onPlaceSelect, onGetLocation }, ref) => {
     const places = useMapsLibrary('places');
     const [open, setOpen] = useState(false);
     const [inputValue, setInputValue] = useState<string>('');
@@ -36,9 +37,6 @@ export const Autocomplete = React.forwardRef<AutocompleteCustomRef, Props>(
 
     const setPlaceByLatLng = useCallback(
       async (lat: number, lng: number) => {
-        // if (!places) return;
-        onGetCoordinate?.({ lat, long: lng });
-
         const location = new google.maps.LatLng(lat, lng);
 
         const geocoder = new google.maps.Geocoder();
@@ -53,6 +51,12 @@ export const Autocomplete = React.forwardRef<AutocompleteCustomRef, Props>(
             location: result.geometry.location,
             viewport: result.geometry.viewport
           } as google.maps.places.Place;
+
+          onGetLocation({
+            lat: lat,
+            long: lng,
+            name: result.formatted_address
+          });
 
           setInputValue(result.formatted_address || '');
           onPlaceSelect(place);
@@ -92,11 +96,10 @@ export const Autocomplete = React.forwardRef<AutocompleteCustomRef, Props>(
 
         resetSession();
         if (place.location) {
-          const lat = place.location?.lat();
-          const long = place.location?.lng();
-          onGetCoordinate?.({
-            lat,
-            long
+          onGetLocation({
+            lat: place.location?.lat(),
+            long: place.location?.lng(),
+            name: suggestion.placePrediction?.text.text
           });
           onPlaceSelect(place);
         }

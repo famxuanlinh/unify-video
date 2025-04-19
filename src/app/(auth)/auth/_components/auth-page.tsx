@@ -4,7 +4,7 @@ import UnifyApi from '@/apis';
 import { useOAuthDirect } from '@/hooks';
 import axios from 'axios';
 import { debounce } from 'lodash';
-import { Loader2, LoaderCircle } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import React, { useCallback, useRef, useState } from 'react';
 
 import {
@@ -15,6 +15,7 @@ import {
   FormItem,
   Input
 } from '@/components';
+import { Loading } from '@/components';
 
 export function AuthPage() {
   const {
@@ -78,24 +79,23 @@ export function AuthPage() {
   return (
     <div className="h-full w-full bg-white">
       {!isNewUser ? (
-        <div className="flex h-screen w-screen flex-col items-center justify-center gap-5">
-          <LoaderCircle className="text-light-grey size-15 animate-spin" />
+        <Loading>
           <p className="text-dark-grey text-xl font-semibold">
             Authenticating...
           </p>
-        </div>
+        </Loading>
       ) : (
-        <div className="flex h-screen w-full flex-col items-center p-4">
-          <div className="max-w-120 space-y-6">
-            <div className="text-dark-grey text-2xl font-bold">
-              Create New Account
-            </div>
-            <Form {...registerForm}>
-              <form
-                onSubmit={handleRegisterFormSubmit}
-                noValidate
-                className="flex flex-col justify-between space-y-6"
-              >
+        <Form {...registerForm}>
+          <div className="flex h-screen w-full items-center justify-center p-4">
+            <form
+              onSubmit={handleRegisterFormSubmit}
+              noValidate
+              className="flex h-full w-full max-w-120 flex-col md:h-181"
+            >
+              <div className="flex-1 space-y-6">
+                <div className="text-dark-grey text-2xl font-bold">
+                  Create New Account
+                </div>
                 <div className="space-y-6">
                   <FormField
                     control={registerForm.control}
@@ -173,24 +173,24 @@ export function AuthPage() {
                     </ul>
                   </div>
                 </div>
+              </div>
 
-                <Button
-                  className="w-full"
-                  disabled={
-                    !registerForm.getValues('accountId') ||
-                    !registerForm.formState.isValid ||
-                    !!registerForm.formState.errors.accountId ||
-                    isLoading ||
-                    registerForm.formState.isSubmitting
-                  }
-                  type="submit"
-                >
-                  Submit
-                </Button>
-              </form>
-            </Form>
+              <Button
+                className="w-full"
+                disabled={
+                  !registerForm.getValues('accountId') ||
+                  !registerForm.formState.isValid ||
+                  !!registerForm.formState.errors.accountId ||
+                  isLoading ||
+                  registerForm.formState.isSubmitting
+                }
+                type="submit"
+              >
+                Submit
+              </Button>
+            </form>
           </div>
-        </div>
+        </Form>
       )}
     </div>
   );

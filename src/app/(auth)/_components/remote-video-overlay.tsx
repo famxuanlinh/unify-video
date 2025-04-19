@@ -68,7 +68,7 @@ export const RemoteVideoOverlay = () => {
           ) : null}
         </div>
       </>
-      <div className="z-50 flex w-full items-center justify-between bg-gradient-to-b from-black/0 to-black p-4">
+      <div className="z-50 flex w-full items-center justify-between gap-4 bg-gradient-to-b from-black/0 to-black p-4">
         <div>
           <div className="flex items-center">
             <p className="text-head-li text-white">
@@ -76,12 +76,16 @@ export const RemoteVideoOverlay = () => {
             </p>
             <VerifiedBadgeIcon className="ml-2" />
           </div>
-          <p className="text-body-m text-light-grey mt-1">
-            {incomingUserInfo?.location?.name
-              ? `${incomingUserInfo?.location?.name} •`
-              : ''}
-            {distance ? `${distance} KM` : null}
-          </p>
+          <div className="text-body-m text-light-grey mt-1 line-clamp-1 flex items-center">
+            <span className="line-clamp-1">
+              {incomingUserInfo?.location?.name
+                ? `${incomingUserInfo?.location?.name}`
+                : ''}
+            </span>
+            <span className="flex-none">
+              {distance ? ` • ${distance} KM` : null}
+            </span>
+          </div>
         </div>
         <button
           onClick={handleNextCall}

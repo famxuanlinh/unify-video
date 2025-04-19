@@ -1,7 +1,7 @@
 'use client';
 
+import { useUpdateProfile } from '@/hooks';
 import { useAuthStore } from '@/store';
-import { getImageUrl, parseToUsername } from '@/utils';
 import { format } from 'date-fns';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
@@ -9,14 +9,12 @@ import React, { useState } from 'react';
 import {
   ArrowLeft,
   ArrowSquareOutIcon,
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
   BioModal,
   Button,
   CalenderIcon,
   EditIcon,
   MapInOutlineIcon,
+  UploadButton,
   UserOutlineIcon,
   VerifiedBadgeIcon
 } from '@/components';
@@ -25,10 +23,31 @@ export const ProfilePage = () => {
   const { me } = useAuthStore();
   const router = useRouter();
 
+  const { handleUpdateProfile, handleUploadAvatar, avatarFile, isUploading } =
+    useUpdateProfile({
+      onSuccess: () => {
+        router.push('/profile');
+      }
+    });
+
   const [isOpenModal, setIsOpenModal] = useState(false);
 
   const handleOpenModal = () => {
     setIsOpenModal(prev => !prev);
+  };
+
+  const handleChangeAvatar = async (file: File) => {
+    let newAvatar = '';
+    try {
+      newAvatar = await handleUploadAvatar(file);
+    } catch (error) {
+      console.log('error:', error);
+    }
+    handleUpdateProfile({
+      fullName: me?.fullName || '',
+      dob: me?.dob || '',
+      avatar: newAvatar
+    });
   };
 
   if (!me) return;
@@ -44,16 +63,16 @@ export const ProfilePage = () => {
           <div></div>
         </div>
         <div className="mt-6 mb-5 flex flex-col items-center">
-          <Avatar className="size-25">
-            <AvatarImage
-              className="object-cover"
-              src={getImageUrl(me?.avatar)}
-            />
-            <AvatarFallback>
-              {me?.fullName?.slice(0, 2) ||
-                parseToUsername(me.userId).slice(0, 2)}
-            </AvatarFallback>
-          </Avatar>
+          <div>
+            <UploadButton
+              isDefaultVariant={false}
+              avatarFile={avatarFile}
+              // className="absolute right-0 bottom-0 z-10 h-8 w-8 rounded-full bg-white"
+              accept="image/*"
+              isLoading={isUploading}
+              onFileUpload={handleChangeAvatar}
+            ></UploadButton>
+          </div>
           <div className="mt-4 mb-2 flex items-center justify-center">
             <p className="text-head-l text-dark-grey">{me?.fullName}</p>
             <VerifiedBadgeIcon className="ml-2" />
@@ -91,7 +110,7 @@ export const ProfilePage = () => {
               <div className="flex items-center gap-2">
                 <CalenderIcon /> <span>DOB</span>
               </div>
-              <div>{format(me.dob || '', 'dd/MM/yyyy')}</div>
+              <div>{format(me?.dob || '', 'dd/MM/yyyy')}</div>
             </div>
             <div className="text-body-m flex items-center justify-between">
               <div className="flex items-center gap-2">

@@ -1,9 +1,33 @@
+'use client';
+
+import { signInWithMiniAppWallet } from '@/utils/auth';
+import { Base64 } from '@/utils/base64';
 import Image from 'next/image';
-import React from 'react';
+import { useRouter } from 'next/navigation';
+import React, { useState } from 'react';
 
 import { Button } from '@/components';
 
 export const LoginPage = () => {
+  const [isLoading, setLoading] = useState(false);
+  const router = useRouter();
+
+  const handleLoginMiniAppWalletAuth = async () => {
+    try {
+      setLoading(true);
+
+      const payload = await signInWithMiniAppWallet();
+      const token = await Base64.encode(payload);
+      const providerId = 'worldWalletAuth';
+
+      router.push(`/auth?token=${token}&providerId=${providerId}`);
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="flex h-screen items-center justify-center bg-[url(/images/main-bg.png)] bg-cover">
       <div
@@ -27,7 +51,12 @@ export const LoginPage = () => {
           </p>
 
           <div className="flex justify-center">
-            <Button variant="secondary" className="w-full sm:max-w-86">
+            <Button
+              disabled={isLoading}
+              onClick={handleLoginMiniAppWalletAuth}
+              variant="secondary"
+              className="w-full sm:max-w-86"
+            >
               Join now
             </Button>
           </div>

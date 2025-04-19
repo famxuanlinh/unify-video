@@ -2,6 +2,7 @@
 
 import { MapConfig } from '@/configs';
 import { toast } from '@/hooks';
+import { Location } from '@/types';
 import { Map } from '@vis.gl/react-google-maps';
 import React, { useRef, useState } from 'react';
 
@@ -9,12 +10,11 @@ import { LocationIcon } from '../icons';
 import { Autocomplete, AutocompleteCustomRef } from './autocomplete';
 import AutocompleteResult from './autocomplete-result';
 interface GoogleMapProps {
-  lat?: number;
-  long?: number;
-  onGetCoordinate: (values: { lat: number; long: number }) => void;
+  onGetLocation: (values: Location) => void;
+  location?: Location;
 }
 
-export const GoogleMap = ({ lat, long, onGetCoordinate }: GoogleMapProps) => {
+export const GoogleMap = ({ location, onGetLocation }: GoogleMapProps) => {
   const [selectedPlace, setSelectedPlace] =
     useState<google.maps.places.Place | null>(null);
 
@@ -43,10 +43,12 @@ export const GoogleMap = ({ lat, long, onGetCoordinate }: GoogleMapProps) => {
   };
 
   React.useEffect(() => {
-    if (lat != null && long != null) {
-      autocompleteRef.current?.setPlaceByLatLng(lat, long);
+    if (location?.lat && location?.long) {
+      autocompleteRef.current?.setPlaceByLatLng(location.lat, location.long);
+    } else {
+      handleMyLocation();
     }
-  }, [lat, long]);
+  }, [location?.lat, location?.long]);
 
   return (
     <>
@@ -69,7 +71,7 @@ export const GoogleMap = ({ lat, long, onGetCoordinate }: GoogleMapProps) => {
       </Map>
 
       <Autocomplete
-        onGetCoordinate={onGetCoordinate}
+        onGetLocation={onGetLocation}
         ref={autocompleteRef}
         onPlaceSelect={setSelectedPlace}
       />

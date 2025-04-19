@@ -5,7 +5,6 @@ import Image from 'next/image';
 import React, { useMemo } from 'react';
 
 import { Dialog, DialogContent, DialogTitle } from '../core';
-import { VerifiedBadgeIcon } from '../icons';
 
 type BioModalProps = {
   data: User;
@@ -49,16 +48,12 @@ export const BioModal: React.FC<BioModalProps> = ({
             style={{ objectFit: 'cover' }}
           />
           <div className="absolute bottom-0 left-0 z-50 flex w-full items-center justify-between rounded-b-3xl bg-gradient-to-b from-black/0 to-black p-4">
-            <div>
+            <div className="w-full">
               <div className="flex items-center">
                 <p className="text-head-li text-white">{data?.fullName}</p>
-                <VerifiedBadgeIcon className="ml-2" />
+                {/* <VerifiedBadgeIcon className="ml-2" /> */}
               </div>
-              <p className="text-body-m text-light-grey mt-1 flex items-center">
-                <span className="line-clamp-1 w-2/3">
-                  {data.hometown?.name}
-                </span>
-              </p>
+
               <p className="text-body-m text-light-grey mt-1">
                 {data?.location?.name ? `${data?.location?.name} •` : ''}
                 {distance}
