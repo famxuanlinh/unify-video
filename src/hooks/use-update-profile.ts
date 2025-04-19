@@ -2,7 +2,7 @@
 
 import UnifyApi from '@/apis';
 import { useAuthStore } from '@/store';
-import { UpdateUserPayload } from '@/types';
+import { Location, UpdateUserPayload } from '@/types';
 import { handleImageCompression, IPFSUtils } from '@/utils';
 import { useCallback, useEffect, useState } from 'react';
 
@@ -14,19 +14,13 @@ export const useUpdateProfile = ({
   const { setMe, me } = useAuthStore();
 
   const [isLoading, setIsLoading] = useState(false);
-  const [isGettingCoordinate, setIsGettingCoordinate] = useState(false);
   const [hometown, setHometown] = useState(me?.hometown?.name || '');
   const [data, setData] = useState({});
 
   const [avatarFile, setAvatarFile] = useState<string>(me?.avatar || '');
   const [isUploading, setIsUploading] = useState(false);
-  const [coordinate, setCoordinate] = useState<{
-    lat?: number;
-    long?: number;
-  }>({
-    lat: me?.location?.lat,
-    long: me?.location?.long
-  });
+
+  const [location, setLocation] = useState<Location>({});
 
   const handleUpdateProfile = async (payload: UpdateUserPayload) => {
     try {
@@ -34,8 +28,9 @@ export const useUpdateProfile = ({
       const res = await UnifyApi.user.update({
         ...payload,
         location: {
-          lat: coordinate.lat,
-          long: coordinate.long
+          lat: location.lat,
+          long: location.long,
+          name: location.name
         },
         hometown: {
           name: hometown
@@ -79,59 +74,37 @@ export const useUpdateProfile = ({
     setAvatarFile('');
   };
 
-  const handleGetCoordinate = (values: { lat: number; long: number }) => {
-    setCoordinate(values);
+  const handleGetLocation = (value: Location) => {
+    setLocation(value);
   };
+
   const handleGetHometownAddress = (value: string) => {
     setHometown(value);
   };
 
-  const handleGetLocation = () => {
-    setIsGettingCoordinate(true);
-    navigator.geolocation.getCurrentPosition(pos => {
-      const { latitude, longitude } = pos.coords;
-      setCoordinate({
-        lat: latitude,
-        long: longitude
-      });
-      setIsGettingCoordinate(false);
-    });
-  };
-
   useEffect(() => {
     if (me) {
-      // if (!me?.location?.lat && !me?.location?.long) {
-      //   navigator.geolocation.getCurrentPosition(pos => {
-      //     const { latitude, longitude } = pos.coords;
-      //     setCoordinate({
-      //       lat: latitude,
-      //       long: longitude
-      //     });
-      //     setIsGettingCoordinate(false);
-      //   });
-      // } else {
       setAvatarFile(me?.avatar || '');
-      setCoordinate({
+      setHometown(me?.hometown?.name || '');
+      setLocation({
         lat: me?.location?.lat,
-        long: me?.location?.long
+        long: me?.location?.long,
+        name: me?.location?.name
       });
-      // }
     }
   }, [me]);
 
   return {
     data,
-    coordinate,
     isLoading,
     avatarFile,
     handleGetHometownAddress,
     hometown,
-    isGettingCoordinate,
     handleGetLocation,
+    location,
     handleUpdateProfile,
     isUploading,
     handleDeleteAvatar,
-    handleUploadAvatar,
-    handleGetCoordinate
+    handleUploadAvatar
   };
 };

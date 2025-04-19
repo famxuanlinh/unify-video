@@ -10,11 +10,13 @@ import {
 } from '@/store';
 import { MESSAGE_EVENTS } from '@/types';
 import { log } from '@/utils';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import Peer from 'peerjs';
 import React, { useEffect } from 'react';
 
 import { peerConfig } from '@/lib';
+
+import { Loading } from '../loading';
 
 export const AuthLayout = ({ children }: { children: React.ReactNode }) => {
   const { initSocket } = useSocketStore();
@@ -23,6 +25,7 @@ export const AuthLayout = ({ children }: { children: React.ReactNode }) => {
   const { getProfile } = useGetProfile();
   const { setMyPeerId } = usePeerStore();
   const router = useRouter();
+  const pathName = usePathname();
   const { connectToPeer, answerCall, getData } = usePeer();
 
   const {
@@ -52,12 +55,14 @@ export const AuthLayout = ({ children }: { children: React.ReactNode }) => {
       if (!me.fullName || !me.dob) {
         router.push('/setup-profile');
       }
+
+      if (me.fullName && me.dob && pathName === '/setup-profile') {
+        router.push('/allow-access');
+      }
     }
   }, [me]);
 
   useEffect(() => {
-    // const socket = useSocketStore.getState().socket;
-
     if (!socket || !socket?.connected) return;
 
     log('Setting up socket listeners', socket.id);
@@ -167,6 +172,8 @@ export const AuthLayout = ({ children }: { children: React.ReactNode }) => {
       }
     };
   }, []);
+
+  if (!me) return <Loading />;
 
   return <>{children}</>;
 };

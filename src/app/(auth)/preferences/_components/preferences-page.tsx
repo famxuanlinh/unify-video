@@ -44,7 +44,7 @@ export const PreferencesPage = () => {
   const router = useRouter();
   const { me } = useAuthStore();
 
-  const { isLoading, handleUpdateProfile, coordinate, handleGetCoordinate } =
+  const { isLoading, handleUpdateProfile, handleGetLocation, location } =
     useUpdateProfile({
       onSuccess: () => {
         router.push('/');
@@ -216,9 +216,8 @@ export const PreferencesPage = () => {
               {isShowLimit && (
                 <>
                   <GoogleMap
-                    lat={coordinate.lat}
-                    long={coordinate.long}
-                    onGetCoordinate={handleGetCoordinate}
+                    location={location}
+                    onGetLocation={handleGetLocation}
                   />
 
                   <FormField

@@ -170,14 +170,16 @@ export function usePeer() {
     const setIsEndCall = useMainStore.getState().setIsEndCall;
     // setIncomingUserInfo(null);
 
-    if (timeStreaming > 1) {
+    if (timeStreaming > 10) {
+      socket?.emit(MESSAGE_EVENTS.END);
       router.push(`/review`);
     } else if (isEndCall) {
+      socket?.emit(MESSAGE_EVENTS.END);
+      localStream?.getTracks().forEach(track => track.stop());
       setIncomingUserInfo(null);
       setLocalStream(null);
       setStarted(false);
       setIsEndCall(false);
-      socket?.emit(MESSAGE_EVENTS.END);
       router.push('/');
     } else {
       socket?.emit(MESSAGE_EVENTS.SKIP);
@@ -272,6 +274,7 @@ export function usePeer() {
     }
 
     if (waitingForMatch && isEndCall) {
+      localStream?.getTracks().forEach(track => track.stop());
       // setIncomingUserInfo(null);
       setLocalStream(null);
       setStarted(false);
@@ -310,6 +313,7 @@ export function usePeer() {
       socket?.emit(MESSAGE_EVENTS.SKIP);
     } else {
       setStarted(false);
+      localStream?.getTracks().forEach(track => track.stop());
       setLocalStream(null);
       setStarted(false);
       setIncomingUserInfo(null);

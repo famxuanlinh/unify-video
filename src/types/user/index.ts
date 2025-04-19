@@ -35,7 +35,7 @@ export type UpdateUserPayload = {
   hometown?: Location;
 };
 
-interface Location {
+export interface Location {
   lat?: number;
   long?: number;
   name?: string;

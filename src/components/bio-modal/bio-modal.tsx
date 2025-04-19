@@ -53,11 +53,7 @@ export const BioModal: React.FC<BioModalProps> = ({
                 <p className="text-head-li text-white">{data?.fullName}</p>
                 {/* <VerifiedBadgeIcon className="ml-2" /> */}
               </div>
-              <p className="text-body-m text-light-grey mt-1 flex items-center">
-                <span className="line-clamp-1 w-2/3">
-                  {data.hometown?.name}
-                </span>
-              </p>
+
               <p className="text-body-m text-light-grey mt-1">
                 {data?.location?.name ? `${data?.location?.name} •` : ''}
                 {distance}

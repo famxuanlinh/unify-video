@@ -23,7 +23,7 @@ export const HomePage = () => {
   return (
     <div className="h-screen w-screen bg-black">
       {started ? (
-        <div className="flex h-screen w-screen flex-col p-3 pt-0 md:p-10">
+        <div className="flex h-screen w-screen flex-col p-3 pt-1 md:p-10">
           <div className="flex items-center justify-between pt-1 pb-2 max-md:h-10 md:pb-6">
             <div onClick={handleEndCall} className="cursor-pointer md:py-3">
               <ArrowLeft className="fill-white" />
